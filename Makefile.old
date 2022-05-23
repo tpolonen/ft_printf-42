@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/12 19:01:12 by tpolonen          #+#    #+#              #
-#    Updated: 2022/05/23 10:36:49 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/05/23 10:57:41 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #
@@ -17,13 +17,7 @@ LIB_DIR			:= ../libft/
 SRC_DIR 		:= src
 OBJ_DIR 		:= obj
 
-_SRC := dintarr.c
-_SRC += draw.c
-_SRC += events.c
-_SRC += fileread.c
-_SRC += main.c
-_SRC += map.c
-_SRC += projections.c
+_SRC := $(wildcard $(SRC_DIR)/*.c)
 
 DEP := $(HEADER_DIR)fdf.h
 DEP += $(HEADER_DIR)dintarr.h
@@ -56,6 +50,8 @@ lib:
 	@echo Compiled library
 
 $(BIN): $(OBJ) $(DEP)
+	echo $(_SRC)
+	echo $(SRC)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(BIN)
 	@echo Compiled binary file
 
