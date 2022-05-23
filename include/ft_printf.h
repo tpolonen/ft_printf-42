@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/05/23 11:15:09 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/05/23 13:45:57 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,18 @@
 
 # include "libft.h"
 # include "libftprint.h"
+
+const char	g_flags[] = "-+ #0";
+const char	*g_length[] = {
+	"hh",
+	"h",
+	"l",
+	"ll",
+	"j",
+	"z",
+	"t",
+	"L"
+};
 
 int	ft_printf(const char *restrict format, ...);
 
