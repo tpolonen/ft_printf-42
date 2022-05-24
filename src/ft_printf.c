@@ -12,20 +12,39 @@
 
 #include "ft_printf.h"
 
+# Prototype of format tags is:
+# %[flags][width][.precision][length]specifier
+
+static const char	flags[] = "-+ #0";
+static const char	*length[] = {
+        "hh",
+        "h",
+        "l",
+        "ll",
+        "j",
+        "z",
+        "t",
+        "L"
+};
+static const char   specifiers[] = "cdieEfgGosuxXpn%";
+
 int	ft_printf(const char *restrict format, ...)
 {
-	int	n;
+	int     n;
+    dstr_t
 
 	n = 0;
 	while (format[n] != '\0')
 	{
 		while (format[n] != '%')
 			write(1, format + n, 1);
-		if (format[n - 1] == '%' || format[n + 1] == '%')
+		if (format[n + 1] == '%')
 		{
 			write(1, format + n, 1);
+            n++;
 			continue ;
 		}
+        n++;
 	}
-	return (0);
+	return (n);
 }

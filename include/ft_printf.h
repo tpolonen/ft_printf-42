@@ -15,22 +15,12 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdarh.h>
+# include <stdarg.h>
 
 # include "libft.h"
 # include "libftprint.h"
 
-const char	g_flags[] = "-+ #0";
-const char	*g_length[] = {
-	"hh",
-	"h",
-	"l",
-	"ll",
-	"j",
-	"z",
-	"t",
-	"L"
-};
+
 
 int	ft_printf(const char *restrict format, ...);
 
