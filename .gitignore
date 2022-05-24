@@ -2,6 +2,7 @@
 *.swp
 *.old
 !.gitignore
+!./.tests
 
 # Prerequisites
 *.d

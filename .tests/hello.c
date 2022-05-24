@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   hello.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/05/24 17:51:13 by tpolonen         ###   ########.fr       */
+/*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
+/*   Updated: 2022/05/24 17:29:10 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#include "ft_printf.h"
+#include <stdio.h>
 
-# include <unistd.h>
-# include <stdlib.h>
-# include <stdarh.h>
-
-# include "libft.h"
-# include "libftprint.h"
-
-int	ft_printf(const char *restrict format, ...);
-
-#endif
+int main(void) {
+	printf("Hello from stdio!\n");
+	ft_printf("Hello from libft!\n");
+	return 0;
+}
