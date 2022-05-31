@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/05/24 17:51:13 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/05/31 18:33:34 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdarh.h>
+# include <stdarg.h>
 
-# include "libft.h"
-# include "libftprint.h"
+# include "../../libft/include/libft.h"
 
 int	ft_printf(const char *restrict format, ...);
 

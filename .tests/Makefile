@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/24 17:30:39 by tpolonen          #+#    #+#              #
-#    Updated: 2022/05/24 17:51:34 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/05/31 19:16:42 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,16 +17,24 @@ LFTDIR		:= ../../libft/
 DEP := $(HEADERDIR1)ft_printf.h
 DEP += $(HEADERDIR2)libft.h
 
-SRC := $(wildcard ./*.c)
-BIN := $(basename $(SRC))
+SRC1 := $(wildcard ./*.c)
+SRC2 := $(wildcard ../src/*.c)
+BIN := $(basename $(SRC1))
 
 CC			:= gcc
 CFLAGS		:= -g -Wall -Wextra -Werror
-CPPFLAGS	:= -I$(HEADER_DIR1) -I$(HEADER_DIR2)
+CPPFLAGS	:= -I$(HEADERDIR1) -I$(HEADERDIR2)
+#$(addprefix -I,$(DEP))
 LDFLAGS		:= -L$(LFTDIR)
 LDLIBS		:= -lft
 
 all: $(BIN)
 
-$(BIN):
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC) $< -o $@
+$(BIN): $(SRC1) $(SRC2) $(DEP)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC1) $(SRC2) -o $@ $(LDFLAGS) $(LDLIBS)
+
+clean:
+	rm -rf $(BIN)
+
+re: clean
+	make all
