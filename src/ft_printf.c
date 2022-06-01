@@ -6,12 +6,12 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/01 12:32:48 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/01 17:48:29 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdarg.h>
 #include "ft_printf.h"
+#include <stdio.h>
 
 // Prototype of format tags is:
 // %[flags][width][.precision][length mod]conversion
@@ -72,8 +72,8 @@ const int	g_flag_count = 5;
 const char	*g_length[] = {
 	"hh",
 	"h",
-	"l",
 	"ll",
+	"l",
 	"j",
 	"z",
 	"t",
@@ -86,49 +86,123 @@ const char	g_conv_count = 15;
 
 static void get_conv(int *token, char **seek)
 {
-	return ;
+	int	i;
+	int	stop;
+
+	i = 0;
+	while (i < g_conv_count)
+	{
+		if (**seek == g_conv[i])
+		{
+			printf("found conv! %c == %c\nwe should flip bit %d\n", **seek, g_conv[i], i);
+			*token |= (1 << i);
+			break ;
+		}
+		i++;
+	}
 }
 
 static void get_length(int *token, char **seek)
 {
-	return ;
+	int	i;
+	int	stop;
+
+	i = 0;
+	while (i < g_length_count)
+	{
+		if (ft_strncmp(*seek, g_length[i], ft_strlen(g_length[i])) == 0)
+		{
+			printf("found length! %c == %s\nwe should flip bit %d\n", **seek, g_length[i], i);
+			*token |= 1 << i;
+			(*seek) += ft_strlen(g_length[i]);
+			break ;
+		}
+		i++;
+	}
+	*token <<= g_conv_count;
 }
 
 static void	get_flag(int *token, char **seek)
 {
-	return ;
+	int	i;
+	int	stop;
+
+	while (**seek != '\0')
+	{	
+		i = 0;
+		stop = 1;
+		while (i < g_flag_count)
+		{
+			if (**seek == g_flags[i])
+			{
+				printf("found flag! %c == %c\nwe should flip bit %d\n", **seek, g_flags[i], i);
+				*token |= 1 << i;
+				stop = 0;
+			}
+			i++;
+		}
+		if (stop)
+			break ;
+		(*seek)++;
+		printf("moving to check if %c is flag\n", **seek);
+	}
+	*token <<= g_length_count;
 }
 
-static int *get_token(const char *start)
+static int get_token(int *token, char **start)
 {
-	int			token;
-	const char	*seek;
-
-	token = 0;
-	seek = start;
-	get_flag(&token, &seek);
-	get_length(&token, &seek);
-	get_conv(&token, &seek);
-	return token;
+	printf("we get token\n");
+	(*start)++;
+	*token = 0;
+	get_flag(token, start);
+	get_length(token, start);
+	get_conv(token, start);
+	//if some fail condition return 0
+	return (1);
 }
 
+//good ol' bitprint from stackoverflow
+//should probably copy one we made for fillit and put that in libft
+// Assumes little endian
+void printBits(size_t const size, void const * const ptr)
+{
+    unsigned char *b = (unsigned char*) ptr;
+    unsigned char byte;
+    int i, j;
+    
+    for (i = size-1; i >= 0; i--) {
+        for (j = 7; j >= 0; j--) {
+            byte = (b[i] >> j) & 1;
+            printf("%u", byte);
+        }
+    }
+    puts("");
+}
+
+__attribute__ ((format (printf, 1, 2)))
 int	ft_printf(const char *restrict format, ...)
 {
 	va_list	arg_ptr;
-	int		n;
+	int		token;
 	t_dstr	*out;
 
+
 	va_start(arg_ptr, format);
-	n = 0;
 	if (ft_dstrnew(&out, 8) == -1)
 		return (-1);
-	while (format[n] != '\0')
+	while (*format != '\0')
 	{
-		if (format[n] != '%')
-			ft_dstraddc(&out, format[n]);
-		else if (format[n + 1] == '%')
-			ft_dstraddc(&out, format[n++]);
-		else 
+		if (*format != '%')
+			ft_dstraddc(&out, *format);
+		else if (*(format + 1) == '%')
+			ft_dstraddc(&out, *format++);
+		else if (!get_token(&token, (char **) &format))
+			ft_dstraddc(&out, *format); //we should send a compiler error or something here
+		else
+		{
+			printBits(sizeof(int), &token);
+		}
+
 			//get token as bits in int
 			//feed token, dstr and corresponding item in va_args (arg itself?) to dispatcher
 			//so something like
@@ -150,8 +224,13 @@ int	ft_printf(const char *restrict format, ...)
 			//calling va_arg.
 			//can we actually expect that va_arg returns -1 after it's emptied?
 			//probably worth testing in cluster & with ft_printf testers.
+			//IF __attribute__ is actually allowed, that solves issue with not matching
+			//conv/arg numbers...
+			//should we put the type funnel here in main? would be more readable I guess
+			//if linecount permits. we could make bitmasks for each type and check if
+			//token matches a type with bitwise &
 			;
-		n++;
+		format++;
 	}
 	va_end(arg_ptr);
 	write(1, out->str, out->len);

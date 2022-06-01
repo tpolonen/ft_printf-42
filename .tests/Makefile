@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/24 17:30:39 by tpolonen          #+#    #+#              #
-#    Updated: 2022/05/31 19:16:42 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/06/01 15:51:12 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ SRC2 := $(wildcard ../src/*.c)
 BIN := $(basename $(SRC1))
 
 CC			:= gcc
-CFLAGS		:= -g -Wall -Wextra -Werror
+CFLAGS		:= -g 
 CPPFLAGS	:= -I$(HEADERDIR1) -I$(HEADERDIR2)
 #$(addprefix -I,$(DEP))
 LDFLAGS		:= -L$(LFTDIR)

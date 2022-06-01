@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/05/31 19:14:14 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/01 17:25:42 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ int main(void) {
 	printf("\nprintf returned %zu", pf);
 	printf("\nft_printf returned %zu\n", fp);
 
-	printf("%lu\n", sizeof(int));
+//	printf("let's see some printf warnings! %d %d", 2);
+//	ft_printf("let's see some ft_printf warnings! %d %d", 2);
 
+//	printf("what happens if %k there's just a random percent");
+
+	ft_printf("%-+ #0llfwonder what this does?\n", 1.0);
 	return 0;
 }
