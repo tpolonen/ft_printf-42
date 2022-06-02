@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 13:02:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 13:50:20 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,9 +202,9 @@ static int get_token(int *token, char **start)
 __attribute__ ((format (printf, 1, 2)))
 int	ft_printf(const char *restrict format, ...)
 {
-	va_list	arg_ptr;
-	int		token;
-	t_dstr	*out;
+	va_list			arg_ptr;
+	int				token;
+	static t_dstr	*out;
 
 	va_start(arg_ptr, format);
 	while (*format != '\0')
