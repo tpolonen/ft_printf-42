@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 17:38:38 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 19:40:52 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,48 +20,46 @@
 // diouxX with flags hh, h, l, ll
 // f with flags l, L
 
-// so types we actually need to handle are
-// diouxX - integer as either signed/unsigned decimal, unsigned octal or unsigned hex
-// c - first byte of argument is printed, so char
-// s - string, so char pointer until null byte is reached
-// p - is pointer address if I remember correctly, so also integer? in hex
-// f - float, infinity and NaN are printed as "inf" and "nan" respectively
-
-// so types are
-// - integer
-// - short
-// - long
-// - long long
-// - char (pointer)
-// - float
-
-// not too bad to handle with if/else checks IF we handle integer types with in one branch.
-// we only need to get flag and type passed to function that handles the actual conversion
-// so we have functions
-// * handle_int(va_list, token, &out)
-//  - branches off to handle_char, handle short, handle_long, handle_long_long
-//  - or alternatively convert the input always to long long...
-//  - we probably need to branch off to different outputs eventually anyways,
-//    order of operations matters.
-// * handle_char(va_list, token, &out)
-//  - two cases: print char or print string, probably can be handled in this function
-// * handle_float(va_list, token, &out)
-//  - small f = print infinity and nan as `inf`, `nan`
-//  - big F = print infinity and nan as `INF`, `NAN`
-
-// we probably can't pass va_arg directly, but instead pass the list (pointer?) and
-// let the handle function handle the va_arg.
-
-// probably special case for %%, no need to go through the whole rigamarole...
-// we already have a special case for %%, no need to make it any more complicated.
-// actually have to, b/c linecount of main function :P
-// percent is now a char type
-
 // Also needs to be managed:
 // %%
 // flags `-+ #0`
 // minimum field-width
 // precision
+
+// we probably need to have some hardcoded checks inside flag reading
+// for minimum width and precision. we also have to save that info
+// somewhere. fuck. i thought we could have managed to do this
+// just with bitflags.
+
+// left padding can be done while parsing but right padding and
+// precision are done later. so what do? completely branch off
+// function during parsing or what
+
+// path of least resistance is probably
+// - create some context struct that is allocated completely in stack
+// - get token during parsing like it's done now but save it in struct
+// - check for precision and field width during flags ->
+// - if either is found, they have space allocated in the struct
+// - instead of passing token around, pass the struct
+
+// is field width just a number immediately after percent mark?
+// if precision just a number following a period after possible field width?
+// so actually we could read the field width and precision first. possibly
+// inside the get_token function.
+// width can be after any flag specifier ;_;
+// so during flag reading for every char:
+//  -check if there's a number and then read width
+//  -check if there's a period and then read precision
+//  -put both/either/neither in the context struct
+
+// token struct?
+// -int spec
+// -int width
+// -int precision
+
+// make it a static in main and reset after each use to save in lines.
+
+// some sources say that flags come first and width/prec after...
 
 // Bonuses:
 // conversions e and g with L flag
@@ -79,7 +77,7 @@
 //   11111
 //   -+ #0 < flags
 //        11111111
-//        h,hhh,l,ll,j,z,t,L < length specifiers
+//        h,hh,l,ll,j,z,t,L < length specifiers
 //                11111111111111111
 //                cdieEfFgGosuxXpn% < conversion specifiers
 // so the bitmasks for different types are
@@ -112,15 +110,13 @@
 // 00000000000000000000000010000000  < octal
 // 00000000000000000000000000011100  < hexal
 
-// we probably make defines from these
-
 // idea is that even if we don't handle the specific flag, we have some default case
 // per type so the function prints something and doesn't segfault if unimplemented
 // but ISO-specified conversion is requested.
 
-const char	g_flags[] = "-+ #0";
-const int	g_flag_count = 5;
-const char	*g_length[] = {
+static const char	g_flags[] = "-+ #0";
+static const int	g_flag_count = 5;
+static const char	*g_length[] = {
 	"h",
 	"hh",
 	"l",
@@ -130,9 +126,9 @@ const char	*g_length[] = {
 	"t",
 	"L"
 };
-const char	g_length_count = 8;
-const char	g_conv[] = "cdieEfFgGosuxXpn%";
-const char	g_conv_count = 17;
+static const char	g_length_count = 8;
+static const char	g_conv[] = "cdieEfFgGosuxXpn%";
+static const char	g_conv_count = 17;
 
 // next three functions could probably be rolled together somehow
 static void get_conv(int *token, char **seek)
@@ -202,16 +198,16 @@ static int get_token(int *token, char **start)
 	(*start)++;
 	*token = 0;
 	get_flag(token, start);
+	//so can we get width and precision here or what
 	get_length(token, start);
 	get_conv(token, start);
-	//if some fail condition return 0
-	return (1);
+	return (token != 0);
 }
 
 /*
  * 1. Create a dynamic string.
  * 2. Insert characters from format sign until null byte or '%' is reached.
- * 3. Turn conversion into bitfield.
+ * 3. Turn conversion into token, containing bitflags, width and precision.
  *    ...if that fails, conversion is invalid. Just insert the next char.
  * 4. Using token and appropriate bitmask, transfer to type specific function:
  *    - pointer to dynamic string
