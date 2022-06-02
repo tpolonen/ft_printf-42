@@ -3,6 +3,7 @@
 *.old
 !.gitignore
 !./.tests
+*.out
 
 # Prerequisites
 *.d
