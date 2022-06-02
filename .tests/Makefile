@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/24 17:30:39 by tpolonen          #+#    #+#              #
-#    Updated: 2022/06/02 14:33:51 by teppo            ###   ########.fr        #
+#    Updated: 2022/06/02 17:09:42 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,6 @@ lib:
 
 %: %.c lib
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC2) $< -o $@.out $(LDFLAGS) $(LDLIBS)
-
 
 clean:
 	/bin/rm -rf *.out

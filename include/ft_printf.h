@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 15:01:50 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/02 17:36:43 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@
 # define U_OCT 		128
 # define U_HEX 		24
 # define PTR 		4
-# define I_CHAR		16777216
-# define SHORT		8388608
-# define LLONG		4194304
-# define LONG 		2097152
+# define SHORT		16777216
+# define S_CHAR		8388608
+# define LONG		4194304
+# define LLONG 		2097152
 # define INTMAX_T	1048576
 # define SIZE_T		524288
 # define PTRDIFF_T	262144
@@ -43,9 +43,16 @@
 # define PERCENT	1
 
 # define FLOAT		16128
+# define LDOUBLE	131072
 # define SCI_DOUBLE 12288
 # define DEC_DOUBLE 3072 
 # define SHORTEST_F 768	
+
+# define SIGNED		311296
+# define UNSIGNED	65724
+# define DECIMAL	49184
+# define OCTAL		128
+# define HEXAL		28
 
 int	ft_printf(const char *restrict format, ...) 
 		__attribute__ ((format (printf, 1, 2)));

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 14:21:44 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/02 17:38:38 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,35 +74,43 @@
 // Alter colors, fd, other fun stuff
 
 // token bitfield key
-// 000
+// 00
 // not used
-//    11111
-//    -+ #0 < flags
-//         11111111
-//         hh,h,ll,l,j,z,t,L < length specifiers
-//                 11111111111111111
-//                 cdieEfFgGosuxXpn% < conversion specifiers
+//   11111
+//   -+ #0 < flags
+//        11111111
+//        h,hhh,l,ll,j,z,t,L < length specifiers
+//                11111111111111111
+//                cdieEfFgGosuxXpn% < conversion specifiers
 // so the bitmasks for different types are
-// 000000000000000001100000010111100 < integer types, specifically
-// 000000000000000001100000000000000  < signed decimal
-// 000000000000000000000000000100000  < unsigned decimal
-// 000000000000000000000000010000000  < unsigned octal
-// 000000000000000000000000000011000  < unsigned hexadecimal
-// 000000000000000000000000000000100  < void * in hexadecimal
-// 000000001000000000000000000000000  < signed or unsigned char
-// 000000000100000000000000000000000  < signed or unsigned short
-// 000000000010000000000000000000000  < signed or unsigned long long
-// 000000000001000000000000000000000  < signed or unsigned long
-// 000000000000100000000000000000000  < signed or unsigned intmax_t
-// 000000000000010000000000000000000  < signed or unsigned size_t
-// 000000000000001000000000000000000  < ptrdiff_t
-// 000000000000000010000000001000000 < char types, specifically
-// 000000000000000010000000000000000  < int converted to an unsigned char
-// 000000000000000000000000001000000  < const char * pointing to char[]
-// 000000000000000000011111100000000 < float types, specifically
-// 000000000000000000011000000000000  < double rounded and converted to d.ddde+dd
-// 000000000000000000000110000000000  < double rounded and converted to ddd.ddd
-// 000000000000000000000001100000000  < double, we don't have to worry about this ._.
+// 00000000000000001100000010111100 < integer types, specifically
+// 00000000000000001100000000000000  < signed decimal
+// 00000000000000000000000000100000  < unsigned decimal
+// 00000000000000000000000010000000  < unsigned octal
+// 00000000000000000000000000011100  < unsigned hexadecimal
+// 00000000000000000000000000000100  < void * in hexadecimal
+// 00000001000000000000000000000000  < signed or unsigned short
+// 00000000100000000000000000000000  < signed or unsigned char
+// 00000000010000000000000000000000  < signed or unsigned long
+// 00000000001000000000000000000000  < signed or unsigned long long
+// 00000000000100000000000000000000  < signed or unsigned intmax_t
+// 00000000000010000000000000000000  < signed or unsigned size_t
+// 00000000000001000000000000000000  < ptrdiff_t
+// 00000000000000010000000001000000 < char types, specifically
+// 00000000000000010000000000000000  < int converted to an unsigned char
+// 00000000000000000000000001000000  < const char * pointing to char[]
+// 00000000000000000000000000000001  < just a percent mark
+// 00000000000000000011111100000000 < float types, specifically
+// 00000000000000100000000000000000  < long double
+// 00000000000000000011000000000000  < double rounded and converted to d.ddde+dd
+// 00000000000000000000110000000000  < double rounded and converted to ddd.ddd
+// 00000000000000000000001100000000  < double, shortest of the previous ones
+                                    
+// 00000000000001001100000000000000  < signed
+// 00000000000000010000000010111100  < unsigned
+// 00000000000000001100000000100000  < decimal
+// 00000000000000000000000010000000  < octal
+// 00000000000000000000000000011100  < hexal
 
 // we probably make defines from these
 
@@ -113,10 +121,10 @@
 const char	g_flags[] = "-+ #0";
 const int	g_flag_count = 5;
 const char	*g_length[] = {
-	"hh",
 	"h",
-	"ll",
+	"hh",
 	"l",
+	"ll",
 	"j",
 	"z",
 	"t",
@@ -126,6 +134,7 @@ const char	g_length_count = 8;
 const char	g_conv[] = "cdieEfFgGosuxXpn%";
 const char	g_conv_count = 17;
 
+// next three functions could probably be rolled together somehow
 static void get_conv(int *token, char **seek)
 {
 	int	i;
@@ -151,10 +160,11 @@ static void get_length(int *token, char **seek)
 	i = 0;
 	while (i < g_length_count)
 	{
-		if (ft_strncmp(*seek, g_length[i], ft_strlen(g_length[i])) == 0)
+		if (ft_strncmp(*seek, g_length[g_length_count - i - 1], \
+					ft_strlen(g_length[g_length_count - i - 1])) == 0)
 		{
 			*token |= 1 << i;
-			(*seek) += ft_strlen(g_length[g_length_count - i]);
+			(*seek) += ft_strlen(g_length[g_length_count - i - 1]);
 			break ;
 		}
 		i++;
@@ -173,7 +183,7 @@ static void	get_flag(int *token, char **seek)
 		stop = 1;
 		while (i < g_flag_count)
 		{
-			if (**seek == g_flags[g_flag_count - i])
+			if (**seek == g_flags[g_flag_count - i - 1])
 			{
 				*token |= 1 << i;
 				stop = 0;
@@ -198,7 +208,20 @@ static int get_token(int *token, char **start)
 	return (1);
 }
 
-__attribute__ ((format (printf, 1, 2)))
+/*
+ * 1. Create a dynamic string.
+ * 2. Insert characters from format sign until null byte or '%' is reached.
+ * 3. Turn conversion into bitfield.
+ *    ...if that fails, conversion is invalid. Just insert the next char.
+ * 4. Using token and appropriate bitmask, transfer to type specific function:
+ *    - pointer to dynamic string
+ *    - token
+ *    - and list of args
+ * 5. Arg is converted into correct output and appended to dynamic string.
+ * 6. Repeat until null byte is reached.
+ * 7. Write contents of dynamic string directly to stdout.
+ * 8. Free dynamic string and return it's length.
+ */
 int	ft_printf(const char *restrict format, ...)
 {
 	va_list			args;
@@ -211,7 +234,7 @@ int	ft_printf(const char *restrict format, ...)
 		if (*format != '%')
 			ft_dstraddc(&out, *format);
 		else if (!get_token(&token, (char **) &format))
-			ft_dstraddc(&out, *format); //we should send a compiler error or something here
+			ft_dstraddc(&out, *format);
 		else
 		{
 			if (token & INTEGER)
@@ -227,29 +250,3 @@ int	ft_printf(const char *restrict format, ...)
 	write(1, out->str, out->len);
 	return (ft_dstrclose(&out, NULL));
 }
-			//get token as bits in int
-			//feed token, dstr and corresponding item in va_args (arg itself?) to dispatcher
-			//so something like
-			//convert(get_token(format + n), &out, arg);
-			//do we need to squeeze out the next arg here?
-			//how's that gonna work?
-			//after getting full token we know which type the next conversion will be
-			//can we get the next token by size in bytes or do we have to provide type?
-			//I'm thinking of storing types/bitecounts in array where index corresponds
-			//to specific conversion flag, so it would be possible to provide size of
-			//arg after token has been processed
-			//do we need to iterate through the string first to get token count so we know
-			//the size of va_list? linked list would make sense here, since we need to
-			//insert processed tokens between plaintext strings
-			//looks like va_arg(dest, type) is kind of iterator. so no need to count
-			//what va_arg returns if there's not enough args for tokens?
-			//random errors. how can we handle that situation without counting tokens
-			//first and comparing them to args. we can't check for next arg without
-			//calling va_arg.
-			//can we actually expect that va_arg returns -1 after it's emptied?
-			//probably worth testing in cluster & with ft_printf testers.
-			//IF __attribute__ is actually allowed, that solves issue with not matching
-			//conv/arg numbers...
-			//should we put the type funnel here in main? would be more readable I guess
-			//if linecount permits. we could make bitmasks for each type and check if
-			//token matches a type with bitwise &

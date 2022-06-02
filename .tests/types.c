@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 15:54:26 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 16:43:25 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,14 @@ int main(void) {
 	ft_printf("what's e?%e\n", 1.0);
 	ft_printf("what's f?%f\n", 1.1);
 	ft_printf("what's g?%g\n", 1.2);
+
+	ft_printf("\nBONUS MODE\n");
+	ft_printf("ld? %ld lld? %lld hd? %hd hhd? %hhd\n", 1, 2, 3, 4); 
+	ft_printf("li? %li lli? %lli hi? %hi hhi? %hhi\n", 1, 2, 3, 4); 
+	ft_printf("lo? %lo llo? %llo ho? %ho hho? %hho\n", 1, 2, 3, 4); 
+	ft_printf("lu? %lu llu? %llu hu? %hu hhi? %hhu\n", 1, 2, 3, 4); 
+	ft_printf("lx? %lx llx? %llx hx? %hx hhx? %hhx\n", 1, 2, 3, 4); 
+	ft_printf("lX? %lX llX? %llX hX? %hX hhX? %hhX\n", 1, 2, 3, 4); 
 	
 	ft_printf("\nthanks for playing :)\n");
 }
