@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/01 17:48:29 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 13:02:21 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,25 +30,33 @@
 
 // so types are
 // - integer
+// - short
+// - long
+// - long long
 // - char (pointer)
 // - float
 
-// not too bad to handle with if/else checks. we only need to get flag and type
-// passed to function that handles the actual conversion
+// not too bad to handle with if/else checks IF we handle integer types with in one branch.
+// we only need to get flag and type passed to function that handles the actual conversion
 // so we have functions
-// * handle_int(va_arg, flags, seek)
+// * handle_int(va_list, token, &out)
 //  - branches off to handle_char, handle short, handle_long, handle_long_long
 //  - or alternatively convert the input always to long long...
 //  - we probably need to branch off to different outputs eventually anyways,
 //    order of operations matters.
-// * handle_char_ptr(va_arg, flags, seek)
+// * handle_char(va_list, token, &out)
 //  - two cases: print char or print string, probably can be handled in this function
-// * handle_float(va_arg, flags, seek)
+// * handle_float(va_list, token, &out)
 //  - small f = print infinity and nan as `inf`, `nan`
 //  - big F = print infinity and nan as `INF`, `NAN`
 
+// we probably can't pass va_arg directly, but instead pass the list (pointer?) and
+// let the handle function handle the va_arg.
+
 // probably special case for %%, no need to go through the whole rigamarole...
 // we already have a special case for %%, no need to make it any more complicated.
+// actually have to, b/c linecount of main function :P
+// percent is now a char type
 
 // Also needs to be managed:
 // %%
@@ -66,9 +74,45 @@
 // - etc...
 // Alter colors, fd, other fun stuff
 
+// token bitfield key
+// 000
+// not used
+//    11111
+//    -+ #0 < flags
+//         11111111
+//         hh,h,ll,l,j,z,t,L < length specifiers
+//                 11111111111111111
+//                 cdieEfFgGosuxXpn% < conversion specifiers
+// so the bitmasks for different types are
+// 000000000000000001100000010111100 < integer types, specifically
+// 000000000000000001100000000000000  < signed decimal
+// 000000000000000000000000000100000  < unsigned decimal
+// 000000000000000000000000010000000  < unsigned octal
+// 000000000000000000000000000011000  < unsigned hexadecimal
+// 000000000000000000000000000000100  < void * in hexadecimal
+// 000000001000000000000000000000000  < signed or unsigned char
+// 000000000100000000000000000000000  < signed or unsigned short
+// 000000000010000000000000000000000  < signed or unsigned long long
+// 000000000001000000000000000000000  < signed or unsigned long
+// 000000000000100000000000000000000  < signed or unsigned intmax_t
+// 000000000000010000000000000000000  < signed or unsigned size_t
+// 000000000000001000000000000000000  < ptrdiff_t
+// 000000000000000010000000001000000 < char types, specifically
+// 000000000000000010000000000000000  < int converted to an unsigned char
+// 000000000000000000000000001000000  < const char * pointing to char[]
+// 000000000000000000011111100000000 < float types, specifically
+// 000000000000000000011000000000000  < double rounded and converted to d.ddde+dd
+// 000000000000000000000110000000000  < double rounded and converted to ddd.ddd
+// 000000000000000000000001100000000  < double, we don't have to worry about this ._.
+
+// we probably make defines from these
+
+// idea is that even if we don't handle the specific flag, we have some default case
+// per type so the function prints something and doesn't segfault if unimplemented
+// but ISO-specified conversion is requested.
+
 const char	g_flags[] = "-+ #0";
 const int	g_flag_count = 5;
-
 const char	*g_length[] = {
 	"hh",
 	"h",
@@ -80,9 +124,8 @@ const char	*g_length[] = {
 	"L"
 };
 const char	g_length_count = 8;
-
-const char	g_conv[] = "cdieEfgGosuxXpn%";
-const char	g_conv_count = 15;
+const char	g_conv[] = "cdieEfFgGosuxXpn%";
+const char	g_conv_count = 17;
 
 static void get_conv(int *token, char **seek)
 {
@@ -92,9 +135,8 @@ static void get_conv(int *token, char **seek)
 	i = 0;
 	while (i < g_conv_count)
 	{
-		if (**seek == g_conv[i])
+		if (**seek == g_conv[g_conv_count - i - 1])
 		{
-			printf("found conv! %c == %c\nwe should flip bit %d\n", **seek, g_conv[i], i);
 			*token |= (1 << i);
 			break ;
 		}
@@ -112,9 +154,8 @@ static void get_length(int *token, char **seek)
 	{
 		if (ft_strncmp(*seek, g_length[i], ft_strlen(g_length[i])) == 0)
 		{
-			printf("found length! %c == %s\nwe should flip bit %d\n", **seek, g_length[i], i);
 			*token |= 1 << i;
-			(*seek) += ft_strlen(g_length[i]);
+			(*seek) += ft_strlen(g_length[g_length_count - i]);
 			break ;
 		}
 		i++;
@@ -133,9 +174,8 @@ static void	get_flag(int *token, char **seek)
 		stop = 1;
 		while (i < g_flag_count)
 		{
-			if (**seek == g_flags[i])
+			if (**seek == g_flags[g_flag_count - i])
 			{
-				printf("found flag! %c == %c\nwe should flip bit %d\n", **seek, g_flags[i], i);
 				*token |= 1 << i;
 				stop = 0;
 			}
@@ -144,14 +184,12 @@ static void	get_flag(int *token, char **seek)
 		if (stop)
 			break ;
 		(*seek)++;
-		printf("moving to check if %c is flag\n", **seek);
 	}
 	*token <<= g_length_count;
 }
 
 static int get_token(int *token, char **start)
 {
-	printf("we get token\n");
 	(*start)++;
 	*token = 0;
 	get_flag(token, start);
@@ -161,24 +199,6 @@ static int get_token(int *token, char **start)
 	return (1);
 }
 
-//good ol' bitprint from stackoverflow
-//should probably copy one we made for fillit and put that in libft
-// Assumes little endian
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    
-    for (i = size-1; i >= 0; i--) {
-        for (j = 7; j >= 0; j--) {
-            byte = (b[i] >> j) & 1;
-            printf("%u", byte);
-        }
-    }
-    puts("");
-}
-
 __attribute__ ((format (printf, 1, 2)))
 int	ft_printf(const char *restrict format, ...)
 {
@@ -186,23 +206,28 @@ int	ft_printf(const char *restrict format, ...)
 	int		token;
 	t_dstr	*out;
 
-
 	va_start(arg_ptr, format);
-	if (ft_dstrnew(&out, 8) == -1)
-		return (-1);
 	while (*format != '\0')
 	{
 		if (*format != '%')
 			ft_dstraddc(&out, *format);
-		else if (*(format + 1) == '%')
-			ft_dstraddc(&out, *format++);
 		else if (!get_token(&token, (char **) &format))
 			ft_dstraddc(&out, *format); //we should send a compiler error or something here
 		else
 		{
-			printBits(sizeof(int), &token);
+			if (token & INTEGER)
+				ft_dstrbuild(&out, " integer!", 9);
+			if (token & CHAR)
+				ft_dstrbuild(&out, " char type!", 12);
+			if (token & FLOAT)
+				ft_dstrbuild(&out, " float!", 7);
 		}
-
+		format++;
+	}
+	va_end(arg_ptr);
+	write(1, out->str, out->len);
+	return (ft_dstrclose(&out, NULL));
+}
 			//get token as bits in int
 			//feed token, dstr and corresponding item in va_args (arg itself?) to dispatcher
 			//so something like
@@ -229,10 +254,3 @@ int	ft_printf(const char *restrict format, ...)
 			//should we put the type funnel here in main? would be more readable I guess
 			//if linecount permits. we could make bitmasks for each type and check if
 			//token matches a type with bitwise &
-			;
-		format++;
-	}
-	va_end(arg_ptr);
-	write(1, out->str, out->len);
-	return (ft_dstrclose(&out, NULL));
-}
