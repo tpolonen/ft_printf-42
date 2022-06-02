@@ -6,12 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 13:50:20 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/02 14:21:44 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include <stdio.h>
 
 // Prototype of format tags is:
 // %[flags][width][.precision][length mod]conversion
@@ -202,11 +201,11 @@ static int get_token(int *token, char **start)
 __attribute__ ((format (printf, 1, 2)))
 int	ft_printf(const char *restrict format, ...)
 {
-	va_list			arg_ptr;
+	va_list			args;
 	int				token;
 	static t_dstr	*out;
 
-	va_start(arg_ptr, format);
+	va_start(args, format);
 	while (*format != '\0')
 	{
 		if (*format != '%')
@@ -216,15 +215,15 @@ int	ft_printf(const char *restrict format, ...)
 		else
 		{
 			if (token & INTEGER)
-				ft_dstrbuild(&out, " integer!", 9);
+				int_handler(&out, token, args);
 			if (token & CHAR)
-				ft_dstrbuild(&out, " char type!", 12);
+				char_handler(&out, token, args);
 			if (token & FLOAT)
-				ft_dstrbuild(&out, " float!", 7);
+				float_handler(&out, token, args);
 		}
 		format++;
 	}
-	va_end(arg_ptr);
+	va_end(args);
 	write(1, out->str, out->len);
 	return (ft_dstrclose(&out, NULL));
 }

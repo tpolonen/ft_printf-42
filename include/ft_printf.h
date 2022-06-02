@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printg.h                                        :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 12:53:32 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 15:01:50 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,20 @@
 # define SIZE_T		524288
 # define PTRDIFF_T	262144
 
-# define CHAR		65600
+# define CHAR		65601
 # define U_CHAR		65536
 # define CHAR_ARR	64
 # define PERCENT	1
 
 # define FLOAT		16128
-# define DEC_DOUBLE 3072 
 # define SCI_DOUBLE 12288
+# define DEC_DOUBLE 3072 
 # define SHORTEST_F 768	
 
-int	ft_printf(const char *restrict format, ...)
-	__attribute__ ((format (printf, 1, 2)));
+int	ft_printf(const char *restrict format, ...) 
+		__attribute__ ((format (printf, 1, 2)));
+int	int_handler(t_dstr **out, int token, va_list args);
+int	char_handler(t_dstr **out, int token, va_list args);
+int float_handler(t_dstr **out, int token, va_list args);
 
 #endif
