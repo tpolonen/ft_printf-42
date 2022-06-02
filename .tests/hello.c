@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/01 17:25:42 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/02 15:58:36 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ int main(void) {
 	printf("\nprintf returned %zu", pf);
 	printf("\nft_printf returned %zu\n", fp);
 
-//	printf("let's see some printf warnings! %d %d", 2);
-//	ft_printf("let's see some ft_printf warnings! %d %d", 2);
+	pf = printf("  Printf: So here's a very long amount of text, which could cause issues if the dynamic string doesn't expand as expected. It needs to grow several times here and if it doesn't, well there's gonna be some funny stuff happening is alls im saying!\n");
+	fp = printf("ftPrintf: So here's a very long amount of text, which could cause issues if the dynamic string doesn't expand as expected. It needs to grow several times here and if it doesn't, well there's gonna be some funny stuff happening is alls im saying!\n");
 
-//	printf("what happens if %k there's just a random percent");
+	printf("\nprintf returned %zu", pf);
+	printf("\nft_printf returned %zu\n", fp);
 
-	ft_printf("%-+ #0llfwonder what this does?\n", 1.0);
 	return 0;
 }
