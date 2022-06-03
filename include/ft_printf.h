@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 17:36:43 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/03 11:59:23 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,13 @@
 # define DECIMAL	49184
 # define OCTAL		128
 # define HEXAL		28
+
+typedef struct s_token
+{
+	int	specs;
+	int	width;
+	int	precision;
+}	t_token;
 
 int	ft_printf(const char *restrict format, ...) 
 		__attribute__ ((format (printf, 1, 2)));

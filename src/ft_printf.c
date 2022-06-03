@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/02 19:40:52 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/03 12:54:13 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ static const char	g_conv[] = "cdieEfFgGosuxXpn%";
 static const char	g_conv_count = 17;
 
 // next three functions could probably be rolled together somehow
-static void get_conv(int *token, char **seek)
+static void get_conv(int *t_token, char **seek)
 {
 	int	i;
 	int	stop;
@@ -141,14 +141,14 @@ static void get_conv(int *token, char **seek)
 	{
 		if (**seek == g_conv[g_conv_count - i - 1])
 		{
-			*token |= (1 << i);
+			*token->specs |= (1 << i);
 			break ;
 		}
 		i++;
 	}
 }
 
-static void get_length(int *token, char **seek)
+static void get_length(t_token *token, char **seek)
 {
 	int	i;
 	int	stop;
@@ -159,16 +159,16 @@ static void get_length(int *token, char **seek)
 		if (ft_strncmp(*seek, g_length[g_length_count - i - 1], \
 					ft_strlen(g_length[g_length_count - i - 1])) == 0)
 		{
-			*token |= 1 << i;
+			*token->specs |= 1 << i;
 			(*seek) += ft_strlen(g_length[g_length_count - i - 1]);
 			break ;
 		}
 		i++;
 	}
-	*token <<= g_conv_count;
+	*token->specs <<= g_conv_count;
 }
 
-static void	get_flag(int *token, char **seek)
+static void	get_flag(t_token *token, char **seek)
 {
 	int	i;
 	int	stop;
@@ -181,7 +181,7 @@ static void	get_flag(int *token, char **seek)
 		{
 			if (**seek == g_flags[g_flag_count - i - 1])
 			{
-				*token |= 1 << i;
+				*token->specs |= 1 << i;
 				stop = 0;
 			}
 			i++;
@@ -190,15 +190,16 @@ static void	get_flag(int *token, char **seek)
 			break ;
 		(*seek)++;
 	}
-	*token <<= g_length_count;
+	*token->specs <<= g_length_count;
 }
 
-static int get_token(int *token, char **start)
+static int get_token(t_token *token, char **start)
 {
 	(*start)++;
-	*token = 0;
+	token = { 0, 0, 0 }; 
 	get_flag(token, start);
 	//so can we get width and precision here or what
+	//we can.
 	get_length(token, start);
 	get_conv(token, start);
 	return (token != 0);
@@ -221,7 +222,7 @@ static int get_token(int *token, char **start)
 int	ft_printf(const char *restrict format, ...)
 {
 	va_list			args;
-	int				token;
+	t_token			token;
 	static t_dstr	*out;
 
 	va_start(args, format);
