@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/03 11:59:23 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/03 14:45:35 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,15 @@
 
 typedef struct s_token
 {
-	int	specs;
-	int	width;
-	int	precision;
+	int				specs;
+	unsigned int	width;
+	unsigned int	precision;
 }	t_token;
 
 int	ft_printf(const char *restrict format, ...) 
 		__attribute__ ((format (printf, 1, 2)));
-int	int_handler(t_dstr **out, int token, va_list args);
-int	char_handler(t_dstr **out, int token, va_list args);
-int float_handler(t_dstr **out, int token, va_list args);
+int	int_handler(t_dstr **out, t_token *token, va_list args);
+int	char_handler(t_dstr **out, t_token *token, va_list args);
+int float_handler(t_dstr **out, t_token *token, va_list args);
 
 #endif
