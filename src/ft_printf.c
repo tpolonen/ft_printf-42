@@ -6,11 +6,12 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/03 14:01:33 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/03 16:33:57 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+#include <stdio.h>
 
 // Prototype of format tags is:
 // %[flags][width][.precision][length mod]conversion
@@ -198,8 +199,13 @@ static int get_token(t_token *token, char **start)
 	(*start)++;
 	*token = (t_token) {0, 0, 0};
 	get_flag(token, start);
-	//so can we get width and precision here or what
-	//we can.
+	if (ft_isdigit(**start))
+		token->width = (int) ft_strtol(*start, start);
+	if (**start == '.')
+	{
+		(*start)++;
+		token->precision = (int) ft_strtol(*start, start);
+	}
 	get_length(token, start);
 	get_conv(token, start);
 	return (token->specs != 0);
