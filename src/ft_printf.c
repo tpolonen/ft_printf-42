@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/03 16:33:57 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/05 14:51:54 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,10 +194,14 @@ static void	get_flag(t_token *token, char **seek)
 	token->specs <<= g_length_count;
 }
 
-static int get_token(t_token *token, char **start)
+static int	get_token(t_token *token, char **start, int *n)
 {
-	(*start)++;
 	*token = (t_token) {0, 0, 0};
+	if (*(*start)++ != '%')
+	{
+		write(1, start, (*n)++);
+		return (0);
+	}
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
@@ -212,44 +216,46 @@ static int get_token(t_token *token, char **start)
 }
 
 /*
- * 1. Create a dynamic string.
- * 2. Insert characters from format sign until null byte or '%' is reached.
- * 3. Turn conversion into token, containing bitflags, width and precision.
- *    ...if that fails, conversion is invalid. Just insert the next char.
- * 4. Using token and appropriate bitmask, transfer to type specific function:
+ * 1. Write characters from format sign until null byte or '%' is reached.
+ * 2. Turn conversion into token, containing bitflags, width and precision.
+ *    ...if that fails, conversion is invalid. Just write the next char.
+ * 3. Using token and appropriate bitmask, transfer to type specific function:
  *    - pointer to dynamic string
  *    - token
  *    - and list of args
- * 5. Arg is converted into correct output and appended to dynamic string.
- * 6. Repeat until null byte is reached.
- * 7. Write contents of dynamic string directly to stdout.
- * 8. Free dynamic string and return it's length.
+ * 4. Arg is converted into correct output and written.
+ * 5. Repeat until null byte is reached.
+ * 6. Return how many characters was written.
  */
 int	ft_printf(const char *restrict format, ...)
 {
-	va_list			args;
-	t_token			token;
-	static t_dstr	*out;
+	va_list	args;
+	t_token	token;
+	int		n;
+	int		ret;
 
 	va_start(args, format);
+	ret = 0;
 	while (*format != '\0')
 	{
-		if (*format != '%')
-			ft_dstraddc(&out, *format);
-		else if (!get_token(&token, (char **) &format))
-			ft_dstraddc(&out, *format);
-		else
+		n = 0;
+		while (format[n] != '%' && format[n] != '\0')
+			n++;
+		format += write(1, format, n);
+		if (*format == '\0')
+			break ;
+		if (get_token(&token, (char **) &format, &n))
 		{
 			if (token.specs & INTEGER)
-				int_handler(&out, &token, args);
+				n += int_handler(&token, args);
 			if (token.specs & CHAR)
-				char_handler(&out, &token, args);
+				n += char_handler(&token, args);
 			if (token.specs & FLOAT)
-				float_handler(&out, &token, args);
+				n += float_handler(&token, args);
 		}
+		ret += n;
 		format++;
 	}
 	va_end(args);
-	write(1, out->str, out->len);
-	return (ft_dstrclose(&out, NULL));
+	return (ret + n);
 }
