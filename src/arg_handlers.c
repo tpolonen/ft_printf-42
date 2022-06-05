@@ -6,17 +6,17 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/05 14:18:17 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/05 15:17:40 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-/* Handlers always return the amount of chars that were added to dynamic string,
+/* Conversion functions always return the amount of chars that were written,
  * or -1 in the case of error.
  */
 
-int	int_handler(t_token *token, va_list args)
+int	conv_integer(t_token *token, va_list args)
 {
 	if (token->specs & SIGNED) write(1, "signed ", 7);
 	else if (token->specs & UNSIGNED) write(1, "unsigned ", 9);
@@ -31,7 +31,7 @@ int	int_handler(t_token *token, va_list args)
 	return (0);
 }
 
-int	char_handler(t_token *token, va_list args)
+int	conv_char(t_token *token, va_list args)
 {
 	char	*str;
 	int		len;
@@ -54,7 +54,7 @@ int	char_handler(t_token *token, va_list args)
 	return (len);
 }
 
-int float_handler(t_token *token, va_list args)
+int conv_float(t_token *token, va_list args)
 {
 	if (token->specs & SCI_DOUBLE) write(1, \
 			"double! (scientific notation)", 30);

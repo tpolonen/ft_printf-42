@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/05 14:51:54 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/05 15:25:06 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,11 +247,11 @@ int	ft_printf(const char *restrict format, ...)
 		if (get_token(&token, (char **) &format, &n))
 		{
 			if (token.specs & INTEGER)
-				n += int_handler(&token, args);
+				n += conv_integer(&token, args);
 			if (token.specs & CHAR)
-				n += char_handler(&token, args);
+				n += conv_char(&token, args);
 			if (token.specs & FLOAT)
-				n += float_handler(&token, args);
+				n += conv_float(&token, args);
 		}
 		ret += n;
 		format++;

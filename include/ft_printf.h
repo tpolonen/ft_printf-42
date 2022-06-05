@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/05 15:13:37 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/05 15:26:48 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,6 @@
 # define OCTAL		128
 # define HEXAL		28
 
-typedef enum	e_conv
-{
-		c_int = INTEGER;
-		c_char = CHAR;
-		c_float = FLOAT;
-}	t_conv;
-
 typedef struct	s_token
 {
 	int				specs;
@@ -70,12 +63,6 @@ typedef struct	s_token
 
 typedef	int conv_function(t_token *token, va_list args);
 
-conv_function	*conv_function_dispatch[]
-{
-	conv_integer;
-	conv_char;
-	conv_float;
-}
 int	ft_printf(const char *restrict format, ...) 
 		__attribute__ ((format (printf, 1, 2)));
 int	conv_integer(t_token *token, va_list args);
