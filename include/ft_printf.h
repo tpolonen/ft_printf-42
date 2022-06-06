@@ -6,17 +6,15 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/05 15:26:48 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/06 11:16:44 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
-
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdarg.h>
-
 # include "libft.h"
 
 /* Here starts defining of bitmasks.
@@ -62,6 +60,12 @@ typedef struct	s_token
 }	t_token;
 
 typedef	int conv_function(t_token *token, va_list args);
+
+typedef struct	s_conv
+{
+	int				key;
+	conv_function	*func;
+}	t_conv;
 
 int	ft_printf(const char *restrict format, ...) 
 		__attribute__ ((format (printf, 1, 2)));

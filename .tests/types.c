@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/03 14:48:57 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/06 11:11:39 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,6 @@ int main(void) {
 	ft_printf("lX? [%lX] llX? [%llX] hX? [%hX] hhX? [%hhX]\n", (long) 1, (long long) 2, (short) 3, (char) 4); 
 	
 	ft_printf("\nthanks for playing :)\n");
+
+	return 0;
 }

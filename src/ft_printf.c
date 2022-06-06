@@ -6,115 +6,17 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/05 15:25:06 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/06 12:44:43 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 #include <stdio.h>
 
-// Prototype of format tags is:
-// %[flags][width][.precision][length mod]conversion
-
-// Conversions that need to be handled per subject:
-// csp
-// diouxX with flags hh, h, l, ll
-// f with flags l, L
-
-// Also needs to be managed:
-// %%
-// flags `-+ #0`
-// minimum field-width
-// precision
-
-// we probably need to have some hardcoded checks inside flag reading
-// for minimum width and precision. we also have to save that info
-// somewhere. fuck. i thought we could have managed to do this
-// just with bitflags.
-
-// left padding can be done while parsing but right padding and
-// precision are done later. so what do? completely branch off
-// function during parsing or what
-
-// path of least resistance is probably
-// - create some context struct that is allocated completely in stack
-// - get token during parsing like it's done now but save it in struct
-// - check for precision and field width during flags ->
-// - if either is found, they have space allocated in the struct
-// - instead of passing token around, pass the struct
-
-// is field width just a number immediately after percent mark?
-// if precision just a number following a period after possible field width?
-// so actually we could read the field width and precision first. possibly
-// inside the get_token function.
-// width can be after any flag specifier ;_;
-// so during flag reading for every char:
-//  -check if there's a number and then read width
-//  -check if there's a period and then read precision
-//  -put both/either/neither in the context struct
-
-// token struct?
-// -int spec
-// -int width
-// -int precision
-
-// make it a static in main and reset after each use to save in lines.
-
-// some sources say that flags come first and width/prec after...
-
-// Bonuses:
-// conversions e and g with L flag
-// detailed flags management: `*$'`
-// non existing flags:
-// - %b to print in binary
-// - %r to print string of non-printables
-// - %k to print a date in any ordinary ISO format
-// - etc...
-// Alter colors, fd, other fun stuff
-
-// token bitfield key
-// 00
-// not used
-//   11111
-//   -+ #0 < flags
-//        11111111
-//        h,hh,l,ll,j,z,t,L < length specifiers
-//                11111111111111111
-//                cdieEfFgGosuxXpn% < conversion specifiers
-// so the bitmasks for different types are
-// 00000000000000001100000010111100 < integer types, specifically
-// 00000000000000001100000000000000  < signed decimal
-// 00000000000000000000000000100000  < unsigned decimal
-// 00000000000000000000000010000000  < unsigned octal
-// 00000000000000000000000000011100  < unsigned hexadecimal
-// 00000000000000000000000000000100  < void * in hexadecimal
-// 00000001000000000000000000000000  < signed or unsigned short
-// 00000000100000000000000000000000  < signed or unsigned char
-// 00000000010000000000000000000000  < signed or unsigned long
-// 00000000001000000000000000000000  < signed or unsigned long long
-// 00000000000100000000000000000000  < signed or unsigned intmax_t
-// 00000000000010000000000000000000  < signed or unsigned size_t
-// 00000000000001000000000000000000  < ptrdiff_t
-// 00000000000000010000000001000000 < char types, specifically
-// 00000000000000010000000000000000  < int converted to an unsigned char
-// 00000000000000000000000001000000  < const char * pointing to char[]
-// 00000000000000000000000000000001  < just a percent mark
-// 00000000000000000011111100000000 < float types, specifically
-// 00000000000000100000000000000000  < long double
-// 00000000000000000011000000000000  < double rounded and converted to d.ddde+dd
-// 00000000000000000000110000000000  < double rounded and converted to ddd.ddd
-// 00000000000000000000001100000000  < double, shortest of the previous ones
-                                    
-// 00000000000001001100000000000000  < signed
-// 00000000000000010000000010111100  < unsigned
-// 00000000000000001100000000100000  < decimal
-// 00000000000000000000000010000000  < octal
-// 00000000000000000000000000011100  < hexal
-
-// idea is that even if we don't handle the specific flag, we have some default case
-// per type so the function prints something and doesn't segfault if unimplemented
-// but ISO-specified conversion is requested.
-
+static const t_conv	g_conv_table[] = {\
+	{INTEGER, &conv_integer}, {CHAR, &conv_char}, {FLOAT, &conv_float}
+};
+static const int	g_func_count = sizeof(g_conv_table) / sizeof(t_conv);
 static const char	g_flags[] = "-+ #0";
 static const int	g_flag_count = 5;
 static const char	*g_length[] = {
@@ -127,32 +29,13 @@ static const char	*g_length[] = {
 	"t",
 	"L"
 };
-static const char	g_length_count = 8;
+static const int	g_length_count = 8;
 static const char	g_conv[] = "cdieEfFgGosuxXpn%";
-static const char	g_conv_count = 17;
+static const int	g_conv_count = 17;
 
-// next three functions could probably be rolled together somehow
-static void get_conv(t_token *token, char **seek)
+static void	get_conv(t_token *token, char **seek)
 {
 	int	i;
-	int	stop;
-
-	i = 0;
-	while (i < g_conv_count)
-	{
-		if (**seek == g_conv[g_conv_count - i - 1])
-		{
-			token->specs |= (1 << i);
-			break ;
-		}
-		i++;
-	}
-}
-
-static void get_length(t_token *token, char **seek)
-{
-	int	i;
-	int	stop;
 
 	i = 0;
 	while (i < g_length_count)
@@ -167,6 +50,16 @@ static void get_length(t_token *token, char **seek)
 		i++;
 	}
 	token->specs <<= g_conv_count;
+	i = 0;
+	while (i < g_conv_count)
+	{
+		if (**seek == g_conv[g_conv_count - i - 1])
+		{
+			token->specs |= (1 << i);
+			break ;
+		}
+		i++;
+	}
 }
 
 static void	get_flag(t_token *token, char **seek)
@@ -196,7 +89,7 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	*token = (t_token) {0, 0, 0};
+	*token = (t_token){0, 0, 0};
 	if (*(*start)++ != '%')
 	{
 		write(1, start, (*n)++);
@@ -210,9 +103,22 @@ static int	get_token(t_token *token, char **start, int *n)
 		(*start)++;
 		token->precision = (int) ft_strtol(*start, start);
 	}
-	get_length(token, start);
 	get_conv(token, start);
 	return (token->specs != 0);
+}
+
+static int	convert(t_token *token, va_list args)
+{
+	int	i;
+
+	i = 0;
+	while (i < g_func_count)
+	{
+		if (token->specs & g_conv_table[i].key)
+			return (g_conv_table[i].func(token, args));
+		i++;
+	}
+	return (0);
 }
 
 /*
@@ -241,21 +147,14 @@ int	ft_printf(const char *restrict format, ...)
 		n = 0;
 		while (format[n] != '%' && format[n] != '\0')
 			n++;
+		ret += n;
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
 		if (get_token(&token, (char **) &format, &n))
-		{
-			if (token.specs & INTEGER)
-				n += conv_integer(&token, args);
-			if (token.specs & CHAR)
-				n += conv_char(&token, args);
-			if (token.specs & FLOAT)
-				n += conv_float(&token, args);
-		}
-		ret += n;
+			ret += convert(&token, args);
 		format++;
 	}
 	va_end(args);
-	return (ret + n);
+	return (ret);
 }

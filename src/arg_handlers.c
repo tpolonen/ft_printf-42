@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/05 15:17:40 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/06 12:42:28 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,19 @@
 /* Conversion functions always return the amount of chars that were written,
  * or -1 in the case of error.
  */
+
+static int	putnum(ssize_t num, int sign, int base)
+{
+	size_t	len;
+	int		i;
+	char	buf[30];
+	char	digits[] = "0123456789abcdefghjiklmnopqrstuvwxyz";
+
+	i = 0;
+	if (num < 0)
+		buf[i++] = '-';
+
+}
 
 int	conv_integer(t_token *token, va_list args)
 {
@@ -49,7 +62,8 @@ int	conv_char(t_token *token, va_list args)
 		return (1);
 	}
 	str = va_arg(args, char *);
-	while (str[len++]) ;
+	while (str[len])
+		len++;
 	write(1, str, len);
 	return (len);
 }
