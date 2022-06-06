@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/06 12:42:28 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/06 15:23:40 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,76 @@
  * or -1 in the case of error.
  */
 
-static int	putnum(ssize_t num, int sign, int base)
+static int	putnum(size_t num, int negative, int base)
 {
 	size_t	len;
-	int		i;
-	char	buf[30];
 	char	digits[] = "0123456789abcdefghjiklmnopqrstuvwxyz";
 
-	i = 0;
-	if (num < 0)
-		buf[i++] = '-';
+	len = ft_sizelen(num, base);
+	if (negative)
+		write(1, "-", 1);
+	while (num > 0)
+	{
+		write(1, &digits[num % base], 1);
+		num /= base;
+	}
+	return (len);
+}
 
+static ssize_t	signed_typecast(t_token *token, va_list args)
+{
+	if (token->specs & S_CHAR)
+		return ((ssize_t)(signed char)va_arg(args, int));
+	if (token->specs & SHORT)
+		return ((ssize_t)(short)va_arg(args, int));
+	if (token->specs & LONG)
+		return ((ssize_t)(long)va_arg(args, long));
+	if (token->specs & LLONG)
+		return ((ssize_t)(long long)va_arg(args, long long));
+	if (token->specs & SIZE_T)
+		return ((ssize_t)va_arg(args, size_t));
+	if (token->specs & INTMAX_T)
+		return ((ssize_t)va_arg(args, intmax_t));
+	if (token->specs & PTRDIFF_T)
+		return ((ssize_t)va_arg(args, ptrdiff_t));
+	return ((ssize_t)(int)va_arg(args, int));
+}
+
+static size_t	unsigned_typecast(t_token *token, va_list args)
+{	
+	if (token->specs & S_CHAR)
+		return ((ssize_t)(signed char)va_arg(args, int));
+	if (token->specs & SHORT)
+		return ((size_t)(short)va_arg(args, int));
+	if (token->specs & LONG)
+		return ((size_t)(long)va_arg(args, long));
+	if (token->specs & LLONG)
+		return ((size_t)(long long)va_arg(args, long long));
+	if (token->specs & SIZE_T)
+		return ((size_t)va_arg(args, size_t));
+	if (token->specs & INTMAX_T)
+		return ((size_t)va_arg(args, intmax_t));
+	if (token->specs & PTRDIFF_T)
+		return ((size_t)va_arg(args, ptrdiff_t));
+	return ((ssize_t)(int)va_arg(args, int));
 }
 
 int	conv_integer(t_token *token, va_list args)
 {
-	if (token->specs & SIGNED) write(1, "signed ", 7);
-	else if (token->specs & UNSIGNED) write(1, "unsigned ", 9);
+	size_t	usize;
+	ssize_t	ssize;
+	int		base;
 
-	if (token->specs & DECIMAL) write(1, "decimal ", 8);
-	else if (token->specs & OCTAL) write(1, "octal ", 7);
-	else if (token->specs & HEXAL) write(1, "hexadecimal ", 12);
-
-	if (token->specs & LLONG) write(1, "long long!", 11);
-	else if (token->specs & LONG) write(1, "long!", 6);
-	else write(1, "integer!", 9);
-	return (0);
+	if (token->specs & SIGNED)
+	{
+		ssize = signed_typecast(token, args);
+		return (putnum(ft_llabs(ssize), ssize < 0, base));
+	}
+	if (token->specs & UNSIGNED)
+	{
+		usize = unsigned_typecast(token, args);
+		return (putnum(usize, 0, base));
+	}
 }
 
 int	conv_char(t_token *token, va_list args)
