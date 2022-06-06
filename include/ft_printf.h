@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 11:16:44 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:02:15 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdarg.h>
+# include <stddef.h>
 # include "libft.h"
 
 /* Here starts defining of bitmasks.
@@ -26,13 +27,14 @@
 # define U_DEC 		32
 # define U_OCT 		128
 # define U_HEX 		24
+# define BIG_HEX	8
 # define PTR 		4
 # define SHORT		16777216
 # define S_CHAR		8388608
 # define LONG		4194304
 # define LLONG 		2097152
 # define INTMAX_T	1048576
-# define SIZE_T		524288
+# define SIZE_T		524292
 # define PTRDIFF_T	262144
 
 # define CHAR		65601
@@ -52,25 +54,31 @@
 # define OCTAL		128
 # define HEXAL		28
 
-typedef struct	s_token
+# define F_NEGATIVE_PADDING	536870912
+# define F_PRINT_SIGN		268435456
+# define F_PADDED_POSITIVE	134217728
+# define F_ALTERNATE_FORM	67108864
+# define F_PAD_WITH_ZEROES	33554432
+
+typedef struct s_token
 {
 	int				specs;
 	unsigned int	width;
 	unsigned int	precision;
 }	t_token;
 
-typedef	int conv_function(t_token *token, va_list args);
+typedef int	t_conv_function(t_token *token, va_list args);
 
-typedef struct	s_conv
+typedef struct s_conv
 {
 	int				key;
-	conv_function	*func;
+	t_conv_function	*func;
 }	t_conv;
 
-int	ft_printf(const char *restrict format, ...) 
-		__attribute__ ((format (printf, 1, 2)));
+int	ft_printf(const char *restrict format, ...)
+	__attribute__ ((format (printf, 1, 2)));
 int	conv_integer(t_token *token, va_list args);
 int	conv_char(t_token *token, va_list args);
-int conv_float(t_token *token, va_list args);
+int	conv_float(t_token *token, va_list args);
 
 #endif

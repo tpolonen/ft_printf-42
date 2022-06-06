@@ -6,12 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 12:44:43 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/06 17:28:39 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include <stdio.h>
 
 static const t_conv	g_conv_table[] = {\
 	{INTEGER, &conv_integer}, {CHAR, &conv_char}, {FLOAT, &conv_float}
@@ -125,13 +124,14 @@ static int	convert(t_token *token, va_list args)
  * 1. Write characters from format sign until null byte or '%' is reached.
  * 2. Turn conversion into token, containing bitflags, width and precision.
  *    ...if that fails, conversion is invalid. Just write the next char.
- * 3. Using token and appropriate bitmask, transfer to type specific function:
- *    - pointer to dynamic string
- *    - token
- *    - and list of args
- * 4. Arg is converted into correct output and written.
- * 5. Repeat until null byte is reached.
- * 6. Return how many characters was written.
+ * 3. If there's left padding, print it now.
+ * 4. Send token and argument list to converter.
+ * 5. Converter forwards token and argument list to correct function.
+ * 6. Function will convert argument to correct output and return
+ *    the amount of bytes that were printed.
+ * 7. If there's right padding, print it now.
+ * 8. Repeat until null byte is reached.
+ * 9. Return how many characters were written in total.
  */
 int	ft_printf(const char *restrict format, ...)
 {
