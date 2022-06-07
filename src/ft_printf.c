@@ -6,18 +6,12 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 17:28:39 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/07 07:15:24 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static const t_conv	g_conv_table[] = {\
-	{INTEGER, &conv_integer}, {CHAR, &conv_char}, {FLOAT, &conv_float}
-};
-static const int	g_func_count = sizeof(g_conv_table) / sizeof(t_conv);
-static const char	g_flags[] = "-+ #0";
-static const int	g_flag_count = 5;
 static const char	*g_length[] = {
 	"h",
 	"hh",
@@ -63,16 +57,17 @@ static void	get_conv(t_token *token, char **seek)
 
 static void	get_flag(t_token *token, char **seek)
 {
-	int	i;
-	int	stop;
+	int			i;
+	int			stop;
+	const char	flags[] = "*-+ #0";
 
 	while (**seek != '\0')
-	{	
+	{
 		i = 0;
 		stop = 1;
-		while (i < g_flag_count)
+		while (i < 5)
 		{
-			if (**seek == g_flags[g_flag_count - i - 1])
+			if (**seek == flags[5 - i - 1])
 			{
 				token->specs |= 1 << i;
 				stop = 0;
@@ -88,13 +83,15 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	*token = (t_token){0, 0, 0};
+	*token = (t_token){0, 0, -1, ' '};
 	if (*(*start)++ != '%')
 	{
 		write(1, start, (*n)++);
 		return (0);
 	}
 	get_flag(token, start);
+	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_LEFT_PADDING))
+		token->pad_char = '0';
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
 	if (**start == '.')
@@ -104,20 +101,6 @@ static int	get_token(t_token *token, char **start, int *n)
 	}
 	get_conv(token, start);
 	return (token->specs != 0);
-}
-
-static int	convert(t_token *token, va_list args)
-{
-	int	i;
-
-	i = 0;
-	while (i < g_func_count)
-	{
-		if (token->specs & g_conv_table[i].key)
-			return (g_conv_table[i].func(token, args));
-		i++;
-	}
-	return (0);
 }
 
 /*
@@ -152,7 +135,9 @@ int	ft_printf(const char *restrict format, ...)
 		if (*format == '\0')
 			break ;
 		if (get_token(&token, (char **) &format, &n))
-			ret += convert(&token, args);
+			ret += dispatch(&token, args);
+		else
+			ret++;
 		format++;
 	}
 	va_end(args);

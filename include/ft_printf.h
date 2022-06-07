@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 18:02:15 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/07 07:15:31 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # include <stdlib.h>
 # include <stdarg.h>
 # include <stddef.h>
+# include <inttypes.h>
 # include "libft.h"
+
+# include <stdio.h>
 
 /* Here starts defining of bitmasks.
  * Each following decimal number is used as bitmask for interpreting the token.
@@ -54,17 +57,18 @@
 # define OCTAL		128
 # define HEXAL		28
 
-# define F_NEGATIVE_PADDING	536870912
-# define F_PRINT_SIGN		268435456
-# define F_PADDED_POSITIVE	134217728
-# define F_ALTERNATE_FORM	67108864
+# define F_LEFT_PADDING		536870912
+# define F_PRINT_PLUS		268435456
+# define F_PADDED_POS		134217728
+# define F_ALT_FORM			67108864
 # define F_PAD_WITH_ZEROES	33554432
 
 typedef struct s_token
 {
 	int				specs;
-	unsigned int	width;
-	unsigned int	precision;
+	int				width;
+	int				precision;
+	char			pad_char;
 }	t_token;
 
 typedef int	t_conv_function(t_token *token, va_list args);
@@ -77,8 +81,11 @@ typedef struct s_conv
 
 int	ft_printf(const char *restrict format, ...)
 	__attribute__ ((format (printf, 1, 2)));
+int	dispatch(t_token *token, va_list args);
+int	print_padding(int count, char c, va_list args);
 int	conv_integer(t_token *token, va_list args);
 int	conv_char(t_token *token, va_list args);
+int	conv_string(t_token *token, va_list args);
 int	conv_float(t_token *token, va_list args);
 
 #endif

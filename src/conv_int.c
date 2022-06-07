@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arg_handlers.c                                     :+:      :+:    :+:   */
+/*   conv_int.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/06 18:03:31 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/07 07:06:42 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,15 @@ static int	putnum(size_t num, int negative, int base, t_token *token)
 	int			i;
 
 	len = ft_sizelen(num, base);
-	i = len;
+	i = len + 1;
+	if (negative)
+		buf[--i] = '-';
+	else if (token->specs & F_PRINT_PLUS)
+		buf[--i] = '+';
+	else if (token->specs & F_PADDED_POS)
+		buf[--i] = ' ';
+	else
+		--i;
 	while (num > 0)
 	{
 		if (token->specs & BIG_HEX)
@@ -33,12 +41,8 @@ static int	putnum(size_t num, int negative, int base, t_token *token)
 			buf[--i] = digits[num % base];
 		num /= base;
 	}
-	if (negative)
-		write(1, "-", 1);
-	else if (token->specs & F_PADDED_POSITIVE)
-		write(1, " ", 1);
 	write(1, buf, len);
-	return (len + negative);
+	return (len + (negative || token->specs & F_PRINT_PLUS & F_PADDED_POS));
 }
 
 static ssize_t	signed_typecast(t_token *token, va_list args)
@@ -79,55 +83,47 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((ssize_t)(int)va_arg(args, int));
 }
 
+static int	check_base(t_token *token, int *base, int negative)
+{
+	int	ret;
+
+	ret = 2;
+	if (token->specs & OCTAL)
+		*base = 8;
+	else if (token->specs & HEXAL)
+		*base = 16;
+	else
+		*base = 10;
+	if (token->specs & BIG_HEX && token->specs & F_ALT_FORM)
+		write(1, "0X", 2);
+	else if (token->specs & HEXAL && \
+			(token->specs & F_ALT_FORM || token->specs & PTR))
+		write(1, "0x", 2);
+	else
+		ret = 0;
+	token->width -= ret;
+	return (ret);
+}
+
 int	conv_integer(t_token *token, va_list args)
 {
 	size_t	usize;
 	ssize_t	ssize;
 	int		base;
+	int		ret;
 
-	base = 10;
-	if (token->specs & OCTAL)
-		base = 8;
-	else if (token->specs & HEXAL)
-		base = 16;
-	if (token->specs & BIG_HEX && token->specs & F_ALTERNATE_FORM)
-		write(1, "0X", 2);
-	else if (token->specs & HEXAL && \
-			(token->specs & F_ALTERNATE_FORM || token->specs & PTR))
-		write(1, "0x", 2);
 	if (token->specs & SIGNED)
 	{
 		ssize = signed_typecast(token, args);
-		return (putnum(ft_ssabs(ssize), ssize < 0, base, token));
+		ret = check_base(token, &base, ssize < 0);
+		ret += putnum(ft_ssabs(ssize), ssize < 0, base, token);
 	}
-	if (token->specs & UNSIGNED)
+	else if (token->specs & UNSIGNED)
 	{
 		usize = unsigned_typecast(token, args);
-		return (putnum(usize, 0, base, token));
+		ret = check_base(token, &base, 0);
+		ret += putnum(usize, 0, base, token);
 	}
-	return (0);
+ 	return (ret);
 }
 
-int	conv_char(t_token *token, va_list args)
-{
-	char	*str;
-	int		len;
-
-	len = 0;
-	if (token->specs & U_CHAR || token->specs & PERCENT)
-	{
-		if (token->specs & U_CHAR)
-		{
-			len = va_arg(args, int);
-			write(1, (unsigned char *) &(len), 1);
-		}
-		else
-			write(1, "%", 1);
-		return (1);
-	}
-	str = va_arg(args, char *);
-	while (str[len])
-		len++;
-	write(1, str, len);
-	return (len);
-}
