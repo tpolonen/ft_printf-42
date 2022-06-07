@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 17:57:53 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/07 12:16:46 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ int main(void) {
 	ft_printf("what's c? [%c]\n", 'c');
 	ft_printf("what's s? [%s]\n", "string!");
 	ft_printf("what's p? [%p]\n", &a);
-	printf("(actually was %p)\n", &a);
-	
+	   printf("printf    (%p)\n", &a);
+	ft_printf("alt form? [%#p]\n", &a);
+	   printf("printf    (%#p)\n", &a);
+
 	ft_printf("\nhopefully that went well. what about these?\n");
 	ft_printf("what's d? [%d]\n", -123456);
 	ft_printf("what's i? [%i]\n", -1234567);
@@ -38,6 +40,9 @@ int main(void) {
 	printf("what says printf?\n");
 	printf("what's #x? [%#x]\n", 12);
 	printf("what's #X? [%#X]\n", 13);
+
+	ft_printf("different num appends? [% d], [% d], [%+d], [%+d], [%d], [%d]\n", 1, -1, 42, -42, 50, -50); 
+	   printf("different num appends? [% d], [% d], [%+d], [%+d], [%d], [%d]*\n", 1, -1, 42, -42, 50, -50); 
 	
 	ft_printf("\nlast batch, let's GOOOOOOOOOOOOOOOOOO\n");
 	ft_printf("what's e? [%e]\n", 1.0);
@@ -47,6 +52,8 @@ int main(void) {
 	ft_printf("\nBONUS MODE\n");
 	ft_printf("ld? [%ld] lld? [%lld] hd? [%hd] hhd? [%hhd]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	printf("ld? [%ld] lld? [%lld] hd? [%hd] hhd? [%hhd]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	ft_printf("ld? [%ld] lld? [%lld] hd? [%hd] hhd? [%hhd]\n", (long) -2147483640, (long long) -9223372036854775800, (short) -3000, (char) -30);
+	printf("ld? [%ld] lld? [%lld] hd? [%hd] hhd? [%hhd]*\n", (long) -2147483640, (long long) -9223372036854775800, (short) -3000, (char) -30);
 	ft_printf("li? [%li] lli? [%lli] hi? [%hi] hhi? [%hhi]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	printf("li? [%li] lli? [%lli] hi? [%hi] hhi? [%hhi]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	ft_printf("lo? [%lo] llo? [%llo] ho? [%ho] hho? [%hho]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
@@ -57,6 +64,11 @@ int main(void) {
 	printf("lx? [%lx] llx? [%llx] hx? [%hx] hhx? [%hhx]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	ft_printf("lX? [%lX] llX? [%llX] hX? [%hX] hhX? [%hhX]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	printf("lX? [%lX] llX? [%llX] hX? [%hX] hhX? [%hhX]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+
+	ft_printf("#lx? [%#lx] #llx? [%#llx] #hx? [%#hx] #hhx? [%#hhx]\n",  (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	   printf("#lx? [%#lx] #llx? [%#llx] #hx? [%#hx] #hhx? [%#hhx]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	ft_printf("#lX? [%#lX] #llX? [%#llX] #hX? [%#hX] #hhX? [%#hhX]\n",  (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	   printf("#lX? [%#lX] #llX? [%#llX] #hX? [%#hX] #hhX? [%#hhX]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	
 	ft_printf("\nthanks for playing :)\n");
 

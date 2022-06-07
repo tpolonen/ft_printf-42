@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/07 07:15:31 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/07 12:48:52 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,15 @@ int	conv_string(t_token *token, va_list args)
 
 int	print_padding(int count, char c, va_list args)
 {
-	return (0);
+	int	ret;
+
+	ret = 0;
+	while (count)
+	{
+		ret += write(1, &c, 1);
+		count--;
+	}
+	return (ret);
 }
 
 int	dispatch(t_token *token, va_list args)
