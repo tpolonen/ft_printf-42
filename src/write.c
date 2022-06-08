@@ -6,9 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 11:14:34 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/08 12:03:33 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "ft_printf.h"
 
 /* putnum assembles the number as string to buffer, then writes the buffer.
  * If there is an appending character, it's added to front of the buffer
@@ -34,7 +36,7 @@ int	putnum(size_t num, int negative, int base, t_token *token)
 		i--;
 	while (num > 0)
 	{
-		if (token->specs & BIG_HEX)
+		if (token->specs & ALLCAPS)
 			buf[--i] = ft_toupper(digits[num % base]);
 		else
 			buf[--i] = digits[num % base];
@@ -48,12 +50,12 @@ int	print_padding(int count, char c, va_list args)
 {
 	int	ret;
 
+	(void) args;
 	ret = 0;
-	while (count)
+	while (count > 0)
 	{
 		ret += write(1, &c, 1);
 		count--;
 	}
 	return (ret);
 }
-

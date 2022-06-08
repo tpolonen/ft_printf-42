@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/07 11:45:37 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 12:05:57 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,14 @@ static int	get_token(t_token *token, char **start, int *n)
 		return (0);
 	}
 	get_flag(token, start);
-	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_LEFT_PADDING))
+	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
 	if (ft_isdigit(**start))
+	{
 		token->width = (int) ft_strtol(*start, start);
+		if (token->specs & F_RIGHT_PADDING)
+			token->width = -(ft_abs(token->width));
+	}
 	if (**start == '.')
 	{
 		(*start)++;
@@ -107,9 +111,9 @@ static int	get_token(t_token *token, char **start, int *n)
  * 1. Write characters from format sign until null byte or '%' is reached.
  * 2. Turn conversion into token, containing bitflags, width and precision.
  *    ...if that fails, conversion is invalid. Just write the next char.
- * 3. If there's left padding, print it now.
- * 4. Send token and argument list to converter.
- * 5. Converter forwards token and argument list to correct function.
+ * 3. Send token and argument list to converter.
+ * 4. Converter forwards token and argument list to correct function.
+ * 5. If there's left padding,  print it now.
  * 6. Function will convert argument to correct output and return
  *    the amount of bytes that were printed.
  * 7. If there's right padding, print it now.

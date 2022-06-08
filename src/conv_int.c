@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 11:14:34 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/08 12:07:56 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
 	if (token->specs & S_CHAR)
-		return ((ssize_t)(va_arg(args, int)) & CHAR_MASK) ;
+		return ((ssize_t)(va_arg(args, int))) ;
 	if (token->specs & SHORT)
-		return ((ssize_t)va_arg(args, int) & SHORT_MASK);
+		return ((ssize_t)va_arg(args, int));
 	if (token->specs & LONG)
 		return ((ssize_t)va_arg(args, long));
 	if (token->specs & LLONG)
@@ -32,7 +32,7 @@ static ssize_t	signed_typecast(t_token *token, va_list args)
 		return ((ssize_t)va_arg(args, intmax_t));
 	if (token->specs & PTRDIFF_T)
 		return ((ssize_t)va_arg(args, ptrdiff_t));
-	return ((ssize_t)va_arg(args, int) & INT_MASK);
+	return ((ssize_t)va_arg(args, int));
 }
 
 static size_t	unsigned_typecast(t_token *token, va_list args)
@@ -54,7 +54,7 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(int)va_arg(args, int));
 }
 
-static int	check_base(t_token *token, int *base)
+static int	add_prefix(t_token *token, int *base, va_list args)
 {
 	int	ret;
 
@@ -66,15 +66,14 @@ static int	check_base(t_token *token, int *base)
 		*base = 16;
 		if (token->specs & F_ALT_FORM || token->specs & PTR)
 		{
-			if (token->specs & BIG_HEX)
-				ret = write(1, "0X", 2);
+			if (token->specs & ALLCAPS)
+				ret += write(1, "0X", 2);
 			else
-				ret = write(1, "0x", 2);
+				ret += write(1, "0x", 2);
 		}
 	}
 	else
 		*base = 10;
-	token->width -= ret;
 	return (ret);
 }
 
@@ -84,17 +83,24 @@ int	conv_integer(t_token *token, va_list args)
 	size_t	usize;
 	int		base;
 	int		ret;
+	size_t	len;
 
 	if (token->specs & SIGNED)
 	{
-		ssize = signed_typecast(token, args, ft_);
-		ret = check_base(token, &base);
+		ssize = signed_typecast(token, args);
+		ret = add_prefix(token, &base, args);
+		len = ft_ssizelen(ssize, base) + ret;
+		if (token->width > 0 && len < token->width)
+			ret += print_padding(token->width - len, token->pad_char, args); 
 		ret += putnum(ft_ssabs(ssize), ssize < 0, base, token);
 	}
 	else if (token->specs & UNSIGNED)
 	{
 		usize = unsigned_typecast(token, args);
-		ret = check_base(token, &base);
+		ret = add_prefix(token, &base, args);
+		len = ft_sizelen(usize, base) + ret;
+		if (token->width > 0 && len < token->width)
+			ret += print_padding(token->width - len, token->pad_char, args); 
 		ret += putnum((size_t)usize, 0, base, token);
 	}
  	return (ret);
