@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/07 12:16:46 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/07 20:49:09 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int main(void) {
 	printf("li? [%li] lli? [%lli] hi? [%hi] hhi? [%hhi]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	ft_printf("lo? [%lo] llo? [%llo] ho? [%ho] hho? [%hho]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	printf("lo? [%lo] llo? [%llo] ho? [%ho] hho? [%hho]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
-	ft_printf("lu? [%lu] llu? [%llu] hu? [%hu] hhi? [%hhu]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
-	printf("lu? [%lu] llu? [%llu] hu? [%hu] hhi? [%hhu]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	ft_printf("lu? [%lu] llu? [%llu] hu? [%hu] hhu? [%hhu]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
+	printf("lu? [%lu] llu? [%llu] hu? [%hu] hhu? [%hhu]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	ft_printf("lx? [%lx] llx? [%llx] hx? [%hx] hhx? [%hhx]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	printf("lx? [%lx] llx? [%llx] hx? [%hx] hhx? [%hhx]*\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);
 	ft_printf("lX? [%lX] llX? [%llX] hX? [%hX] hhX? [%hhX]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);

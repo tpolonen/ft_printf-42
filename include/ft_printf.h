@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/07 11:48:50 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 09:21:53 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,16 @@
 # define F_ALT_FORM			67108864
 # define F_PAD_WITH_ZEROES	33554432
 
+# define CHAR_MASK	255
+# define SHORT_MASK	65535
+# define INT_MASK	4294967295
+
 typedef struct s_token
 {
-	int				specs;
-	int				width;
-	int				precision;
-	char			pad_char;
+	int			specs;
+	int			width;
+	int			precision;
+	char		pad_char;
 }	t_token;
 
 typedef int	t_conv_function(t_token *token, va_list args);
@@ -82,10 +86,11 @@ typedef struct s_conv
 int	ft_printf(const char *restrict format, ...)
 	__attribute__ ((format (printf, 1, 2)));
 int	dispatch(t_token *token, va_list args);
-int	print_padding(int count, char c, va_list args);
 int	conv_integer(t_token *token, va_list args);
 int	conv_char(t_token *token, va_list args);
 int	conv_string(t_token *token, va_list args);
 int	conv_float(t_token *token, va_list args);
 
+int	putnum(size_t num, int negative, int base, t_token *token)
+int	print_padding(int count, char c, va_list args);
 #endif

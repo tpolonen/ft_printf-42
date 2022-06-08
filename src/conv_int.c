@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/07 12:57:26 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 11:14:34 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,73 +16,23 @@
  * or -1 in the case of error.
  */
 
-/* putnum assembles the number as string to buffer, then writes the buffer.
- * If there is an appending character, it's added to front of the buffer
- * and rest of the characters are appended behind it.
- * Returns the amount of written characters.
- */
-static int	putnum(size_t num, int negative, int base, t_token *token)
-{
-	size_t		len;
-	const char	digits[] = "0123456789abcdefghjiklmnopqrstuvwxyz";
-	char		buf[30];
-	int			i;
-
-	len = ft_sizelen(num, base);
-	i = len + 1;
-	if (negative)
-		buf[0] = '-';
-	else if (token->specs & F_PRINT_PLUS)
-		buf[0] = '+';
-	else if (token->specs & F_PADDED_POS)
-		buf[0] = ' ';
-	else
-		i--;
-	while (num > 0)
-	{
-		if (token->specs & BIG_HEX)
-			buf[--i] = ft_toupper(digits[num % base]);
-		else
-			buf[--i] = digits[num % base];
-		num /= base;
-	}
-	return (write(1, buf, len + (negative || token->specs & \
-			(F_PRINT_PLUS | F_PADDED_POS))));
-}
-
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
-/*
 	if (token->specs & S_CHAR)
-		printf("?s_char?");
+		return ((ssize_t)(va_arg(args, int)) & CHAR_MASK) ;
 	if (token->specs & SHORT)
-		printf("?short?");
+		return ((ssize_t)va_arg(args, int) & SHORT_MASK);
 	if (token->specs & LONG)
-		printf("?long?");
+		return ((ssize_t)va_arg(args, long));
 	if (token->specs & LLONG)
-		printf("?llong?");
-	if (token->specs & SIZE_T)
-		printf("?size_t?");
-	if (token->specs & INTMAX_T)
-		printf("?intmax_t?");
-	if (token->specs & PTRDIFF_T)
-		printf("?ptrdiff_tt?");
-*/
-	if (token->specs & S_CHAR)
-		return ((ssize_t)(signed char)va_arg(args, int));
-	if (token->specs & SHORT)
-		return ((ssize_t)(signed short)va_arg(args, int));
-	if (token->specs & LONG)
-		return ((ssize_t)(signed long)va_arg(args, long));
-	if (token->specs & LLONG)
-		return ((ssize_t)(signed long long)va_arg(args, long long));
+		return ((ssize_t)va_arg(args, long long));
 	if (token->specs & SIZE_T)
 		return (va_arg(args, ssize_t));
 	if (token->specs & INTMAX_T)
 		return ((ssize_t)va_arg(args, intmax_t));
 	if (token->specs & PTRDIFF_T)
 		return ((ssize_t)va_arg(args, ptrdiff_t));
-	return ((ssize_t)(int)va_arg(args, int));
+	return ((ssize_t)va_arg(args, int) & INT_MASK);
 }
 
 static size_t	unsigned_typecast(t_token *token, va_list args)
@@ -130,26 +80,22 @@ static int	check_base(t_token *token, int *base)
 
 int	conv_integer(t_token *token, va_list args)
 {
-	size_t	size;
+	ssize_t	ssize;
+	size_t	usize;
 	int		base;
 	int		ret;
-	int		len;
 
 	if (token->specs & SIGNED)
 	{
-		size = (size_t)signed_typecast(token, args);
+		ssize = signed_typecast(token, args, ft_);
 		ret = check_base(token, &base);
-		len = token->width - (int)ft_ssizelen((ssize_t)size, base);
-		len += (token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS);
-		printf("<%d>", len);
-//		ret += print_padding(len, token->pad_char, args);
-		ret += putnum(ft_ssabs((ssize_t)size), (ssize_t)size < 0, base, token);
+		ret += putnum(ft_ssabs(ssize), ssize < 0, base, token);
 	}
 	else if (token->specs & UNSIGNED)
 	{
-		size = unsigned_typecast(token, args);
+		usize = unsigned_typecast(token, args);
 		ret = check_base(token, &base);
-		ret += putnum(size, 0, base, token);
+		ret += putnum((size_t)usize, 0, base, token);
 	}
  	return (ret);
 }
