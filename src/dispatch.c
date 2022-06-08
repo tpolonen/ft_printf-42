@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 09:22:27 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/08 12:48:21 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,7 @@ int	dispatch(t_token *token, va_list args)
 		i++;
 	}
 	if (token->width > ret)
-	{
-		print_padding(token->width - ret, token->pad_char, args);
-		ret = token->width;
-	}
+	//	ret+ = print_padding(token->width - ret, token->pad_char, args);
+		;
 	return (ret);
 }

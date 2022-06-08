@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 12:03:33 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 12:44:03 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,24 @@ int	putnum(size_t num, int negative, int base, t_token *token)
 			(F_PRINT_PLUS | F_PADDED_POS))));
 }
 
-int	print_padding(int count, char c, va_list args)
+int	print_padding(int count, t_token *token, va_list args)
 {
 	int	ret;
 
 	(void) args;
 	ret = 0;
+	if (token->specs & HEXAL && \
+			(token->specs & F_ALT_FORM || token->specs & PTR))
+	{
+		count -= 2;
+		if (token->specs & ALLCAPS)
+			ret += write(1, "0X", 2);
+		else
+			ret += write(1, "0x", 2);
+	}
 	while (count > 0)
 	{
-		ret += write(1, &c, 1);
+		ret += write(1, &(token->pad_char), 1);
 		count--;
 	}
 	return (ret);

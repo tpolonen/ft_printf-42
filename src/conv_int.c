@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 12:07:56 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 12:49:24 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,27 +54,14 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(int)va_arg(args, int));
 }
 
-static int	add_prefix(t_token *token, int *base, va_list args)
+static int	get_base(t_token *token)
 {
-	int	ret;
-
-	ret = 0;
 	if (token->specs & OCTAL)
-		*base = 8;
+		return (8);
 	else if (token->specs & HEXAL)
-	{
-		*base = 16;
-		if (token->specs & F_ALT_FORM || token->specs & PTR)
-		{
-			if (token->specs & ALLCAPS)
-				ret += write(1, "0X", 2);
-			else
-				ret += write(1, "0x", 2);
-		}
-	}
+		return (16);
 	else
-		*base = 10;
-	return (ret);
+		return (10);
 }
 
 int	conv_integer(t_token *token, va_list args)
@@ -85,22 +72,21 @@ int	conv_integer(t_token *token, va_list args)
 	int		ret;
 	size_t	len;
 
+	base = get_base(token);
 	if (token->specs & SIGNED)
 	{
 		ssize = signed_typecast(token, args);
-		ret = add_prefix(token, &base, args);
 		len = ft_ssizelen(ssize, base) + ret;
 		if (token->width > 0 && len < token->width)
-			ret += print_padding(token->width - len, token->pad_char, args); 
+			ret += print_padding(token->width - len, token, args); 
 		ret += putnum(ft_ssabs(ssize), ssize < 0, base, token);
 	}
 	else if (token->specs & UNSIGNED)
 	{
 		usize = unsigned_typecast(token, args);
-		ret = add_prefix(token, &base, args);
 		len = ft_sizelen(usize, base) + ret;
 		if (token->width > 0 && len < token->width)
-			ret += print_padding(token->width - len, token->pad_char, args); 
+			ret += print_padding(token->width - len, token, args); 
 		ret += putnum((size_t)usize, 0, base, token);
 	}
  	return (ret);

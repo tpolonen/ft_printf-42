@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/08 12:04:53 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 12:44:35 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,5 +93,5 @@ int	conv_string(t_token *token, va_list args);
 int	conv_float(t_token *token, va_list args);
 
 int	putnum(size_t num, int negative, int base, t_token *token);
-int	print_padding(int count, char c, va_list args);
+int	print_padding(int count, t_token *token, va_list args);
 #endif
