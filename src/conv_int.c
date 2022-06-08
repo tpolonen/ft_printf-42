@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 12:49:24 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:02:01 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,27 @@ static int	get_base(t_token *token)
 		return (10);
 }
 
+static int	check_padding(t_token *token, size_t len, va_list args)
+{
+	int	ret;
+
+	ret = 0;
+	if (token->specs & PTR || (token->specs & HEXAL && \
+				token->specs & F_ALT_FORM))
+	{
+		ret += 2;
+		len += 2;
+		token->pad_char = '0';
+		if (token->specs & ALL_CAPS)
+			write(1, "0X", 2);
+		else
+			write(1, "0x", 2);
+	}
+	if (len < token->width)
+		ret += print_padding(token->width - len, token, args);
+	return (ret);
+}
+
 int	conv_integer(t_token *token, va_list args)
 {
 	ssize_t	ssize;
@@ -72,23 +93,22 @@ int	conv_integer(t_token *token, va_list args)
 	int		ret;
 	size_t	len;
 
+	ret = 0;
+	ssize = 0;
 	base = get_base(token);
 	if (token->specs & SIGNED)
 	{
 		ssize = signed_typecast(token, args);
-		len = ft_ssizelen(ssize, base) + ret;
-		if (token->width > 0 && len < token->width)
-			ret += print_padding(token->width - len, token, args); 
-		ret += putnum(ft_ssabs(ssize), ssize < 0, base, token);
+		len = ft_ssizelen(ssize, base);
+		usize = ft_ssabs(ssize);
 	}
 	else if (token->specs & UNSIGNED)
 	{
 		usize = unsigned_typecast(token, args);
 		len = ft_sizelen(usize, base) + ret;
-		if (token->width > 0 && len < token->width)
-			ret += print_padding(token->width - len, token, args); 
-		ret += putnum((size_t)usize, 0, base, token);
 	}
+	ret += check_padding(token, len, args);
+	ret += putnum(usize, ssize < 0, base, token);
  	return (ret);
 }
 

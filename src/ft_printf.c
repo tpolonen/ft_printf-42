@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/08 12:05:57 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:32:19 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,10 @@ static int	get_token(t_token *token, char **start, int *n)
 		return (0);
 	}
 	get_flag(token, start);
+	if (token->specs & F_PAD_WITH_ZEROES)
+		printf("we should pad this with 0");
+	if (token->specs & F_RIGHT_PADDING)
+		printf("we should pad from right");
 	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
 	if (ft_isdigit(**start))

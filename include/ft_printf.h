@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/08 12:44:35 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:00:33 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@
 # define OCTAL		128
 # define HEXAL		28
 
-# define ALLCAPS	8
+# define ALL_CAPS	8
 
 # define F_RIGHT_PADDING	536870912
 # define F_PRINT_PLUS		268435456

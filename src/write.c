@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 12:44:03 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:02:18 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	putnum(size_t num, int negative, int base, t_token *token)
 		i--;
 	while (num > 0)
 	{
-		if (token->specs & ALLCAPS)
+		if (token->specs & ALL_CAPS)
 			buf[--i] = ft_toupper(digits[num % base]);
 		else
 			buf[--i] = digits[num % base];
@@ -52,15 +52,6 @@ int	print_padding(int count, t_token *token, va_list args)
 
 	(void) args;
 	ret = 0;
-	if (token->specs & HEXAL && \
-			(token->specs & F_ALT_FORM || token->specs & PTR))
-	{
-		count -= 2;
-		if (token->specs & ALLCAPS)
-			ret += write(1, "0X", 2);
-		else
-			ret += write(1, "0x", 2);
-	}
 	while (count > 0)
 	{
 		ret += write(1, &(token->pad_char), 1);

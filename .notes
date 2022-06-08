@@ -58,10 +58,10 @@
 // Alter colors, fd, other fun stuff
 
 // token bitfield key
-// 00
+// 0
 // not used
-//   11111
-//   -+ #0 < flags
+//  111111
+//  *-+ #0 < flags
 //        11111111
 //        h,hh,l,ll,j,z,t,L < length specifiers
 //                11111111111111111
