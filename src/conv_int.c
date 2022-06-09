@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/09 13:11:40 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/09 20:00:38 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,24 +64,23 @@ static int	get_base(t_token *token)
 		return (10);
 }
 
-static int	check_padding(t_token *token, size_t len, va_list args)
+static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 {
 	int	ret;
 
 	ret = 0;
-	if (token->specs & PTR || (token->specs & HEXAL && \
-				token->specs & F_ALT_FORM))
-	{
-		ret += 2;
-		len += 2;
-		token->pad_char = '0';
-		if (token->specs & ALL_CAPS)
-			write(1, "0X", 2);
-		else
-			write(1, "0x", 2);
-	}
+	if (token->precision > 0 && len < (size_t)token->precision)
+		len = token->precision;
+	if (token->specs & F_PAD_WITH_ZEROES)
+		ret += print_prefix(negative, token);
+	len += ret;
 	if (len < token->width)
+	{
 		ret += print_padding(token->width - len, token, args);
+		token->width = 0;
+	}
+	if (!(token->specs & F_PAD_WITH_ZEROES))
+		ret += print_prefix(negative, token);
 	return (ret);
 }
 
@@ -105,10 +104,9 @@ int	conv_integer(t_token *token, va_list args)
 	else if (token->specs & UNSIGNED)
 	{
 		usize = unsigned_typecast(token, args);
-		len = ft_sizelen(usize, base) + ret;
+		len = ft_sizelen(usize, base);
 	}
-	ret += check_padding(token, len, args);
-	ret += putnum(usize, ssize < 0, base, token);
-	ret += check_padding(token, len, args);
+	ret += check_prefix(token, len, ssize < 0, args);
+	ret += putnum(usize, base, token->precision, token->specs & ALL_CAPS);
 	return (ret);
 }

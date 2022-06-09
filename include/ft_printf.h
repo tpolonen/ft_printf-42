@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/08 15:00:33 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/09 19:39:54 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@
 
 # define ALL_CAPS	8
 
+# define F_STAR				1073741824
 # define F_RIGHT_PADDING	536870912
 # define F_PRINT_PLUS		268435456
 # define F_PADDED_POS		134217728
@@ -70,10 +71,10 @@
 
 typedef struct s_token
 {
-	int			specs;
-	int			width;
-	int			precision;
-	char		pad_char;
+	int		specs;
+	int		width;
+	int		precision;
+	char	pad_char;
 }	t_token;
 
 typedef int	t_conv_function(t_token *token, va_list args);
@@ -92,6 +93,7 @@ int	conv_char(t_token *token, va_list args);
 int	conv_string(t_token *token, va_list args);
 int	conv_float(t_token *token, va_list args);
 
-int	putnum(size_t num, int negative, int base, t_token *token);
+int	print_prefix(int negative, t_token *token);
 int	print_padding(int count, t_token *token, va_list args);
+int	putnum(size_t num, int base, int min_len, int all_caps);
 #endif

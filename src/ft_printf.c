@@ -6,50 +6,49 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/09 13:01:49 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/09 19:55:38 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static const int	g_length_count = 8;
-static const char	g_conv[] = "cdieEfFgGosuxXpn%";
-static const int	g_conv_count = 17;
-
 static void	get_conversion(t_token *token, char **seek)
 {
+	static const char	conv[] = "cdieEfFgGosuxXpn%";
 	int	i;
 
 	i = 0;
 	while (i < 17)
 	{
-		if (**seek == g_conv[17 - i - 1])
+		if (**seek == conv[17 - i - 1])
 		{
-			token->specs |= (1 << i);
+			token->specs |= 1 << i;
 			break ;
 		}
 		i++;
 	}
+//	printf("\nafter conversion:%d", token->specs);
 }
 
 static void	get_length(t_token *token, char **seek)
 {
 	int			i;
 	int			len;
-	const char	*g_length[] = {"h", "hh", "l", "ll", "j", "z", "t", "L"};
+	const char	*length[] = {"h", "hh", "l", "ll", "j", "z", "t", "L"};
 
 	i = 0;
 	while (i < 8)
 	{
-		len = ft_strlen(g_length[8 - i - 1]);
-		if (ft_strncmp(*seek, g_length[8 - i - 1], len) == 0)
+		len = ft_strlen(length[8 - i - 1]);
+		if (ft_strncmp(*seek, length[8 - i - 1], len) == 0)
 		{
 			token->specs |= 1 << i;
-			(*seek) += ft_strlen(g_length[8 - i - 1]);
+			(*seek) += ft_strlen(length[8 - i - 1]);
 			break ;
 		}
 		i++;
 	}
+//	printf("\nafter length:%d", token->specs);
 	token->specs <<= 17;
 }
 
@@ -67,7 +66,7 @@ static void	get_flag(t_token *token, char **seek)
 		{
 			if (**seek == flags[6 - i - 1])
 			{
-				token->specs |= 1 << i;
+				token->specs |= (1 << i);
 				stop = 0;
 			}
 			i++;
@@ -76,20 +75,20 @@ static void	get_flag(t_token *token, char **seek)
 			break ;
 		(*seek)++;
 	}
+//	printf("\nafter flags:%d", token->specs);
 	token->specs <<= 8;
 }
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	*token = (t_token){0, 0, -1, ' '};
+	*token = (t_token){0, 0, 0, ' '};
 	if (*(*start)++ != '%')
 	{
 		write(1, start, (*n)++);
 		return (0);
 	}
+//	printf("\nbefore flags:%d", token->specs);
 	get_flag(token, start);
-	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
-		token->pad_char = '0';
 	if (ft_isdigit(**start))
 	{
 		token->width = (int) ft_strtol(*start, start);
@@ -103,6 +102,10 @@ static int	get_token(t_token *token, char **start, int *n)
 	}
 	get_length(token, start);
 	get_conversion(token, start);
+//	printf("\nflags: %d, %d, %d, %d, %d, %d\n", token->specs & F_STAR, token->specs & F_RIGHT_PADDING, token->specs & F_PRINT_PLUS, token->specs & F_PADDED_POS, token->specs & F_ALT_FORM, token->specs & F_PAD_WITH_ZEROES);
+//	if (token->specs & HEXAL) printf("[HEX]!\n");
+	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
+		token->pad_char = '0';
 	return (token->specs != 0);
 }
 
