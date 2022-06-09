@@ -6,12 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/08 14:32:19 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/09 13:01:49 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
 
 static const int	g_length_count = 8;
 static const char	g_conv[] = "cdieEfFgGosuxXpn%";
@@ -89,10 +88,6 @@ static int	get_token(t_token *token, char **start, int *n)
 		return (0);
 	}
 	get_flag(token, start);
-	if (token->specs & F_PAD_WITH_ZEROES)
-		printf("we should pad this with 0");
-	if (token->specs & F_RIGHT_PADDING)
-		printf("we should pad from right");
 	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
 	if (ft_isdigit(**start))
@@ -124,6 +119,7 @@ static int	get_token(t_token *token, char **start, int *n)
  * 8. Repeat until null byte is reached.
  * 9. Return how many characters were written in total.
  */
+
 int	ft_printf(const char *restrict format, ...)
 {
 	va_list	args;

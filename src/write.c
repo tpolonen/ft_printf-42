@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 15:02:18 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/09 13:18:06 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	putnum(size_t num, int negative, int base, t_token *token)
 		buf[0] = ' ';
 	else
 		i--;
-	while (num > 0)
+	while (i > 0)
 	{
 		if (token->specs & ALL_CAPS)
 			buf[--i] = ft_toupper(digits[num % base]);

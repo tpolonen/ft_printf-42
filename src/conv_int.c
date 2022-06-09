@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/08 15:02:01 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/09 13:11:40 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
 	if (token->specs & S_CHAR)
-		return ((ssize_t)(va_arg(args, int))) ;
+		return ((ssize_t)(va_arg(args, int)));
 	if (token->specs & SHORT)
 		return ((ssize_t)va_arg(args, int));
 	if (token->specs & LONG)
@@ -109,6 +109,6 @@ int	conv_integer(t_token *token, va_list args)
 	}
 	ret += check_padding(token, len, args);
 	ret += putnum(usize, ssize < 0, base, token);
- 	return (ret);
+	ret += check_padding(token, len, args);
+	return (ret);
 }
-
