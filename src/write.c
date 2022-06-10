@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/10 14:44:37 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/11 01:38:44 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ int	print_prefix(int negative, t_token *token)
 	int	ret;
 
 	ret = 0;
-	if ((token->specs & HEXAL && token->specs & F_ALT_FORM) || token->specs & PTR)
+	if ((token->specs & HEXAL && token->specs & F_ALT_FORM) || \
+			token->specs & PTR)
 	{
 		if (token->specs & ALL_CAPS)
 			ret += write(1, "0X", 2);
@@ -39,10 +40,8 @@ int	print_padding(int count, t_token *token, va_list args)
 
 	(void) args;
 	ret = 0;
-//	printf("[%d%c]", count, token->pad_char);
 	while (count > 0)
 	{
-//		printf("[%d%c]", count, token->pad_char);
 		ret += write(1, &(token->pad_char), 1);
 		count--;
 	}

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/10 18:24:56 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/11 01:36:18 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static int	get_conversion(t_token *token, char **seek)
 {
 	static const char	conv[] = "cdieEfFgGosuxXpn%";
-	int	i;
+	int					i;
 
 	i = 0;
 	while (i < 17)

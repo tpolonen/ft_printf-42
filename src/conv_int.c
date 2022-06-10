@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/10 15:16:12 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/11 01:40:26 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,16 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 {
 	int			ret;
-	int 		pre_len;
+	int			pre_len;
 	int			pre_printed;
 
 	ret = 0;
 	pre_len = 0;
 	pre_printed = 0;
 	if (token->precision > 0 && len < (size_t)token->precision)
-		len = token->precision;	
+		len = token->precision;
 	else if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM))
-		token->precision = len += 1;
+		token->precision = ++len;
 	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
 		pre_len += 2;
 	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
@@ -92,7 +92,7 @@ int	conv_integer(t_token *token, va_list args)
 	size_t	len;
 
 	ret = 0;
-	ssize = 0;	
+	ssize = 0;
 	if (token->specs & OCTAL)
 		base = 8;
 	else if (token->specs & HEXAL)
