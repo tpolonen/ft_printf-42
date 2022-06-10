@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/09 20:00:38 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/10 12:45:29 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,24 @@ static int	get_base(t_token *token)
 static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 {
 	int	ret;
+	int prefix;
 
 	ret = 0;
+	prefix = 0;
+	if (token->pad_char == '0' && (token->specs & F_ALT_FORM || negative))
+	{
+		prefix++;
+		ret += print_prefix(negative, token);
+		len += ret;
+	}
 	if (token->precision > 0 && len < (size_t)token->precision)
 		len = token->precision;
-	if (token->specs & F_PAD_WITH_ZEROES)
-		ret += print_prefix(negative, token);
-	len += ret;
 	if (len < token->width)
 	{
 		ret += print_padding(token->width - len, token, args);
 		token->width = 0;
 	}
-	if (!(token->specs & F_PAD_WITH_ZEROES))
+	if (!prefix)
 		ret += print_prefix(negative, token);
 	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/09 19:55:38 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/10 12:22:29 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	*token = (t_token){0, 0, 0, ' '};
+	*token = (t_token){0, 0, 0, '\0'};
 	if (*(*start)++ != '%')
 	{
 		write(1, start, (*n)++);
@@ -102,10 +102,15 @@ static int	get_token(t_token *token, char **start, int *n)
 	}
 	get_length(token, start);
 	get_conversion(token, start);
-//	printf("\nflags: %d, %d, %d, %d, %d, %d\n", token->specs & F_STAR, token->specs & F_RIGHT_PADDING, token->specs & F_PRINT_PLUS, token->specs & F_PADDED_POS, token->specs & F_ALT_FORM, token->specs & F_PAD_WITH_ZEROES);
+//	printf("\nflags: *%d, -%d, +%d,  %d, #%d, 0%d\n", (token->specs & F_STAR) > 0, (token->specs & F_RIGHT_PADDING) > 0, (token->specs & F_PRINT_PLUS) > 0, (token->specs & F_PADDED_POS) > 0, (token->specs & F_ALT_FORM) > 0, (token->specs & F_PAD_WITH_ZEROES) > 0);
 //	if (token->specs & HEXAL) printf("[HEX]!\n");
-	if (token->specs & F_PAD_WITH_ZEROES && !(token->specs & F_RIGHT_PADDING))
+	if (token->specs & F_PAD_WITH_ZEROES && token->precision <= 0 && !(token->specs & F_RIGHT_PADDING))
+	{
+//		printf("bonjour :)");
 		token->pad_char = '0';
+	}
+	else
+		token->pad_char = ' ';
 	return (token->specs != 0);
 }
 
