@@ -6,13 +6,13 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/10 15:05:22 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/10 18:24:56 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	get_conversion(t_token *token, char **seek)
+static int	get_conversion(t_token *token, char **seek)
 {
 	static const char	conv[] = "cdieEfFgGosuxXpn%";
 	int	i;
@@ -23,11 +23,11 @@ static void	get_conversion(t_token *token, char **seek)
 		if (**seek == conv[17 - i - 1])
 		{
 			token->specs |= 1 << i;
-			break ;
+			return (1);
 		}
 		i++;
 	}
-//	printf("\nafter conversion:%d", token->specs);
+	return (0);
 }
 
 static void	get_length(t_token *token, char **seek)
@@ -48,7 +48,6 @@ static void	get_length(t_token *token, char **seek)
 		}
 		i++;
 	}
-//	printf("\nafter length:%d", token->specs);
 	token->specs <<= 17;
 }
 
@@ -80,23 +79,23 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	*token = (t_token){0, 0, 0, '\0'};
-	if (*(*start)++ != '%')
-	{
-		write(1, start, (*n)++);
-		return (0);
-	}
+	char	*begin;
+
+	begin = (*start)++;
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
 	if (**start == '.')
-	{
-		(*start)++;
-		token->precision = (int) ft_strtol(*start, start);
-	}
+		token->precision = (int) ft_strtol(++(*start), start);
 	get_length(token, start);
-	get_conversion(token, start);
-	if (token->specs & F_PAD_WITH_ZEROES && token->precision == 0 && !(token->specs & F_RIGHT_PADDING))
+	if (!get_conversion(token, start))
+	{
+		write(1, "%", 1);
+		*start = begin;
+		return (0);
+	}
+	if (token->precision == 0 && token->specs & F_PAD_WITH_ZEROES && \
+			!(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
 	else
 		token->pad_char = ' ';
@@ -139,6 +138,7 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
+		token = (t_token){0, 0, 0, '\0'};
 		if (get_token(&token, (char **) &format, &n))
 			ret += dispatch(&token, args);
 		else
