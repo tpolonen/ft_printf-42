@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/10 12:22:29 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/10 15:05:22 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ static void	get_flag(t_token *token, char **seek)
 			break ;
 		(*seek)++;
 	}
-//	printf("\nafter flags:%d", token->specs);
 	token->specs <<= 8;
 }
 
@@ -87,14 +86,9 @@ static int	get_token(t_token *token, char **start, int *n)
 		write(1, start, (*n)++);
 		return (0);
 	}
-//	printf("\nbefore flags:%d", token->specs);
 	get_flag(token, start);
 	if (ft_isdigit(**start))
-	{
 		token->width = (int) ft_strtol(*start, start);
-		if (token->specs & F_RIGHT_PADDING)
-			token->width = -(ft_abs(token->width));
-	}
 	if (**start == '.')
 	{
 		(*start)++;
@@ -102,15 +96,14 @@ static int	get_token(t_token *token, char **start, int *n)
 	}
 	get_length(token, start);
 	get_conversion(token, start);
-//	printf("\nflags: *%d, -%d, +%d,  %d, #%d, 0%d\n", (token->specs & F_STAR) > 0, (token->specs & F_RIGHT_PADDING) > 0, (token->specs & F_PRINT_PLUS) > 0, (token->specs & F_PADDED_POS) > 0, (token->specs & F_ALT_FORM) > 0, (token->specs & F_PAD_WITH_ZEROES) > 0);
-//	if (token->specs & HEXAL) printf("[HEX]!\n");
-	if (token->specs & F_PAD_WITH_ZEROES && token->precision <= 0 && !(token->specs & F_RIGHT_PADDING))
-	{
-//		printf("bonjour :)");
+	if (token->specs & F_PAD_WITH_ZEROES && token->precision == 0 && !(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
-	}
 	else
 		token->pad_char = ' ';
+	if (token->specs & F_RIGHT_PADDING)
+		token->width = -(ft_abs(token->width));
+	if (token->specs & PTR)
+		token->specs |= F_ALT_FORM;
 	return (token->specs != 0);
 }
 
