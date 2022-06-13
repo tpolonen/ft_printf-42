@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/06 11:30:35 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/13 17:47:56 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,11 @@ int main(void) {
 	printf("\nft_printf returned %zu\n\n", fp);
 
 
+	printf("let's play with strings\n\n");
+
+	pf=printf("lc_printf says:\n%.s %.0s %1.1s\n%020.10s\n\n", "12345", "12345", "12345", "1234567890ABCDEFG");
+	fp=ft_printf("ft printf says:\n%.s %.0s %1.1s\n%020.10s\n\n", "12345", "12345", "12345", "1234567890ABCDEFG");
+
+	printf("pf[%d]fp[%d]\n",pf, fp);
 	return 0;
 }

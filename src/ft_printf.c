@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/13 16:15:35 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/13 17:55:06 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,13 @@ static int	get_conversion(t_token *token, char **seek)
 	static const char	conv[] = "cdieEfFgGosuxXpn%";
 	int					i;
 
-	i = 1;
+	i = 0;
 	while (i < 17)
 	{
 		if (**seek == conv[17 - i])
 		{
 			token->specs |= 1 << (i - 1);
+			printf("%c", i);
 			return (0);
 		}
 		i++;
@@ -87,17 +88,15 @@ static int	get_token(t_token *token, char **start, int *n)
 		token->precision = (int) ft_strtol(++(*start), start);
 	get_length(token, start);
 	if (get_conversion(token, start))
-		return (0);
-	if (token->precision == 0 && token->specs & F_PAD_WITH_ZEROES && \
+		return (1);
+	if (token->precision < 0 && token->specs & F_PAD_WITH_ZEROES && \
 			!(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
-	else
-		token->pad_char = ' ';
 	if (token->specs & F_RIGHT_PADDING)
 		token->width = -(ft_abs(token->width));
 	if (token->specs & PTR)
 		token->specs |= F_ALT_FORM;
-	return (1);
+	return (0);
 }
 
 /*
@@ -132,8 +131,8 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
-		token = (t_token){0, 0, 0, '\0'};
-		if (get_token(&token, (char **) &format, &n))
+		token = (t_token){0, 0, -1, ' '};
+		if (get_token(&token, (char **) &format, &n) == 0)
 			ret += dispatch(&token, args);
 		else
 			ret += write(1, *format, 1);

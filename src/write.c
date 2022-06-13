@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/11 01:38:44 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 17:34:43 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	print_prefix(int negative, t_token *token)
 	return (ret);
 }
 
-int	print_padding(int count, t_token *token, va_list args)
+int	print_padding(int count, char c, va_list args)
 {
 	int	ret;
 
@@ -42,7 +42,7 @@ int	print_padding(int count, t_token *token, va_list args)
 	ret = 0;
 	while (count > 0)
 	{
-		ret += write(1, &(token->pad_char), 1);
+		ret += write(1, &c, 1);
 		count--;
 	}
 	return (ret);

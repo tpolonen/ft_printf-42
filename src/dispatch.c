@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/13 14:00:18 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/13 17:49:37 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	conv_char(t_token *token, va_list args)
 {
 	unsigned char	c;
 
+	write(1, "!", 1);
 	if (token->specs & U_CHAR)
 		c = (unsigned char) va_arg(args, int);
 	else
@@ -39,10 +40,11 @@ int	conv_string(t_token *token, va_list args)
 	str = va_arg(args, char *);
 	while (str[len])
 		len++;
-	if (token->precision > 0 && token->precision < len)
+	if (token->precision >= 0 && token->precision < len)
 		len = token->precision;
-	write(1, str, len);
-	return (len);
+	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
+		print_padding(token->width - len, ' ', args);
+	return (write(1, str, len));
 }
 
 int	dispatch(t_token *token, va_list args)
@@ -62,5 +64,7 @@ int	dispatch(t_token *token, va_list args)
 		}
 		i++;
 	}
+	if ((token->specs & F_RIGHT_PADDING) && token->width > ret)
+		ret += print_padding(token->width - ret, ' ', args);
 	return (ret);
 }
