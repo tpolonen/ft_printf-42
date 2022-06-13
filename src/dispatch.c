@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/09 19:53:07 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 14:00:18 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,10 @@ int	dispatch(t_token *token, va_list args)
 	while (i < func_count)
 	{
 		if (token->specs & g_conv_table[i].key)
+		{
 			ret += g_conv_table[i].func(token, args);
+			break ;
+		}
 		i++;
 	}
 	return (ret);

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/11 01:36:18 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 16:15:35 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,17 @@ static int	get_conversion(t_token *token, char **seek)
 	static const char	conv[] = "cdieEfFgGosuxXpn%";
 	int					i;
 
-	i = 0;
+	i = 1;
 	while (i < 17)
 	{
-		if (**seek == conv[17 - i - 1])
+		if (**seek == conv[17 - i])
 		{
-			token->specs |= 1 << i;
-			return (1);
+			token->specs |= 1 << (i - 1);
+			return (0);
 		}
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 static void	get_length(t_token *token, char **seek)
@@ -36,14 +36,14 @@ static void	get_length(t_token *token, char **seek)
 	int			len;
 	const char	*length[] = {"h", "hh", "l", "ll", "j", "z", "t", "L"};
 
-	i = 0;
+	i = 1;
 	while (i < 8)
 	{
-		len = ft_strlen(length[8 - i - 1]);
-		if (ft_strncmp(*seek, length[8 - i - 1], len) == 0)
+		len = ft_strlen(length[8 - i]);
+		if (ft_strncmp(*seek, length[8 - i], len) == 0)
 		{
-			token->specs |= 1 << i;
-			(*seek) += ft_strlen(length[8 - i - 1]);
+			token->specs |= 1 << (i - 1);
+			(*seek) += ft_strlen(length[8 - i]);
 			break ;
 		}
 		i++;
@@ -59,13 +59,13 @@ static void	get_flag(t_token *token, char **seek)
 
 	while (**seek != '\0')
 	{
-		i = 0;
+		i = 1;
 		stop = 1;
 		while (i < 6)
 		{
-			if (**seek == flags[6 - i - 1])
+			if (**seek == flags[6 - i])
 			{
-				token->specs |= (1 << i);
+				token->specs |= 1 << (i - 1);
 				stop = 0;
 			}
 			i++;
@@ -79,21 +79,15 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n)
 {
-	char	*begin;
-
-	begin = (*start)++;
+	(*start)++;
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
 	if (**start == '.')
 		token->precision = (int) ft_strtol(++(*start), start);
 	get_length(token, start);
-	if (!get_conversion(token, start))
-	{
-		write(1, "%", 1);
-		*start = begin;
+	if (get_conversion(token, start))
 		return (0);
-	}
 	if (token->precision == 0 && token->specs & F_PAD_WITH_ZEROES && \
 			!(token->specs & F_RIGHT_PADDING))
 		token->pad_char = '0';
@@ -103,7 +97,7 @@ static int	get_token(t_token *token, char **start, int *n)
 		token->width = -(ft_abs(token->width));
 	if (token->specs & PTR)
 		token->specs |= F_ALT_FORM;
-	return (token->specs != 0);
+	return (1);
 }
 
 /*
@@ -142,7 +136,7 @@ int	ft_printf(const char *restrict format, ...)
 		if (get_token(&token, (char **) &format, &n))
 			ret += dispatch(&token, args);
 		else
-			ret++;
+			ret += write(1, *format, 1);
 		format++;
 	}
 	va_end(args);
