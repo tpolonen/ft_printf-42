@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/13 17:55:06 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 20:13:18 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,16 @@ static int	get_conversion(t_token *token, char **seek)
 	static const char	conv[] = "cdieEfFgGosuxXpn%";
 	int					i;
 
-	i = 0;
-	while (i < 17)
+	i = 16;
+	while (i >= 0)
 	{
-		if (**seek == conv[17 - i])
+		if (**seek == conv[i])
 		{
-			token->specs |= 1 << (i - 1);
-			printf("%c", i);
+			token->specs |= 1 << (16 - i);
+//			printf("(%c)", conv[i]);
 			return (0);
 		}
-		i++;
+		i--;
 	}
 	return (1);
 }
@@ -37,17 +37,18 @@ static void	get_length(t_token *token, char **seek)
 	int			len;
 	const char	*length[] = {"h", "hh", "l", "ll", "j", "z", "t", "L"};
 
-	i = 1;
-	while (i < 8)
+	i = 7;
+	while (i >= 0)
 	{
-		len = ft_strlen(length[8 - i]);
-		if (ft_strncmp(*seek, length[8 - i], len) == 0)
+		len = ft_strlen(length[i]);
+		if (ft_strncmp(*seek, length[i], len) == 0)
 		{
-			token->specs |= 1 << (i - 1);
-			(*seek) += ft_strlen(length[8 - i]);
+//			printf("(%s)", length[i]);
+			token->specs |= 1 << (7 - i);
+			(*seek) += ft_strlen(length[i]);
 			break ;
 		}
-		i++;
+		i--;
 	}
 	token->specs <<= 17;
 }
@@ -60,16 +61,17 @@ static void	get_flag(t_token *token, char **seek)
 
 	while (**seek != '\0')
 	{
-		i = 1;
+		i = 5;
 		stop = 1;
-		while (i < 6)
+		while (i >= 0)
 		{
-			if (**seek == flags[6 - i])
+			if (**seek == flags[i])
 			{
-				token->specs |= 1 << (i - 1);
+	//			printf("(%c[%i])", flags[i], i);
+				token->specs |= 1 << (5 - i);
 				stop = 0;
 			}
-			i++;
+			i--;
 		}
 		if (stop)
 			break ;
@@ -135,7 +137,7 @@ int	ft_printf(const char *restrict format, ...)
 		if (get_token(&token, (char **) &format, &n) == 0)
 			ret += dispatch(&token, args);
 		else
-			ret += write(1, *format, 1);
+			ret += write(1, format, 1);
 		format++;
 	}
 	va_end(args);

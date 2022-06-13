@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/11 01:40:26 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 19:37:06 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,30 @@ static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 		pre_len += 2;
 	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
 		pre_len += 1;
-	if ((token->precision + pre_len > token->width) || token->pad_char == '0')
+	if (pre_len && (token->precision + pre_len > token->width || token->pad_char == '0'))
 	{
+/*		printf("(print ");		
+		if (negative) printf("[-]");
+		else if (token->specs & F_PRINT_PLUS) printf("[+]");
+		else if (token->specs & F_PADDED_POS) printf("[ ]");
+		printf(" before padding)");
+		*/
 		ret += print_prefix(negative, token);
 		pre_printed = 1;
 	}
 	if (len + pre_len < token->width)
-		ret += print_padding(token->width - len - pre_len, token, args);
+		ret += putset(token->width - len - pre_len, token->pad_char);
 	if (pre_len > 0 && pre_printed == 0)
+	{
+		/*
+		printf("(print ");		
+		if (negative) printf("[-]");
+		else if (token->specs & F_PADDED_POS) printf("[ ]");
+		else if (token->specs & F_PRINT_PLUS) printf("[+]");
+		printf(" after padding)");
+		*/
 		ret += print_prefix(negative, token);
+	}
 	return (ret);
 }
 

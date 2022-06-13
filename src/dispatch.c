@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/13 17:49:37 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 19:40:54 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,29 +22,35 @@ static const t_conv	g_conv_table[] = {
 int	conv_char(t_token *token, va_list args)
 {
 	unsigned char	c;
+	int				ret;
 
-	write(1, "!", 1);
+	ret = 0;
 	if (token->specs & U_CHAR)
 		c = (unsigned char) va_arg(args, int);
 	else
 		c = '%';
-	return (write(1, &c, 1));
+	if (token->width > 1 && !(token->specs & F_RIGHT_PADDING))
+		ret += putset(token->width - 1, ' ');
+	return (ret + write(1, &c, 1));
 }
 
 int	conv_string(t_token *token, va_list args)
 {	
 	char	*str;
 	int		len;
+	int		ret;
 
 	len = 0;
+	ret = 0;
 	str = va_arg(args, char *);
 	while (str[len])
 		len++;
 	if (token->precision >= 0 && token->precision < len)
 		len = token->precision;
 	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
-		print_padding(token->width - len, ' ', args);
-	return (write(1, str, len));
+		ret += putset(token->width - len, ' ');
+	ret += write(1, str, len);
+	return (ret);
 }
 
 int	dispatch(t_token *token, va_list args)
@@ -64,7 +70,7 @@ int	dispatch(t_token *token, va_list args)
 		}
 		i++;
 	}
-	if ((token->specs & F_RIGHT_PADDING) && token->width > ret)
-		ret += print_padding(token->width - ret, ' ', args);
+	if ((token->specs & F_RIGHT_PADDING) && ft_abs(token->width) > ret)
+		ret += putset(token->width + ret, ' ');
 	return (ret);
 }

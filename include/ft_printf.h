@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/13 17:35:14 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 19:36:31 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define S_DEC 		49152
 # define U_DEC 		32
 # define U_OCT 		128
-# define U_HEX 		24
+# define U_HEX 		28
 # define PTR 		4
 # define SHORT		16777216
 # define S_CHAR		8388608
@@ -56,7 +56,7 @@
 # define OCTAL		128
 # define HEXAL		28
 
-# define ALL_CAPS	8
+# define ALL_CAPS	5384
 
 # define F_STAR				1073741824
 # define F_RIGHT_PADDING	536870912
@@ -64,10 +64,6 @@
 # define F_PADDED_POS		134217728
 # define F_ALT_FORM			67108864
 # define F_PAD_WITH_ZEROES	33554432
-
-# define CHAR_MASK	255
-# define SHORT_MASK	65535
-# define INT_MASK	4294967295
 
 typedef struct s_token
 {
@@ -94,6 +90,6 @@ int	conv_string(t_token *token, va_list args);
 int	conv_float(t_token *token, va_list args);
 
 int	print_prefix(int negative, t_token *token);
-int	print_padding(int count, char c, va_list args);
+int	putset(int count, char c);
 int	putnum(size_t num, int base, int min_len, int all_caps);
 #endif

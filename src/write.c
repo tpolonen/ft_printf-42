@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/13 17:34:43 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/13 20:04:10 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,55 @@
 
 int	print_prefix(int negative, t_token *token)
 {
-	int	ret;
-
-	ret = 0;
 	if ((token->specs & HEXAL && token->specs & F_ALT_FORM) || \
 			token->specs & PTR)
 	{
 		if (token->specs & ALL_CAPS)
-			ret += write(1, "0X", 2);
-		else
-			ret += write(1, "0x", 2);
+			return (write(1, "0X", 2));
+		return (write(1, "0x", 2));
 	}
-	else if (negative)
-		ret += write(1, "-", 1);
-	else if (token->specs & F_PRINT_PLUS)
-		ret += write(1, "+", 1);
-	else if (token->specs & F_PADDED_POS)
-		ret += write(1, " ", 1);
-	return (ret);
+	if (negative)
+		return (write(1, "-", 1));
+	if (token->specs & F_PRINT_PLUS)
+		return (write(1, "+", 1));
+	if (token->specs & F_PADDED_POS)
+		return (write(1, " ", 1));
+	return (0);
 }
 
-int	print_padding(int count, char c, va_list args)
+/* putset works similarly to memset - char c is printed count times.
+ * This form might be a bit overengineered, but at least it guarantees
+ * that larger outputs are printed as fast as possible.
+ */
+
+int	putset(int count, char c)
 {
-	int	ret;
+	int		ret;
+	char	buf[sizeof(size_t)];
 
-	(void) args;
 	ret = 0;
-	while (count > 0)
+	ft_memset(buf, c, sizeof(size_t));
+	while (count > sizeof(size_t))
 	{
-		ret += write(1, &c, 1);
-		count--;
+		ret += write(1, buf, sizeof(size_t));
+		count -= sizeof(size_t);
+	}
+	while (count > sizeof(int))
+	{
+		ret += write(1, buf, sizeof(int));
+		count -= sizeof(int);
+	}
+	while (count)
+	{
+		ret += write(1, buf, 1);
+		count -= 1;
 	}
 	return (ret);
 }
 
-/* putnum assembles the number as string to buffer, then writes the buffer.
- * If there is an appending character, it's added to front of the buffer
- * and rest of the characters are appended behind it.
- * Returns the amount of written characters.
+/* putnum assembles the number as a string to buffer and outputs it.
+ * If the minimum length is longer than amount of digits in number,,
+ * desired amount of zeroes is printed first and the buffer afterwards.
  */
 
 int	putnum(size_t num, int base, int min_len, int all_caps)
@@ -60,10 +71,12 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 	const char	digits[] = "0123456789abcdefghjiklmnopqrstuvwxyz";
 	char		buf[30];
 	int			i;
+	int			ret;
 
+	ret = 0;
 	len = ft_sizelen(num, base);
 	if (len < min_len)
-		len = min_len;
+		ret += putset(min_len - len, '0');
 	i = len;
 	while (i > 0)
 	{
@@ -73,5 +86,5 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 			buf[--i] = digits[num % base];
 		num /= base;
 	}
-	return (write(1, buf, len));
+	return (ret + write(1, buf, len));
 }
