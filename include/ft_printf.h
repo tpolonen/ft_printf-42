@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/13 19:36:31 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/14 10:25:32 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ typedef struct s_token
 	int		specs;
 	int		width;
 	int		precision;
-	char	pad_char;
 }	t_token;
 
 typedef int	t_conv_function(t_token *token, va_list args);

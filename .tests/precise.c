@@ -25,13 +25,18 @@ int main (void)
 	fp4 = ft_printf("%#15.14X*\n", 2387123);
 	int fp5 = ft_printf("what does this look like? %#15.15X*\n", 2387123);
 	fp5 = ft_printf("%#15.15X*\n", 2387123);
-	
+
+	p1 =     printf("what does this look like? %#15.11x*\n", 2387123);
+	fp1 = ft_printf("what does this look like? %#15.11x!\n", 2387123);
+
 	printf("results: p1:%3d  p2:%3d  p3:%3d  p4:%3d  p5:%3d\n", p1, p2, p3, p4, p5);
 	printf("results:fp1:%3d fp2:%3d fp3:%3d fp4:%3d fp5:%3d\n", fp1, fp2, fp3, fp4, fp5);
 	printf("\n\n");
 
-	p1 =     printf("%#15.11x", 2387123); printf("\n");
-	fp1 = ft_printf("%#15.11x", 2387123); printf("\n");
+	p1 =     printf("%#15.11x", 2387123); 
+	printf("\n");
+	fp1 = ft_printf("%#15.11x", 2387123); 
+	printf("\n");
 	printf("pf[%d] fp[%d]\n",p1,fp1);
 /*	
  *

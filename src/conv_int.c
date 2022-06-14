@@ -6,15 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/13 19:37:06 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/14 11:45:21 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-/* Conversion functions always return the amount of chars that were written,
- * or -1 in the case of error.
- */
 
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
@@ -54,47 +50,43 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(int)va_arg(args, int));
 }
 
+static int	get_prefix_len(t_token *token, size_t *len, int negative)
+{
+	if (token->precision > 0 && *len < (size_t)token->precision)
+		*len = token->precision;
+	else if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM))
+		token->precision = *(++len);
+	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
+		return (2);
+	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
+		return (1);
+	return (0);
+}
+
 static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 {
 	int			ret;
 	int			pre_len;
 	int			pre_printed;
+	char		pad_char;
 
 	ret = 0;
-	pre_len = 0;
+	pre_len = get_prefix_len(token, &len, negative);
 	pre_printed = 0;
-	if (token->precision > 0 && len < (size_t)token->precision)
-		len = token->precision;
-	else if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM))
-		token->precision = ++len;
-	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
-		pre_len += 2;
-	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
-		pre_len += 1;
-	if (pre_len && (token->precision + pre_len > token->width || token->pad_char == '0'))
+	if (token->specs & F_PAD_WITH_ZEROES)
+		pad_char = '0';
+	else
+		pad_char = ' ';
+	if (token->precision + pre_len > token->width || \
+			token->specs & F_PAD_WITH_ZEROES)
 	{
-/*		printf("(print ");		
-		if (negative) printf("[-]");
-		else if (token->specs & F_PRINT_PLUS) printf("[+]");
-		else if (token->specs & F_PADDED_POS) printf("[ ]");
-		printf(" before padding)");
-		*/
 		ret += print_prefix(negative, token);
 		pre_printed = 1;
 	}
-	if (len + pre_len < token->width)
-		ret += putset(token->width - len - pre_len, token->pad_char);
+	if ((int)len + pre_len < token->width)
+		ret += putset(token->width - (int)len - pre_len, pad_char);
 	if (pre_len > 0 && pre_printed == 0)
-	{
-		/*
-		printf("(print ");		
-		if (negative) printf("[-]");
-		else if (token->specs & F_PADDED_POS) printf("[ ]");
-		else if (token->specs & F_PRINT_PLUS) printf("[+]");
-		printf(" after padding)");
-		*/
 		ret += print_prefix(negative, token);
-	}
 	return (ret);
 }
 

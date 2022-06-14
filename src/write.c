@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/13 20:04:10 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/14 11:29:54 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	putset(int count, char c)
 int	putnum(size_t num, int base, int min_len, int all_caps)
 {
 	int			len;
-	const char	digits[] = "0123456789abcdefghjiklmnopqrstuvwxyz";
+	char		*digits;
 	char		buf[30];
 	int			i;
 	int			ret;
@@ -78,12 +78,13 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 	if (len < min_len)
 		ret += putset(min_len - len, '0');
 	i = len;
+	if (all_caps)
+		digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	else
+		digits = "0123456789abcdefghjiklmnopqrstuvwxyz";
 	while (i > 0)
 	{
-		if (all_caps)
-			buf[--i] = ft_toupper(digits[num % base]);
-		else
-			buf[--i] = digits[num % base];
+		buf[--i] = digits[num % base];
 		num /= base;
 	}
 	return (ret + write(1, buf, len));

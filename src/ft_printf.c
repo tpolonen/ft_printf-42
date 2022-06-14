@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/13 20:13:18 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/14 10:57:37 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static int	get_conversion(t_token *token, char **seek)
 		if (**seek == conv[i])
 		{
 			token->specs |= 1 << (16 - i);
-//			printf("(%c)", conv[i]);
 			return (0);
 		}
 		i--;
@@ -43,7 +42,6 @@ static void	get_length(t_token *token, char **seek)
 		len = ft_strlen(length[i]);
 		if (ft_strncmp(*seek, length[i], len) == 0)
 		{
-//			printf("(%s)", length[i]);
 			token->specs |= 1 << (7 - i);
 			(*seek) += ft_strlen(length[i]);
 			break ;
@@ -67,7 +65,6 @@ static void	get_flag(t_token *token, char **seek)
 		{
 			if (**seek == flags[i])
 			{
-	//			printf("(%c[%i])", flags[i], i);
 				token->specs |= 1 << (5 - i);
 				stop = 0;
 			}
@@ -80,20 +77,28 @@ static void	get_flag(t_token *token, char **seek)
 	token->specs <<= 8;
 }
 
-static int	get_token(t_token *token, char **start, int *n)
+static int	get_token(t_token *token, char **start, int *n, va_list args)
 {
-	(*start)++;
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
+	else if (**start == '*')
+	{
+		token->width = (int) va_arg(args, int);
+		(*start)++;
+	}
 	if (**start == '.')
-		token->precision = (int) ft_strtol(++(*start), start);
+		token->precision = (int) ft_strtol(++(*start), start);	
+	else if (**start == '*')
+	{
+		token->precision = (int) va_arg(args, int);
+		(*start)++;
+	}
 	get_length(token, start);
 	if (get_conversion(token, start))
 		return (1);
-	if (token->precision < 0 && token->specs & F_PAD_WITH_ZEROES && \
-			!(token->specs & F_RIGHT_PADDING))
-		token->pad_char = '0';
+	if (token->precision >= 0 || token->specs & F_RIGHT_PADDING)
+		token->specs &= ~F_PAD_WITH_ZEROES;
 	if (token->specs & F_RIGHT_PADDING)
 		token->width = -(ft_abs(token->width));
 	if (token->specs & PTR)
@@ -133,8 +138,9 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
-		token = (t_token){0, 0, -1, ' '};
-		if (get_token(&token, (char **) &format, &n) == 0)
+		token = (t_token){0, 0, -1};
+		format++;
+		if (get_token(&token, (char **) &format, &n, args) == 0)
 			ret += dispatch(&token, args);
 		else
 			ret += write(1, format, 1);
