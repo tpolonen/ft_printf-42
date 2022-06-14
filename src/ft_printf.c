@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/14 10:57:37 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/14 14:33:54 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,17 @@ static void	get_flag(t_token *token, char **seek)
 {
 	int			i;
 	int			stop;
-	const char	flags[] = "*-+ #0";
+	const char	flags[] = "-+ #0";
 
 	while (**seek != '\0')
 	{
-		i = 5;
+		i = 4;
 		stop = 1;
 		while (i >= 0)
 		{
 			if (**seek == flags[i])
 			{
-				token->specs |= 1 << (5 - i);
+				token->specs |= 1 << (4 - i);
 				stop = 0;
 			}
 			i--;
@@ -89,7 +89,7 @@ static int	get_token(t_token *token, char **start, int *n, va_list args)
 	}
 	if (**start == '.')
 		token->precision = (int) ft_strtol(++(*start), start);	
-	else if (**start == '*')
+	if (**start == '*')
 	{
 		token->precision = (int) va_arg(args, int);
 		(*start)++;

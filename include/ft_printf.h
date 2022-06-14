@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/14 10:25:32 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/14 14:31:09 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@
 
 # define ALL_CAPS	5384
 
-# define F_STAR				1073741824
 # define F_RIGHT_PADDING	536870912
 # define F_PRINT_PLUS		268435456
 # define F_PADDED_POS		134217728
