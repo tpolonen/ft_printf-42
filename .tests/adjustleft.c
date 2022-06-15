@@ -7,8 +7,8 @@ int main(void){
 	
 	printf("pf[%d] fd[%d]\n\n", pf, fp);
 
-	pf =    printf("with zero flag? %-010d*\n");
-	fp = ft_printf("with zero flag? %-010d!\n");
+	pf =    printf("with zero flag? %-020d*\n");
+	fp = ft_printf("with zero flag? %-020d!\n");
 
 	printf("pf[%d] fd[%d]\n", pf, fp);
 	return (0);
