@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/14 14:33:54 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/16 12:15:33 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,23 @@ static void	get_flag(t_token *token, char **seek)
 	token->specs <<= 8;
 }
 
+/*
+ * This function converts the specifiers into usable form.
+ * The flags, length and conversion are recorded into bitflag,
+ * optional width and precision are saved as integers.
+ * Width is by default 0, precision is -1 since precision 0
+ * has a specific meaning.
+ *
+ * Some hard checks are made after bitflag is converted
+ * into it's final form: 
+ * - If any amount of precision or left adjustment is 
+ *   specified, zero flag is invalid.
+ * - If left adjustment flag is set, width is converted
+ *   to negative.
+ * - If conversion is a pointer, alternate form flag
+ *   will be set.
+ */
+
 static int	get_token(t_token *token, char **start, int *n, va_list args)
 {
 	get_flag(token, start);
@@ -108,10 +125,10 @@ static int	get_token(t_token *token, char **start, int *n, va_list args)
 
 /*
  * 1. Write characters from format sign until null byte or '%' is reached.
- * 2. Turn conversion into token, containing bitflags, width and precision.
- *    ...if that fails, conversion is invalid. Just write the next char.
- * 3. Send token and argument list to converter.
- * 4. Converter forwards token and argument list to correct function.
+ * 2. Turn specifiers into token, containing bitflags, width and precision.
+ *    ...if that fails, conversion is invalid. Just write the chars instead.
+ * 3. Send token and argument list to dispatcher.
+ * 4. Dispatcher forwards token and argument list to correct function.
  * 5. If there's left padding,  print it now.
  * 6. Function will convert argument to correct output and return
  *    the amount of bytes that were printed.
