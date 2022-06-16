@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/16 12:15:33 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/16 14:19:59 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ static int	get_token(t_token *token, char **start, int *n, va_list args)
 /*
  * 1. Write characters from format sign until null byte or '%' is reached.
  * 2. Turn specifiers into token, containing bitflags, width and precision.
- *    ...if that fails, conversion is invalid. Just write the chars instead.
+ *    ...if that fails, conversion is invalid. Just write the last char.
  * 3. Send token and argument list to dispatcher.
  * 4. Dispatcher forwards token and argument list to correct function.
  * 5. If there's left padding,  print it now.
