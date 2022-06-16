@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/16 14:19:59 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/16 19:13:17 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ static int	get_conversion(t_token *token, char **seek)
 		if (**seek == conv[i])
 		{
 			token->specs |= 1 << (16 - i);
+			if (token->specs & PTR)
+				token->specs |= F_ALT_FORM;
 			return (0);
 		}
 		i--;
@@ -66,6 +68,8 @@ static void	get_flag(t_token *token, char **seek)
 			if (**seek == flags[i])
 			{
 				token->specs |= 1 << (4 - i);
+				if (flags[i] == '0')
+					token->pchar = '0';
 				stop = 0;
 			}
 			i--;
@@ -114,12 +118,11 @@ static int	get_token(t_token *token, char **start, int *n, va_list args)
 	get_length(token, start);
 	if (get_conversion(token, start))
 		return (1);
-	if (token->precision >= 0 || token->specs & F_RIGHT_PADDING)
-		token->specs &= ~F_PAD_WITH_ZEROES;
+	if (token->specs & INTEGER && \
+			(token->precision >= 0 || token->specs & F_RIGHT_PADDING))
+		token->pchar = ' ';
 	if (token->specs & F_RIGHT_PADDING)
 		token->width = -(ft_abs(token->width));
-	if (token->specs & PTR)
-		token->specs |= F_ALT_FORM;
 	return (0);
 }
 
@@ -155,8 +158,8 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
-		token = (t_token){0, 0, -1};
 		format++;
+		token = (t_token){0, 0, -1, ' '};
 		if (get_token(&token, (char **) &format, &n, args) == 0)
 			ret += dispatch(&token, args);
 		else

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/14 14:31:09 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/16 19:51:10 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_token
 	int		specs;
 	int		width;
 	int		precision;
+	char	pchar;
 }	t_token;
 
 typedef int	t_conv_function(t_token *token, va_list args);
@@ -82,6 +83,7 @@ typedef struct s_conv
 int	ft_printf(const char *restrict format, ...)
 	__attribute__ ((format (printf, 1, 2)));
 int	dispatch(t_token *token, va_list args);
+
 int	conv_integer(t_token *token, va_list args);
 int	conv_char(t_token *token, va_list args);
 int	conv_string(t_token *token, va_list args);
@@ -90,4 +92,5 @@ int	conv_float(t_token *token, va_list args);
 int	print_prefix(int negative, t_token *token);
 int	putset(int count, char c);
 int	putnum(size_t num, int base, int min_len, int all_caps);
+int	putstr(char *str, t_token *token);
 #endif

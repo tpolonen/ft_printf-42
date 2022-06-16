@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/14 11:45:21 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/16 19:53:12 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,17 @@ static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
 	int			ret;
 	int			pre_len;
 	int			pre_printed;
-	char		pad_char;
 
 	ret = 0;
 	pre_len = get_prefix_len(token, &len, negative);
 	pre_printed = 0;
-	if (token->specs & F_PAD_WITH_ZEROES)
-		pad_char = '0';
-	else
-		pad_char = ' ';
-	if (token->precision + pre_len > token->width || \
-			token->specs & F_PAD_WITH_ZEROES)
+	if (token->precision + pre_len > token->width || token->pchar == '0')
 	{
 		ret += print_prefix(negative, token);
 		pre_printed = 1;
 	}
 	if ((int)len + pre_len < token->width)
-		ret += putset(token->width - (int)len - pre_len, pad_char);
+		ret += putset(token->width - (int)len - pre_len, token->pchar);
 	if (pre_len > 0 && pre_printed == 0)
 		ret += print_prefix(negative, token);
 	return (ret);

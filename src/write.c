@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/14 11:29:54 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/16 19:51:40 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,26 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 		num /= base;
 	}
 	return (ret + write(1, buf, len));
+}
+
+/* putstr prints the string representation of infinite/NaN required
+ * for floats, in uppercase or lowercase.
+ */
+
+int	putstr(char *str, t_token *token)
+{
+	int	len;
+	int	i;
+
+	len = ft_strlen(str);
+	if (token->specs & ALL_CAPS)
+	{
+		i = 0;
+		while (i < len)
+		{
+			str[i] = ft_toupper(str[i]);
+			i++;
+		}
+	}
+	return (1, str, len);
 }
