@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/19 15:55:55 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/19 16:50:41 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n, va_list args)
 {
-	(*format++);
+	(*start)++;
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);

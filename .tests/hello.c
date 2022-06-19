@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/14 12:24:42 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/19 16:49:47 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,7 @@ int main(void) {
 			"12345", "12345", "12345", "1234567890ABCDEFG");
 
 	printf("pf[%d]fp[%d]\n",pf, fp);
+
+	printf("...can we actually print just a zero\n%i %d %u %o %x\n",0, 0, 0, 0, 0);
 	return 0;
 }
