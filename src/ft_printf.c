@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/16 19:13:17 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/19 15:55:55 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, int *n, va_list args)
 {
+	(*format++);
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
@@ -109,7 +110,7 @@ static int	get_token(t_token *token, char **start, int *n, va_list args)
 		(*start)++;
 	}
 	if (**start == '.')
-		token->precision = (int) ft_strtol(++(*start), start);	
+		token->precision = (int) ft_strtol(++(*start), start);
 	if (**start == '*')
 	{
 		token->precision = (int) va_arg(args, int);
@@ -158,7 +159,6 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, n);
 		if (*format == '\0')
 			break ;
-		format++;
 		token = (t_token){0, 0, -1, ' '};
 		if (get_token(&token, (char **) &format, &n, args) == 0)
 			ret += dispatch(&token, args);

@@ -3,10 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   conv_int.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+/*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
+/*   Updated: 2022/06/19 15:51:25 by tpolonen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   conv_int.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/16 19:53:12 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/19 15:41:06 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +62,8 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(int)va_arg(args, int));
 }
 
-static int	get_prefix_len(t_token *token, size_t *len, int negative)
+static int	get_prefix_len(int negative, t_token *token)
 {
-	if (token->precision > 0 && *len < (size_t)token->precision)
-		*len = token->precision;
-	else if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM))
-		token->precision = *(++len);
 	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
 		return (2);
 	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
@@ -63,22 +71,27 @@ static int	get_prefix_len(t_token *token, size_t *len, int negative)
 	return (0);
 }
 
-static int	check_prefix(t_token *token, size_t len, int negative, va_list args)
+static int	check_prefix(t_token *token, int len, int negative, va_list args)
 {
 	int			ret;
 	int			pre_len;
 	int			pre_printed;
 
 	ret = 0;
-	pre_len = get_prefix_len(token, &len, negative);
+	pre_len = get_prefix_len(negative, token);
 	pre_printed = 0;
-	if (token->precision + pre_len > token->width || token->pchar == '0')
+	if (len > token->precision)
+		token->precision = len;
+	if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM) \
+			&& token->precision < len + 1)
+		token->precision = len + 1;
+	if ((token->precision + pre_len) > token->width || token->pchar == '0')
 	{
 		ret += print_prefix(negative, token);
 		pre_printed = 1;
 	}
-	if ((int)len + pre_len < token->width)
-		ret += putset(token->width - (int)len - pre_len, token->pchar);
+	if ((token->precision + pre_len) < token->width)
+		ret += putset(token->width - token->precision - pre_len, token->pchar);
 	if (pre_len > 0 && pre_printed == 0)
 		ret += print_prefix(negative, token);
 	return (ret);
@@ -104,11 +117,11 @@ int	conv_integer(t_token *token, va_list args)
 	{
 		ssize = signed_typecast(token, args);
 		usize = ft_ssabs(ssize);
-	}
+	}	
 	else if (token->specs & UNSIGNED)
 		usize = unsigned_typecast(token, args);
 	len = ft_sizelen(usize, base);
-	ret += check_prefix(token, len, ssize < 0, args);
+	ret += check_prefix(token, (int)len, ssize < 0, args);
 	ret += putnum(usize, base, token->precision, token->specs & ALL_CAPS);
 	return (ret);
 }

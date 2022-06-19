@@ -6,13 +6,14 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/17 19:08:55 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/19 15:57:28 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	conv_sci_notation(long double num, int negative, int print, t_token *token)
+static int	conv_sci_notation(long double num, int negative,
+		int print, t_token *token)
 {
 	int		sign;
 	size_t	exponent;
@@ -21,7 +22,8 @@ static int	conv_sci_notation(long double num, int negative, int print, t_token *
 	return (0);
 }
 
-static int	conv_dec_notation(long double num, int negative, int print, t_token *token)
+static int	conv_dec_notation(long double num, int negative,
+		int print, t_token *token)
 {
 	size_t		ipart;	
 	long double	fpart;
@@ -47,12 +49,14 @@ static int	conv_dec_notation(long double num, int negative, int print, t_token *
 	return (ret);
 }
 
-static int	conv_shortest_float(long double num, int negative, t_token *token)
+static int	conv_shortest_float(long double num, int negative,
+		t_token *token)
 {
 	return (0);
 }
 
-static int	check_exceptions(long double num, int *ret, int *negative, t_token *token)
+static int	check_exceptions(long double num, int *ret,
+		int *negative, t_token *token)
 {
 	*ret = 0;
 	if (token->specs & ALL_CAPS)
@@ -83,7 +87,7 @@ int	conv_float(t_token *token, va_list args)
 	long double	num;
 	int			ret;
 	int			negative;
-	
+
 	ret = 0;
 	if (token->specs & LDOUBLE)
 		num = va_arg(args, long double);
