@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/19 17:31:32 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/20 11:27:26 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static double	get_rounding(int precision)
 	}
 	return (ret);
 }
-
+/*
 static int	conv_dec_notation(long double num, int negative,
 		int print, t_token *token)
 {
@@ -60,7 +60,7 @@ static int	conv_dec_notation(long double num, int negative,
 	}
 	return (ret);
 }
-
+*/
 /*  1. Your exponent starts at zero.
     2. Slide the decimal so there is only one non-zero digit 
       to the left of the decimal.
@@ -71,6 +71,7 @@ static int	conv_dec_notation(long double num, int negative,
 	   only if the original number had no decimal point. 
 	   We’re assuming they’re not significant unless otherwise specified.
 */
+/*
 static int	conv_sci_notation(long double num, int negative,
 		int print, t_token *token)
 {
@@ -99,7 +100,7 @@ static int	conv_shortest_float(long double num, int negative,
 {
 	return (0);
 }
-
+*/
 /* Basic principles for checking float exceptions are:
  * 1. NaN == NaN is always false.
  * 2. Dividing by zero will always produce infinity:
@@ -111,8 +112,154 @@ static int	conv_shortest_float(long double num, int negative,
  * letter cases.
  */
 
-static int	check_exceptions(long double num, int *ret,
-		int *negative, t_token *token)
+/* So we want to convert float of arbitrary size and precision into array of
+ * printable chars. Okay. Since we are using floating point numbers,
+ * we could utilize the actual floating point?
+ *
+ * 1. Start with the number.
+ * 2. Find out which direction the period is.
+ * 3. If the number is under 1.0, multiply it by ten until it's greater than 1.
+ * 4. If the number is over 10.0, multiply it by 0.1 until it's less than 10.
+ * 5. Now we know the exponent. Yay.
+ * 6. With this knowledge, depending on which kind of output was specified:
+ *    fF: Is exponent positive or negative?
+ *        If positive: - Print num converted to integer.
+ *                     - Decrease integer from remainder.
+ *                     - Multiply remainder by ten
+ *                     - Repeat until we hit the radix.
+ *                     - Print radix and any remaining numbers up to precision.
+ *                       If numbers run out before precision, fill with zeroes.
+ *                     - On the last number: round it somehow somewhere.
+ *        If negative: - Print 0 and radix.
+ *                     - Print zeroes until exponent is zero.
+ *                     - Continue printing numbers as above.
+ *                       If numbers run out before precision, print more zero.
+ *                     - On the last number: round it somehow somewhere.
+ *    eE: Print most significant number.
+ *        Print radix.
+ *        Print as many numbers as is required by precision.
+ *        Fill with zeroes as usual if numbers run out before precision.
+ *        Round off the last number as usual.
+ *    gG: If precision is zero, it is treated as 1.
+ *        Use eE if exponent is less than -4 or greater or equal to precision.
+ *        Otherwise use fF.
+ *        Trailing zeroes are removed from the fractional part of the result;
+ *        a decimal point appears only if it is followed by at least one digit.
+ */
+
+static int	conv_science_notation(long double mantissa, ssize_t exponent,
+		t_token *token)
+{
+	int			ipart;
+	long double	fpart;
+	int			ret;
+
+	ret = 0;
+	ipart = (int) mantissa;
+	fpart = mantissa - (long double) ipart;
+	ret += ft_putchar('0' + ipart);
+	ret += write(1, ".", 1);
+	mantissa -= (long double) ipart;
+	mantissa *= 10.0;
+	while (token->precision)
+	{
+		ipart = (int) mantissa;
+		fpart = mantissa - (long double) ipart;
+		ret += ft_putchar('0' + ipart);
+		token->precision--;
+		mantissa -= (long double) ipart;
+		mantissa *= 10.0;
+	}
+	ret += write(1, "e", 1);
+	ret += write(1, "-", exponent < 0);
+	return (ret + putnum(ft_ssabs(exponent), 10, 0, 0));
+}
+
+
+static int	conv_decimal_notation(long double mantissa, ssize_t exponent,
+		t_token *token)
+{
+	int			ipart;
+	long double	fpart;
+	int			ret;
+
+	ret = 0;
+	if (exponent >= 0)
+	{
+		while (exponent >= 0)
+		{
+			ipart = (int) mantissa;
+			fpart = mantissa - (long double) ipart;
+			ret += ft_putchar('0' + ipart);
+			mantissa -= (long double) ipart;
+			mantissa *= 10.0;
+			exponent--;
+		}
+		if (token->precision > 0)
+		{
+			ret += write(1, ".", 1);
+			while (token->precision > 0)
+			{
+				ipart = (int) mantissa;
+				fpart = mantissa - (long double) ipart;
+				ret += ft_putchar('0' + ipart);
+				mantissa -= (long double) ipart;
+				mantissa *= 10.0;
+				token->precision--;
+			}
+		}
+	}
+	else
+	{
+		ret += write(1, "0", 1);
+		if (token->precision > 0)
+		{
+			ret += write(1, ".", 1);
+			if (token->precision < exponent)
+				return (ret + putset(token->precision, '0'));
+			ret += putset(exponent, '0');
+			token->precision -= exponent;
+			while (token->precision > 0)
+			{
+				ipart = (int) mantissa;
+				fpart = mantissa - (long double) ipart;
+				ret += ft_putchar('0' + ipart);
+				mantissa -= (long double) ipart;
+				mantissa *= 10.0;
+				token->precision--;
+			}
+		}
+	}
+	return (ret);
+}
+
+static ssize_t	get_exponent(long double num, long double *mantissa)
+{
+	ssize_t	exponent;
+
+	exponent = 0;
+	*mantissa = num;
+	if (num < 1.0)
+	{
+		while (*mantissa < 1.0)
+		{
+			*mantissa *= 10.0;
+			exponent--;
+		}
+	}
+	else
+	{
+		while (*mantissa >= 10.0)
+		{
+			*mantissa /= 10.0;
+			exponent++;
+		}
+	}
+	return (exponent);
+}
+
+static int	check_exceptions(long double num, int *ret, int *negative,
+		t_token *token)
 {
 	*ret = 0;
 	if (token->specs & ALL_CAPS)
@@ -151,15 +298,17 @@ static int	check_exceptions(long double num, int *ret,
 int	conv_float(t_token *token, va_list args)
 {
 	long double	num;
-	int			ret;
+	long double	mantissa;
+	ssize_t		exponent;
 	int			negative;
+	int			ret;
 
 	ret = 0;
 	negative = 0;
 	if (token->specs & LDOUBLE)
 		num = va_arg(args, long double);
 	else
-		num = (long double)va_arg(args, double);
+		num = (long double)(double)va_arg(args, double);
 	if (check_exceptions(num, &ret, &negative, token))
 		return (ret);
 	if (num < 0.0)
@@ -167,11 +316,12 @@ int	conv_float(t_token *token, va_list args)
 		negative = 1;
 		num = ft_fabsl(num);
 	}
-	if (token->precision == -1)
+	if (token->precision < 0)
 		token->precision = 6;
+	exponent = get_exponent(num, &mantissa);
 	if (token->specs & SCI_DOUBLE)
-		return (conv_sci_notation(num, negative, 1, token));
+		return (conv_science_notation(mantissa, exponent, token));
 	else if (token->specs & DEC_DOUBLE)
-		return (conv_dec_notation(num, negative, 1, token));
-	return (conv_shortest_float(num, negative, token));
+		return (conv_decimal_notation(mantissa, exponent, token));
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/07 20:49:09 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/20 11:26:56 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ int main(void) {
 	   printf("different num appends? [% d], [% d], [%+d], [%+d], [%d], [%d]*\n", 1, -1, 42, -42, 50, -50); 
 	
 	ft_printf("\nlast batch, let's GOOOOOOOOOOOOOOOOOO\n");
-	ft_printf("what's e? [%e]\n", 1.0);
-	ft_printf("what's f? [%f]\n", 1.1);
-	ft_printf("what's g? [%g]\n", 1.2);
+	ft_printf("what's e? [%e]\n", 0.000012984719824);
+	ft_printf("what's f? [%f]\n", 34298.4584534);
+	ft_printf("what's g? [%g]\n", 1.1283198);
 
 	ft_printf("\nBONUS MODE\n");
 	ft_printf("ld? [%ld] lld? [%lld] hd? [%hd] hhd? [%hhd]\n", (long) 2147483648, (long long) 9223372036854775807, (short) 40000, (char) 300);

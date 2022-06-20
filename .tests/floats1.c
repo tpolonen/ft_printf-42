@@ -14,8 +14,8 @@ int main(void)
 	fp = ft_printf("negativity: %f!\n", -1.0 / 0.0);
 	printf("pf[%d] fp[%d]\n\n", pf, fp);
 
-	pf =    printf("not number: %f*\n", -0.0 / 0.0);
-	fp = ft_printf("not number: %f!\n", -0.0 / 0.0);
+	pf =    printf("not number: %f*\n", 0.0 / 0.0);
+	fp = ft_printf("not number: %f!\n", 0.0 / 0.0);
 	printf("pf[%d] fp[%d]\n\n", pf, fp);
 
 	printf("same with positive widths\n");

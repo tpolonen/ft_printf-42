@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/14 11:47:00 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/20 10:42:00 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,9 @@ int	conv_string(t_token *token, va_list args)
 	int		len;
 	int		ret;
 
-	len = 0;
 	ret = 0;
 	str = va_arg(args, char *);
-	while (str[len])
-		len++;
+	len = ft_strlen(str);
 	if (token->precision >= 0 && token->precision < len)
 		len = token->precision;
 	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
