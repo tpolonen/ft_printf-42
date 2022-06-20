@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/20 11:27:26 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/20 18:50:31 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,8 +147,26 @@ static int	conv_shortest_float(long double num, int negative,
  *        a decimal point appears only if it is followed by at least one digit.
  */
 
+/* so. what we are doing all the time is:
+ * - take a floating point number that is under 10.0 -> one digit before radix.
+ * - separate digit and remainder.
+ * - print digit.
+ * - multiply remainder by then so there is a new digit before radix.
+ * - repeat n times.
+ * we pretty much do this WITH EVERY FLOAT CONVERSION.
+ * differences are:
+ * fF - print until original radix, then print until precision
+ * eE - print until precision, then print exponent
+ * gG - print with eE if exponent < -4 or exponent >= precision,
+ *      print with fF otherwise. IN EITHER CASE,
+ *      print only prevision amount of significant digits.
+ *      Don't print trailing zeroes in fractional part.
+ *
+ * fF and eE are pretty straightforward, gG needs some trickery.
+ */
+
 static int	conv_science_notation(long double mantissa, ssize_t exponent,
-		t_token *token)
+		int trim, t_token *token)
 {
 	int			ipart;
 	long double	fpart;
@@ -169,15 +187,17 @@ static int	conv_science_notation(long double mantissa, ssize_t exponent,
 		token->precision--;
 		mantissa -= (long double) ipart;
 		mantissa *= 10.0;
+		if (mantissa == 0.0 && trim)
+			break ;
 	}
 	ret += write(1, "e", 1);
 	ret += write(1, "-", exponent < 0);
-	return (ret + putnum(ft_ssabs(exponent), 10, 0, 0));
+	return (ret + putnum(ft_ssabs(exponent), 10, 2, 0));
 }
 
 
 static int	conv_decimal_notation(long double mantissa, ssize_t exponent,
-		t_token *token)
+		int trim, t_token *token)
 {
 	int			ipart;
 	long double	fpart;
@@ -195,7 +215,7 @@ static int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 			mantissa *= 10.0;
 			exponent--;
 		}
-		if (token->precision > 0)
+		if (token->precision > 0 && !(trim && mantissa == 0.0))
 		{
 			ret += write(1, ".", 1);
 			while (token->precision > 0)
@@ -206,13 +226,15 @@ static int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 				mantissa -= (long double) ipart;
 				mantissa *= 10.0;
 				token->precision--;
+				if (trim && mantissa == 0.0)
+					break ;
 			}
 		}
 	}
 	else
 	{
 		ret += write(1, "0", 1);
-		if (token->precision > 0)
+		if (token->precision > 0 && !(trim && mantissa == 0.0))
 		{
 			ret += write(1, ".", 1);
 			if (token->precision < exponent)
@@ -227,11 +249,29 @@ static int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 				mantissa -= (long double) ipart;
 				mantissa *= 10.0;
 				token->precision--;
+				if (mantissa == 0.0 && trim)
+					break ;
 			}
 		}
 	}
 	return (ret);
 }
+
+static int	conv_shortest_notation(long double mantissa, ssize_t exponent,
+		t_token *token)
+{
+	int	ret;
+
+	ret = 0;
+	if (token->precision == 0)
+		token->precision = 1;
+	if (exponent < -4 || exponent >= token->precision)
+		ret += conv_science_notation(mantissa, exponent, 1, token);
+	else
+		ret += conv_decimal_notation(mantissa, exponent, 1, token);
+	return (ret);
+}
+
 
 static ssize_t	get_exponent(long double num, long double *mantissa)
 {
@@ -262,6 +302,7 @@ static int	check_exceptions(long double num, int *ret, int *negative,
 		t_token *token)
 {
 	*ret = 0;
+	*negative = 0;
 	if (token->specs & ALL_CAPS)
 	{
 		if (num != num)
@@ -280,7 +321,7 @@ static int	check_exceptions(long double num, int *ret, int *negative,
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-inf", token->width, ' ');
 	}
-	if ((-1.0 / num) == (-1.0 / 0.0))
+	if ((-1.0 / num) == (-1.0 / 0.0) || num < 0.0)
 		*negative = 1;
 	return (*ret);
 }
@@ -304,24 +345,21 @@ int	conv_float(t_token *token, va_list args)
 	int			ret;
 
 	ret = 0;
-	negative = 0;
 	if (token->specs & LDOUBLE)
 		num = va_arg(args, long double);
 	else
 		num = (long double)(double)va_arg(args, double);
 	if (check_exceptions(num, &ret, &negative, token))
 		return (ret);
-	if (num < 0.0)
-	{
-		negative = 1;
-		num = ft_fabsl(num);
-	}
 	if (token->precision < 0)
 		token->precision = 6;
 	exponent = get_exponent(num, &mantissa);
+	ret += write(1, "-", negative);
 	if (token->specs & SCI_DOUBLE)
-		return (conv_science_notation(mantissa, exponent, token));
+		ret += conv_science_notation(mantissa, exponent, 0, token);
 	else if (token->specs & DEC_DOUBLE)
-		return (conv_decimal_notation(mantissa, exponent, token));
-	return (0);
+		ret += conv_decimal_notation(mantissa, exponent, 0, token);
+	else if (token->specs & SHORTEST_F)
+		ret += conv_shortest_notation(mantissa, exponent, token);
+	return (ret);
 }
