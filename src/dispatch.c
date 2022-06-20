@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/20 10:42:00 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/20 22:14:18 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ int	conv_string(t_token *token, va_list args)
 
 int	dispatch(t_token *token, va_list args)
 {
-	int				i;
-	int				ret;
-	const int		func_count = sizeof(g_conv_table) / sizeof(t_conv);
+	int			i;
+	int			ret;
+	const int	func_count = sizeof(g_conv_table) / sizeof(t_conv);
 
 	i = 0;
 	ret = 0;

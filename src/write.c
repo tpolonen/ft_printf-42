@@ -6,11 +6,16 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/19 16:53:03 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/20 22:31:09 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+/* This is pretty kludgy attempt at saving lines from other int conversion
+ * functions. Probably could be refactored in other existing functions somehow.
+ * ._.
+ */
 
 int	print_prefix(int negative, t_token *token)
 {
@@ -60,7 +65,7 @@ int	putset(int count, char c)
 }
 
 /* putnum assembles the number as a string to buffer and outputs it.
- * If the minimum length is longer than amount of digits in number,,
+ * If the minimum length is longer than amount of digits in number,
  * desired amount of zeroes is printed first and the buffer afterwards.
  */
 
@@ -105,4 +110,39 @@ int	putstr(const char *str, int min_len, char fill_char)
 	if (len < min_len)
 		ret += putset(min_len - len, fill_char);
 	return (ret + write(1, str, len));
+}
+
+/* putfloat prints the required amount of digits from normalized float.
+ * optionally last digit is rounded or trailing zeroes are trimmed.
+ * mantissa is adjusted while printing, so this function can be called
+ * repeatedly for the same float.
+ */
+
+int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
+{
+	int		ipart;
+	int		ret;
+	int		i;
+	double	rd;
+
+	ret = 0;
+	if (round)
+	{
+		rd = 0.5;
+		i = count;
+		while (--i > 0)
+			rd *= 0.1;
+		*mantissa += rd;
+	}
+	while (count > 0)
+	{
+		ipart = (int) *mantissa;
+		*mantissa -= (long double) ipart;
+		ret += ft_putchar('0' + ipart);
+		*mantissa *= 10.0;
+		if (trim && *mantissa == 0.0)
+			return (ret);
+		count--;
+	}
+	return (ret);
 }
