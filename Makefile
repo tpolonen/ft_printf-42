@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/23 13:50:42 by tpolonen          #+#    #+#              #
-#    Updated: 2022/06/21 19:27:34 by teppo            ###   ########.fr        #
+#    Updated: 2022/06/21 23:46:03 by teppo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,14 @@ LDFLAGS  := -L$(LFT_DIR)
 LDLIBS   := -lft
 ARFLAGS  := rcs
 
-.PHONY: all clean fclean re
+.PHONY: all lib clean fclean lclean lfclean re
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+lib:
+	make -C $(LFT_DIR) all
+
+$(NAME): lib $(OBJ)
 	$(AR) $(ARFLAGS) $(NAME) $(OBJ)
 	ranlib $(NAME)
 
@@ -44,12 +47,17 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir -p $@
 
-clean:
+lclean:
+	make -C $(LFT_DIR) clean
+
+clean: lclean
 	@/bin/rm -rf $(OBJ_DIR)
 
-fclean: clean
+lfclean:
+	make -C $(LFT_DIR) fclean
+
+fclean: clean lfclean
 	/bin/rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re tests

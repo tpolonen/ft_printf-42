@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/21 20:17:04 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 23:05:24 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,20 @@
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
 	if (token->specs & S_CHAR)
-		return ((ssize_t)(va_arg(args, int)));
+		return ((ssize_t)(signed char)(va_arg(args, int)));
 	if (token->specs & SHORT)
-		return ((ssize_t)va_arg(args, int));
+		return ((ssize_t)(signed short)va_arg(args, int));
 	if (token->specs & LONG)
-		return ((ssize_t)va_arg(args, long));
+		return ((ssize_t)(signed long)va_arg(args, long));
 	if (token->specs & LLONG)
-		return ((ssize_t)va_arg(args, long long));
+		return ((ssize_t)(signed long long)va_arg(args, long long));
 	if (token->specs & SIZE_T)
 		return (va_arg(args, ssize_t));
 	if (token->specs & INTMAX_T)
 		return ((ssize_t)va_arg(args, intmax_t));
 	if (token->specs & PTRDIFF_T)
 		return ((ssize_t)va_arg(args, ptrdiff_t));
-	return ((ssize_t)va_arg(args, int));
+	return ((ssize_t)(signed int)va_arg(args, int));
 }
 
 static size_t	unsigned_typecast(t_token *token, va_list args)
@@ -59,7 +59,7 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 		return ((size_t)va_arg(args, intmax_t));
 	if (token->specs & PTRDIFF_T)
 		return ((size_t)va_arg(args, ptrdiff_t));
-	return ((size_t)(int)va_arg(args, int));
+	return ((size_t)(unsigned int)va_arg(args, int));
 }
 
 static int	get_prefix_len(int negative, t_token *token)

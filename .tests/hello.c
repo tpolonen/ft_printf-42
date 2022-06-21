@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/24 17:28:06 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/19 16:49:47 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/21 23:13:56 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,26 @@ int main(void) {
 
 	printf("pf[%d]fp[%d]\n",pf, fp);
 
-	printf("...can we actually print just a zero\n%i %d %u %o %x\n",0, 0, 0, 0, 0);
+	ft_printf("...can we actually print just a zero\n%i %d %u %o %x\n",0, 0, 0, 0, 0);
+
+	ft_printf("how about this stuff without conversions\n\n");
+	pf =    printf("%%");
+	printf("\n");
+	fp = ft_printf("%%");
+	printf("\n");
+	printf("pf[%d]fp[%d]\n\n",pf ,fp);
+
+	pf =    printf("");
+	printf("\n");
+	fp = ft_printf("");
+	printf("\n");
+	printf("pf[%d]fp[%d]\n\n",pf ,fp);
+
+	pf =    printf("%");
+	printf("\n");
+	fp = ft_printf("%");
+	printf("\n");
+	printf("pf[%d]fp[%d]\n\n",pf ,fp);
+
 	return 0;
 }

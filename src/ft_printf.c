@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/21 19:32:01 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 23:46:48 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ static int	get_conversion(t_token *token, char **seek)
 			token->specs |= 1 << (16 - i);
 			if (token->specs & PTR)
 				token->specs |= F_ALT_FORM;
+			if (token->specs & INTEGER && \
+					(token->precision >= 0 || token->specs & F_RIGHT_PADDING))
+				token->pchar = ' ';
 			return (0);
 		}
 		i--;
@@ -100,7 +103,9 @@ static void	get_flag(t_token *token, char **seek)
 
 static int	get_token(t_token *token, char **start, va_list args)
 {
-	(*start)++;
+	if (*(++(*start)) == '\0')
+		return (-1);
+	*token = (t_token){0, 0, -1, ' '};
 	get_flag(token, start);
 	if (ft_isdigit(**start))
 		token->width = (int) ft_strtol(*start, start);
@@ -119,9 +124,6 @@ static int	get_token(t_token *token, char **start, va_list args)
 	get_length(token, start);
 	if (get_conversion(token, start))
 		return (1);
-	if (token->specs & INTEGER && \
-			(token->precision >= 0 || token->specs & F_RIGHT_PADDING))
-		token->pchar = ' ';
 	if (token->specs & F_RIGHT_PADDING)
 		token->width = -(ft_abs(token->width));
 	return (0);
@@ -159,7 +161,6 @@ int	ft_printf(const char *restrict format, ...)
 		format += write(1, format, (size_t)n);
 		if (*format == '\0')
 			break ;
-		token = (t_token){0, 0, -1, ' '};
 		if (get_token(&token, (char **) &format, args) == 0)
 			ret += dispatch(&token, args);
 		else
