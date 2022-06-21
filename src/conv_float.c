@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/20 22:29:04 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 20:37:59 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ static ssize_t	get_exponent(long double num, long double *mantissa)
 
 	exponent = 0;
 	*mantissa = num;
+	if (num == 0.0)
+		return (0);
 	if (num < 1.0)
 	{
 		while (*mantissa < 1.0)
@@ -115,10 +117,11 @@ int	conv_float(t_token *token, va_list args)
 		num = (long double)(double)va_arg(args, double);
 	if (check_exceptions(num, &ret, &negative, token))
 		return (ret);
+	num = ft_fabsl(num);
 	if (token->precision < 0)
 		token->precision = 6;
 	exponent = get_exponent(num, &mantissa);
-	ret += write(1, "-", negative);
+	ret += (int)write(1, "-", (size_t)negative);
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, 0, token);
 	else if (token->specs & DEC_DOUBLE)

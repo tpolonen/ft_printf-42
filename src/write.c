@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/20 22:31:09 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 20:52:14 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,15 @@ int	print_prefix(int negative, t_token *token)
 	if ((token->specs & F_ALT_FORM) && (token->specs & HEXAL))
 	{
 		if (token->specs & (ALL_CAPS))
-			return (write(1, "0X", 2));
-		return (write(1, "0x", 2));
+			return ((int)write(1, "0X", 2));
+		return ((int)write(1, "0x", 2));
 	}
 	if (negative)
-		return (write(1, "-", 1));
+		return ((int)write(1, "-", 1));
 	if (token->specs & F_PRINT_PLUS)
-		return (write(1, "+", 1));
+		return ((int)write(1, "+", 1));
 	if (token->specs & F_PADDED_POS)
-		return (write(1, " ", 1));
+		return ((int)write(1, " ", 1));
 	return (0);
 }
 
@@ -46,19 +46,19 @@ int	putset(int count, char c)
 
 	ret = 0;
 	ft_memset(buf, c, sizeof(size_t));
-	while (count > sizeof(size_t))
+	while (count > (int) sizeof(size_t))
 	{
-		ret += write(1, buf, sizeof(size_t));
-		count -= sizeof(size_t);
+		ret += (int)write(1, buf, sizeof(size_t));
+		count -= (int) sizeof(size_t);
 	}
-	while (count > sizeof(int))
+	while (count > (int) sizeof(int))
 	{
-		ret += write(1, buf, sizeof(int));
-		count -= sizeof(int);
+		ret += (int)write(1, buf, sizeof(int));
+		count -= (int) sizeof(int);
 	}
 	while (count)
 	{
-		ret += write(1, buf, 1);
+		ret += (int)write(1, buf, 1);
 		count -= 1;
 	}
 	return (ret);
@@ -78,7 +78,7 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 	int			ret;
 
 	ret = 0;
-	len = ft_sizelen(num, base);
+	len = (int)ft_sizelen(num, base);
 	if (len < min_len)
 		ret += putset(min_len - len, '0');
 	i = len;
@@ -88,10 +88,10 @@ int	putnum(size_t num, int base, int min_len, int all_caps)
 		digits = "0123456789abcdefghjiklmnopqrstuvwxyz";
 	while (i > 0)
 	{
-		buf[--i] = digits[num % base];
-		num /= base;
+		buf[--i] = digits[num % (size_t)base];
+		num /= (size_t)base;
 	}
-	return (ret + write(1, buf, len));
+	return (ret + (int)write(1, buf, (size_t)len));
 }
 
 /* putstr prints the string representation of inf/nan required
@@ -105,11 +105,11 @@ int	putstr(const char *str, int min_len, char fill_char)
 	int	len;
 	int	ret;
 
-	len = ft_strlen(str);
+	len = (int)ft_strlen(str);
 	ret = 0;
 	if (len < min_len)
 		ret += putset(min_len - len, fill_char);
-	return (ret + write(1, str, len));
+	return (ret + (int)write(1, str, (size_t)len));
 }
 
 /* putfloat prints the required amount of digits from normalized float.
@@ -128,9 +128,9 @@ int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
 	ret = 0;
 	if (round)
 	{
-		rd = 0.5;
-		i = count;
-		while (--i > 0)
+		rd = 5.0;
+		i = (int)count;
+		while (i-- > 0)
 			rd *= 0.1;
 		*mantissa += rd;
 	}
@@ -138,7 +138,7 @@ int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
 	{
 		ipart = (int) *mantissa;
 		*mantissa -= (long double) ipart;
-		ret += ft_putchar('0' + ipart);
+		ret += ft_putchar('0' + (char)ipart);
 		*mantissa *= 10.0;
 		if (trim && *mantissa == 0.0)
 			return (ret);

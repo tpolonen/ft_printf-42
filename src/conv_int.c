@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/19 15:51:25 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/21 20:17:04 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	get_prefix_len(int negative, t_token *token)
 	return (0);
 }
 
-static int	check_prefix(t_token *token, int len, int negative, va_list args)
+static int	check_prefix(t_token *token, int len, int negative)
 {
 	int			ret;
 	int			pre_len;
@@ -105,23 +105,23 @@ int	conv_integer(t_token *token, va_list args)
 	int		ret;
 	size_t	len;
 
-	ret = 0;
 	ssize = 0;
+	base = 10;
 	if (token->specs & OCTAL)
 		base = 8;
 	else if (token->specs & HEXAL)
 		base = 16;
-	else
-		base = 10;
 	if (token->specs & SIGNED)
 	{
 		ssize = signed_typecast(token, args);
 		usize = ft_ssabs(ssize);
-	}	
+	}
 	else if (token->specs & UNSIGNED)
 		usize = unsigned_typecast(token, args);
+	if (token->specs & PTR && usize == 0)
+		return (putstr("(nil)", token->width, ' '));
 	len = ft_sizelen(usize, base);
-	ret += check_prefix(token, (int)len, ssize < 0, args);
+	ret = check_prefix(token, (int)len, ssize < 0);
 	ret += putnum(usize, base, token->precision, token->specs & ALL_CAPS);
 	return (ret);
 }

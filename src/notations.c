@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/20 22:28:52 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 20:49:38 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 
 	ret = putfloat(1, &mantissa, 0, 0);
 	if (token->precision)
-		ret += write(1, ".", 1);
+		ret += (int)write(1, ".", 1);
 	ret += putfloat(token->precision, &mantissa, 1, trim);
-	ret += write(1, "e", 1);
+	ret += (int)write(1, "e", 1);
 	if (exponent < 0)
-		ret += write(1, "-", 1);
+		ret += (int)write(1, "-", 1);
 	else
-		ret += write(1, "+", 1);
+		ret += (int)write(1, "+", 1);
 	return (ret + putnum(ft_ssabs(exponent), 10, 2, 0));
 }
 
@@ -61,18 +61,18 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	{
 		ret += putfloat(exponent + 1, &mantissa, 0, 0);
 		if (token->precision > 0 && !(trim && mantissa == 0.0))
-			ret += write(1, ".", 1);
+			ret += (int)write(1, ".", 1);
 	}
 	else
 	{
-		ret += write(1, "0", 1);
+		ret += (int)write(1, "0", 1);
 		if (token->precision > 0 && !(trim && mantissa == 0.0))
 		{
-			ret += write(1, ".", 1);
+			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
 				return (ret + putset(token->precision, '0'));
-			ret += putset(exponent, '0');
-			token->precision -= exponent;
+			ret += putset(ft_abs((int)exponent), '0');
+			token->precision -= (int)exponent;
 		}
 	}
 	ret += putfloat(token->precision, &mantissa, 1, trim);

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/19 16:50:41 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/21 19:32:01 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	get_conversion(t_token *token, char **seek)
 static void	get_length(t_token *token, char **seek)
 {
 	int			i;
-	int			len;
+	size_t		len;
 	const char	*length[] = {"h", "hh", "l", "ll", "j", "z", "t", "L"};
 
 	i = 7;
@@ -98,7 +98,7 @@ static void	get_flag(t_token *token, char **seek)
  *   will be set.
  */
 
-static int	get_token(t_token *token, char **start, int *n, va_list args)
+static int	get_token(t_token *token, char **start, va_list args)
 {
 	(*start)++;
 	get_flag(token, start);
@@ -156,14 +156,14 @@ int	ft_printf(const char *restrict format, ...)
 		while (format[n] != '%' && format[n] != '\0')
 			n++;
 		ret += n;
-		format += write(1, format, n);
+		format += write(1, format, (size_t)n);
 		if (*format == '\0')
 			break ;
 		token = (t_token){0, 0, -1, ' '};
-		if (get_token(&token, (char **) &format, &n, args) == 0)
+		if (get_token(&token, (char **) &format, args) == 0)
 			ret += dispatch(&token, args);
 		else
-			ret += write(1, format, 1);
+			ret += (int)write(1, format, 1);
 		format++;
 	}
 	va_end(args);

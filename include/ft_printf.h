@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/20 22:12:05 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 19:59:05 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@ typedef struct s_conv
 	t_conv_function	*func;
 }	t_conv;
 
-int	ft_printf(const char *restrict format, ...)
-	__attribute__ ((format (printf, 1, 2)));
+int	ft_printf(const char *restrict format, ...);
+//	__attribute__ ((format (printf, 1, 2)));
 int	dispatch(t_token *token, va_list args);
 
 int	conv_integer(t_token *token, va_list args);

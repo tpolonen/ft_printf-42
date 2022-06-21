@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/23 13:50:42 by tpolonen          #+#    #+#              #
-#    Updated: 2022/05/24 17:51:10 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/06/21 19:27:34 by teppo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,13 +24,13 @@ SRC  := $(wildcard $(SRC_DIR)*.c)
 OBJ  := $(patsubst $(SRC_DIR)%.c,  $(OBJ_DIR)%.o, $(SRC))
 
 CC 		 := gcc
-CFLAGS 	 := -c -Wall -Wextra -Werror -I$(HEADER_DIR)
+CFLAGS 	 := -c -g -Wall -Wextra -Werror -Wconversion
 CPPFLAGS := -I$(LFTHEADER_DIR) -I$(HEADER_DIR)
 LDFLAGS  := -L$(LFT_DIR)
-LDLIBS   := -lft -lftprintf
+LDLIBS   := -lft
 ARFLAGS  := rcs
 
-.PHONY: all clean fclean re tests
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
@@ -38,14 +38,14 @@ $(NAME): $(OBJ)
 	$(AR) $(ARFLAGS) $(NAME) $(OBJ)
 	ranlib $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	@$(CC) $(CFLAGS) $< -o $@
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJ_DIR)
+	@$(CC) $(CPPFLAGS) $(CFLAGS) $< -o $@ $(LDFLAGS) $(LDLIBS)
 
 $(OBJ_DIR):
 	mkdir -p $@
 
 clean:
-	@/bin/rm -r $(OBJ_DIR)
+	@/bin/rm -rf $(OBJ_DIR)
 
 fclean: clean
 	/bin/rm -f $(NAME)

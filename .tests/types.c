@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/20 21:02:28 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/21 20:50:08 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,14 @@ int main(void) {
 	   printf("printf    (%p)\n", &a);
 	ft_printf("alt form? [%#p]\n", &a);
 	   printf("printf    (%#p)\n", &a);
+
+	ft_printf("what's p? [%p]\n", NULL);
+	   printf("printf    (%p)\n", NULL);
+	ft_printf("alt form? [%#p]\n", NULL);
+	   printf("printf    (%#p)\n", NULL);
+
+	   printf("printf    [%s]\n", NULL);
+	ft_printf("what's s? [%s]\n", NULL);
 
 	ft_printf("\nhopefully that went well. what about these?\n");
 	ft_printf("what's d? [%d]\n", -123456);
@@ -76,6 +84,18 @@ int main(void) {
 
 	fp = ft_printf("what's g? [%.2g]!\n", 1128319.328);
 	pf =    printf("what's g? [%.2g]*\n", 1128319.328);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	pf =    printf("this is apparently hard: [%e]*\n", 0.011719);
+	//fp = ft_printf("this is apparently hard: [%e]!\n", 0.011719);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	pf =    printf("this is apparently hard: [%f]*\n", 0.011719);
+	fp = ft_printf("this is apparently hard: [%f]!\n", 0.011719);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	pf =    printf("this is apparently hard: [%g]*\n", 0.011719);
+	//fp = ft_printf("this is apparently hard: [%g]!\n", 0.011719);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
 	ft_printf("\nBONUS MODE\n");
