@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/21 20:28:45 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/22 23:09:53 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	conv_char(t_token *token, va_list args)
 	else
 		c = '%';
 	if (token->width > 1 && !(token->specs & F_RIGHT_PADDING))
-		ret += putset(token->width - 1, ' ');
+		ret += ft_putset(token->width - 1, ' ');
 	return ((int)(ret + write(1, &c, 1)));
 }
 
@@ -48,7 +48,7 @@ int	conv_string(t_token *token, va_list args)
 	if (token->precision >= 0 && token->precision < len)
 		len = token->precision;
 	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
-		ret += putset(token->width - len, ' ');
+		ret += ft_putset(token->width - len, ' ');
 	ret += (int)write(1, str, (size_t)len);
 	return (ret);
 }
@@ -71,6 +71,6 @@ int	dispatch(t_token *token, va_list args)
 		i++;
 	}
 	if ((token->specs & F_RIGHT_PADDING) && ft_abs(token->width) > ret)
-		ret += putset(ft_abs(token->width) - ret, ' ');
+		ret += ft_putset(ft_abs(token->width) - ret, ' ');
 	return (ret);
 }

@@ -6,14 +6,14 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/21 20:52:14 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/22 23:09:53 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-/* This is pretty kludgy attempt at saving lines from other int conversion
- * functions. Probably could be refactored in other existing functions somehow.
+/* This is pretty kludgy attempt at saving lines from other num conversion
+ * functions. Probably could be refactored in existing functions somehow.
  * ._.
  */
 
@@ -34,68 +34,9 @@ int	print_prefix(int negative, t_token *token)
 	return (0);
 }
 
-/* putset works similarly to memset - char c is printed count times.
- * This form might be a bit overengineered, but at least it guarantees
- * that larger outputs are printed as fast as possible.
- */
 
-int	putset(int count, char c)
-{
-	int		ret;
-	char	buf[sizeof(size_t)];
-
-	ret = 0;
-	ft_memset(buf, c, sizeof(size_t));
-	while (count > (int) sizeof(size_t))
-	{
-		ret += (int)write(1, buf, sizeof(size_t));
-		count -= (int) sizeof(size_t);
-	}
-	while (count > (int) sizeof(int))
-	{
-		ret += (int)write(1, buf, sizeof(int));
-		count -= (int) sizeof(int);
-	}
-	while (count)
-	{
-		ret += (int)write(1, buf, 1);
-		count -= 1;
-	}
-	return (ret);
-}
-
-/* putnum assembles the number as a string to buffer and outputs it.
- * If the minimum length is longer than amount of digits in number,
- * desired amount of zeroes is printed first and the buffer afterwards.
- */
-
-int	putnum(size_t num, int base, int min_len, int all_caps)
-{
-	int			len;
-	char		*digits;
-	char		buf[30];
-	int			i;
-	int			ret;
-
-	ret = 0;
-	len = (int)ft_sizelen(num, base);
-	if (len < min_len)
-		ret += putset(min_len - len, '0');
-	i = len;
-	if (all_caps)
-		digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	else
-		digits = "0123456789abcdefghjiklmnopqrstuvwxyz";
-	while (i > 0)
-	{
-		buf[--i] = digits[num % (size_t)base];
-		num /= (size_t)base;
-	}
-	return (ret + (int)write(1, buf, (size_t)len));
-}
-
-/* putstr prints the string representation of inf/nan required
- * for floats, in uppercase or lowercase.
+/* putstr prints the string representation of several conversions
+ * that sometimes need to output string instead of what they usually do.
  * If minimum length is more than strings length, chars are
  * appended in front.
  */
@@ -108,7 +49,7 @@ int	putstr(const char *str, int min_len, char fill_char)
 	len = (int)ft_strlen(str);
 	ret = 0;
 	if (len < min_len)
-		ret += putset(min_len - len, fill_char);
+		ret += ft_putset(min_len - len, fill_char);
 	return (ret + (int)write(1, str, (size_t)len));
 }
 
@@ -126,7 +67,7 @@ int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
 	double	rd;
 
 	ret = 0;
-	if (round)
+	if (round && count > 0)
 	{
 		rd = 5.0;
 		i = (int)count;
@@ -134,7 +75,10 @@ int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
 			rd *= 0.1;
 		*mantissa += rd;
 	}
-	while (count > 0)
+	if (*mantissa < 0.0 || 42.0 / *mantissa == -1.0 / 0.0)
+		ret += ft_putchar('-');
+	*mantissa = ft_fabsl(*mantissa);
+	while (--count >= 0)
 	{
 		ipart = (int) *mantissa;
 		*mantissa -= (long double) ipart;
@@ -142,7 +86,6 @@ int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
 		*mantissa *= 10.0;
 		if (trim && *mantissa == 0.0)
 			return (ret);
-		count--;
 	}
 	return (ret);
 }

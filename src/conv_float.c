@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/21 20:37:59 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/22 23:22:14 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,14 @@
  * we could utilize the actual floating point?
  *
  * 1. Start with the number.
- * 2. Find out which direction the period is.
+ * 2. Find out which direction the radix is.
  * 3. If the number is under 1.0, multiply it by ten until it's greater than 1.
  * 4. If the number is over 10.0, multiply it by 0.1 until it's less than 10.
- * 5. Now we know the exponent. Yay.
- *
- * As a side effect, this function also produces the normalized version of
- * the original number.
+ * 5. Now we know the exponent. Yay. Also we normalized the number, 
+ *    which can now be found in *mantissa.
  */
 
-static ssize_t	get_exponent(long double num, long double *mantissa)
+static ssize_t	normalize_double(long double num, long double *mantissa)
 {
 	ssize_t	exponent;
 
@@ -57,18 +55,14 @@ static ssize_t	get_exponent(long double num, long double *mantissa)
  * 1. NaN == NaN is always false.
  * 2. Dividing by zero will always produce infinity:
  *    Sign depends on which number was divided.
- * 3. Negative zero can be found by dividing any number with it:
- *    If it produces negative infinity, then it is negative zero.
  * 
  * There is probably a more elegant way to produce output with different
  * letter cases.
  */
 
-static int	check_exceptions(long double num, int *ret, int *negative,
-		t_token *token)
+static int	check_exceptions(long double num, int *ret,	t_token *token)
 {
 	*ret = 0;
-	*negative = 0;
 	if (token->specs & ALL_CAPS)
 	{
 		if (num != num)
@@ -87,8 +81,6 @@ static int	check_exceptions(long double num, int *ret, int *negative,
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-inf", token->width, ' ');
 	}
-	if ((-1.0 / num) == (-1.0 / 0.0) || num < 0.0)
-		*negative = 1;
 	return (*ret);
 }
 
@@ -107,7 +99,6 @@ int	conv_float(t_token *token, va_list args)
 	long double	num;
 	long double	mantissa;
 	ssize_t		exponent;
-	int			negative;
 	int			ret;
 
 	ret = 0;
@@ -115,13 +106,13 @@ int	conv_float(t_token *token, va_list args)
 		num = va_arg(args, long double);
 	else
 		num = (long double)(double)va_arg(args, double);
-	if (check_exceptions(num, &ret, &negative, token))
+	if (check_exceptions(num, &ret, token))
 		return (ret);
-	num = ft_fabsl(num);
 	if (token->precision < 0)
 		token->precision = 6;
-	exponent = get_exponent(num, &mantissa);
-	ret += (int)write(1, "-", (size_t)negative);
+	exponent = normalize_double(ft_fabsl(num), &mantissa);
+	if (num < 0.0)
+		mantissa *= -1.0;
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, 0, token);
 	else if (token->specs & DEC_DOUBLE)

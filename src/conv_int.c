@@ -6,19 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/21 23:05:24 by teppo            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   conv_int.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/02 14:12:55 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/19 15:41:06 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/22 23:10:44 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +61,9 @@ static int	get_prefix_len(int negative, t_token *token)
 
 static int	check_prefix(t_token *token, int len, int negative)
 {
-	int			ret;
-	int			pre_len;
-	int			pre_printed;
+	int	ret;
+	int	pre_len;
+	int	pre_printed;
 
 	ret = 0;
 	pre_len = get_prefix_len(negative, token);
@@ -91,7 +79,7 @@ static int	check_prefix(t_token *token, int len, int negative)
 		pre_printed = 1;
 	}
 	if ((token->precision + pre_len) < token->width)
-		ret += putset(token->width - token->precision - pre_len, token->pchar);
+		ret += ft_putset(token->width - token->precision - pre_len, token->pchar);
 	if (pre_len > 0 && pre_printed == 0)
 		ret += print_prefix(negative, token);
 	return (ret);
@@ -122,6 +110,6 @@ int	conv_integer(t_token *token, va_list args)
 		return (putstr("(nil)", token->width, ' '));
 	len = ft_sizelen(usize, base);
 	ret = check_prefix(token, (int)len, ssize < 0);
-	ret += putnum(usize, base, token->precision, token->specs & ALL_CAPS);
+	ret += ft_putnum(usize, base, token->precision, token->specs & ALL_CAPS);
 	return (ret);
 }

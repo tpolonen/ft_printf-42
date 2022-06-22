@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/21 20:49:38 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/22 23:10:44 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 /* We use these functions after we have normalized the number and got the
  * mantissa and exponent. This information can be used to produce any of
  * these conversions.
+ */
+
+/* Each of these functions has to be in charge of printing their own prefixes:
+ * counting their length is so involved process it's better for them to do it
+ * individually than try to make some kind of 'one-size-fits-all' megafunction
+ * with dozens of if-else-branches.
  */
 
 /* eE: Print the most significant number.
@@ -37,18 +43,17 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 		ret += (int)write(1, "-", 1);
 	else
 		ret += (int)write(1, "+", 1);
-	return (ret + putnum(ft_ssabs(exponent), 10, 2, 0));
+	return (ret + ft_putnum(ft_ssabs(exponent), 10, 2, 0));
 }
 
 /* fF: Is exponent positive or negative?
- *     If positive: - Print num converted to integer.
- *                  - Decrease integer from remainder.
- *                  - Multiply remainder by ten.
+ *     If positive: - Print normalized float digit by digit.
  *                  - Repeat until we hit the radix.
- *                  - Print radix and any remaining numbers up to precision.
+ *                  - If precision > 0:
+ *                       Print radix and any remaining numbers up to precision.
  *     If negative: - Print 0 and radix.
- *                  - Print zeroes until exponent is zero.
- *                  - Continue printing numbers as above.
+ *                  - Print zeroes until exp. is zero or precision runs out.
+ *                  - If any precision is left, fill with normalized float.
  */
 
 int	conv_decimal_notation(long double mantissa, ssize_t exponent,
@@ -70,8 +75,8 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 		{
 			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
-				return (ret + putset(token->precision, '0'));
-			ret += putset(ft_abs((int)exponent), '0');
+				return (ret + ft_putset(token->precision, '0'));
+			ret += ft_putset(ft_abs((int)exponent), '0');
 			token->precision -= (int)exponent;
 		}
 	}
@@ -80,6 +85,7 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 }
 
 /* gG: If precision is zero, it is treated as 1.
+ *     Precision determines how many significant digits are printed.
  *     Use eE if exponent is less than -4 or greater or equal to precision.
  *     Otherwise use fF.
  *     Trailing zeroes are removed from the fractional part of the result;
