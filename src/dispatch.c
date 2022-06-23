@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/22 23:09:53 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 20:21:26 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ int	conv_string(t_token *token, va_list args)
 		len = token->precision;
 	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
 		ret += ft_putset(token->width - len, ' ');
-	ret += (int)write(1, str, (size_t)len);
-	return (ret);
+	return (ret + (int)write(1, str, (size_t)len));
 }
 
 int	dispatch(t_token *token, va_list args)

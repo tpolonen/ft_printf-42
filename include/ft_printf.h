@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/22 23:09:53 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 19:57:57 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,25 +80,41 @@ typedef struct s_conv
 	t_conv_function	*func;
 }	t_conv;
 
-int	ft_printf(const char *restrict format, ...);
-//	__attribute__ ((format (printf, 1, 2)));
-int	dispatch(t_token *token, va_list args);
+/* ft_printf.c
+ */
+int			ft_printf(const char *restrict format, ...);
 
-int	conv_integer(t_token *token, va_list args);
-int	conv_char(t_token *token, va_list args);
-int	conv_string(t_token *token, va_list args);
-int	conv_float(t_token *token, va_list args);
+/* dispatch.c
+ */
+int			dispatch(t_token *token, va_list args);
+int			conv_char(t_token *token, va_list args);
+int			conv_string(t_token *token, va_list args);
 
-int	conv_science_notation(long double mantissa, ssize_t exponent,
-		int trim, t_token *token);
-int	conv_decimal_notation(long double mantissa, ssize_t exponent,
-		int trim, t_token *token);
-int	conv_shortest_notation(long double mantissa, ssize_t exponent,
+/* conv_int.c
+ */
+int			conv_integer(t_token *token, va_list args);
+
+/* conv_float.c
+ */
+int			conv_float(t_token *token, va_list args);
+
+/* notations.c
+ */
+int			conv_science_notation(long double mantissa, ssize_t exponent,
+		t_token *token);
+int			conv_decimal_notation(long double mantissa, ssize_t exponent,
+		t_token *token);
+int			conv_shortest_notation(long double mantissa, ssize_t exponent,
 		t_token *token);
 
-int	print_prefix(int negative, t_token *token);
-int	ft_putset(int count, char c);
-int	putnum(size_t num, int base, int min_len, int all_caps);
-int	putstr(const char *str, int min_len, char fill_char);
-int	putfloat(ssize_t count, long double *mantissa, int round, int trim);
+/* write.c
+ */
+int			print_prefix(int negative, t_token *token);
+int			putstr(const char *str, int min_len, char fill_char);
+int			putfloat(ssize_t len, long double *mantissa, int round, int trim);
+
+/* float_utils.c
+ */
+long double	bad_powf(long double num, int exp);
+long double	round_ld(long double mantissa, ssize_t len, int round);
 #endif

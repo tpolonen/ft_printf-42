@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/22 23:10:44 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 20:13:05 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,8 @@ static int	check_prefix(t_token *token, int len, int negative)
 	pre_printed = 0;
 	if (len > token->precision)
 		token->precision = len;
-	if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM) \
-			&& token->precision < len + 1)
-		token->precision = len + 1;
+	if ((token->specs & OCTAL) && (token->specs & F_ALT_FORM))
+		token->precision = ft_max(token->precision, len + 1);
 	if ((token->precision + pre_len) > token->width || token->pchar == '0')
 	{
 		ret += print_prefix(negative, token);

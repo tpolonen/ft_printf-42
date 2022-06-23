@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/23 14:24:39 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 19:23:02 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,9 @@ int	conv_float(t_token *token, va_list args)
 	if (num < 0.0)
 		mantissa *= -1.0;
 	if (token->specs & SCI_DOUBLE)
-		ret += conv_science_notation(mantissa, exponent, 0, token);
+		ret += conv_science_notation(mantissa, exponent, token);
 	else if (token->specs & DEC_DOUBLE)
-		ret += conv_decimal_notation(mantissa, exponent, 0, token);
+		ret += conv_decimal_notation(mantissa, exponent, token);
 	else if (token->specs & SHORTEST_F)
 		ret += conv_shortest_notation(mantissa, exponent, token);
 	return (ret);
