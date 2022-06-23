@@ -1,6 +1,7 @@
 # Misc
 *.swp
 *.old
+*_debug
 !.gitignore
 !./.tests
 *.out
