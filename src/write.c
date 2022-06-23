@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/22 23:09:53 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 14:00:04 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,35 +57,72 @@ int	putstr(const char *str, int min_len, char fill_char)
  * optionally last digit is rounded or trailing zeroes are trimmed.
  * mantissa is adjusted while printing, so this function can be called
  * repeatedly for the same float.
+ *
+ * But first, here's some utility functions.
  */
 
-int	putfloat(ssize_t count, long double *mantissa, int round, int trim)
+/* Actual powf is REAL complicated. It has specific edge cases that are
+ * really counterintuitive and replicating it while staying within Norme
+ * would be a lot of effort with little payoff. So I opted to make this
+ * tiny version of it that is just used here in the context of putfloat.
+ */
+
+static long double	bad_powf(long double num, int exp)
 {
-	int		ipart;
-	int		ret;
-	int		i;
-	double	rd;
+	long double	out;
+
+	if (exp <= 0)
+		return (num);
+	out = num;
+	while (exp-- > 0)
+		out *= num;
+	return (out);
+}
+
+static int	prepare_float(long double *mantissa, ssize_t len, int round)
+{
+	long double	rd;
+	int			ret;
 
 	ret = 0;
-	if (round && count > 0)
-	{
-		rd = 5.0;
-		i = (int)count;
-		while (i-- > 0)
-			rd *= 0.1;
-		*mantissa += rd;
-	}
 	if (*mantissa < 0.0 || 42.0 / *mantissa == -1.0 / 0.0)
+	{
+		*mantissa = ft_fabsl(*mantissa);
 		ret += ft_putchar('-');
-	*mantissa = ft_fabsl(*mantissa);
-	while (--count >= 0)
+	}
+	if (len <= 0 || !round)
+		return (ret);
+	rd = 5.0L * bad_powf(0.1, (int)len - 1);
+	if ((int)((*mantissa + rd) * bad_powf(10.0, (int)len - 2)) % 2 == 0)
+		*mantissa += rd;
+	return (ret);
+}
+
+int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
+{
+	int	ipart;
+	int	ret;
+	int	ocount;
+
+	ret = 0;
+	ret += prepare_float(mantissa, len, round);
+	ocount = 0;
+	while (--len >= 0)
 	{
 		ipart = (int) *mantissa;
 		*mantissa -= (long double) ipart;
-		ret += ft_putchar('0' + (char)ipart);
 		*mantissa *= 10.0;
-		if (trim && *mantissa == 0.0)
-			return (ret);
+		if (ipart == 0)
+		{
+			if (trim && len == 0)
+				return (ret);
+			ocount++;
+			continue ;
+		}
+		else if (ocount > 0)
+			ret += ft_putset(ocount, '0');
+		ocount = 0;
+		ret += ft_putchar('0' + (char)ipart);
 	}
-	return (ret);
+	return (ret + ft_putset(ocount, '0'));
 }

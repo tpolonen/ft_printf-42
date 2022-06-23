@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/21 20:50:08 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 14:26:31 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,16 +86,32 @@ int main(void) {
 	pf =    printf("what's g? [%.2g]*\n", 1128319.328);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	pf =    printf("this is apparently hard: [%e]*\n", 0.011719);
-	//fp = ft_printf("this is apparently hard: [%e]!\n", 0.011719);
+	pf =    printf("this is apparently hard: e[%e]*\n", 0.011719);
+	fp = ft_printf("this is apparently hard: e[%e]!\n", 0.011719);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	pf =    printf("this is apparently hard: [%f]*\n", 0.011719);
-	fp = ft_printf("this is apparently hard: [%f]!\n", 0.011719);
+	pf =    printf("this is apparently hard: f[%.8f]*\n", 0.011719);
+	fp = ft_printf("this is apparently hard: f[%.8f]!\n", 0.011719);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	pf =    printf("this is apparently hard: [%g]*\n", 0.011719);
-	//fp = ft_printf("this is apparently hard: [%g]!\n", 0.011719);
+	pf =    printf("this is apparently hard: g[%.8g]*\n", 0.011719000000001);
+	fp = ft_printf("this is apparently hard: g[%.8g]!\n", 0.011719000000001);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	fp = ft_printf("what's e? [%.12e]!\n", -0.000012984799824);
+	pf =    printf("what's e? [%.12e]*\n", -0.000012984799824);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	fp = ft_printf("what's f? [%e]!\n", -34298.4584534);
+	pf =    printf("what's f? [%e]*\n", -34298.4584534);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	fp = ft_printf("what's g? [%.8f]!\n", -0.0011283198);
+	pf =    printf("what's g? [%.8f]*\n", -0.0011283198);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	fp = ft_printf("what's g? [%f]!\n", -1128319.328);
+	pf =    printf("what's g? [%f]*\n", -1128319.328);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
 	ft_printf("\nBONUS MODE\n");

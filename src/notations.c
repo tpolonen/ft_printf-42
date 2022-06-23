@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/22 23:10:44 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/23 13:58:51 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,14 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	else
 	{
 		ret += (int)write(1, "0", 1);
+		exponent = (ssize_t)ft_ssabs(exponent);
 		if (token->precision > 0 && !(trim && mantissa == 0.0))
 		{
 			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
 				return (ret + ft_putset(token->precision, '0'));
-			ret += ft_putset(ft_abs((int)exponent), '0');
-			token->precision -= (int)exponent;
+			ret += ft_putset(ft_abs((int)(exponent - 1)), '0');
+			token->precision -= (int)(exponent - 1);
 		}
 	}
 	ret += putfloat(token->precision, &mantissa, 1, trim);
@@ -100,7 +101,8 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 	ret = 0;
 	if (token->precision == 0)
 		token->precision = 1;
-	token->precision--;
+	if (exponent >= 0)
+		token->precision--;
 	if (exponent < -4 || exponent >= token->precision)
 		ret += conv_science_notation(mantissa, exponent, 1, token);
 	else
