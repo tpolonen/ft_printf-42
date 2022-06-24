@@ -5,6 +5,7 @@
 !.gitignore
 !./.tests
 *.out
+24-bit*
 
 # Prerequisites
 *.d
