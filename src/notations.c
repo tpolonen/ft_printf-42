@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/23 19:49:28 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/24 15:31:33 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,20 @@
  * eq. everything that is printed before the number itself - padding to width
  * with whitespace or 0 and the requested sign (minus, plus or empty space).
  */
-
+/*
 static int	check_prefix(t_token *token, int len, long double *mantissa)
 {
-	int	prefix_len;
-	int	prefix_printed;
+	int	prefix_len = 0;
+	int	prefix_printed = 0;
 
+	void(prefix_len);
+	void(prefix_printed);
+	void(token);
+	void(len);
 	*mantissa = ft_fabsl(*mantissa);
 	return (0);
 }
-
+*/
 /* eE: Print the most significant number.
  *     Print radix.
  *     Print as many numbers as is required by precision.
@@ -48,9 +52,9 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
-	ret = check_prefix(token, 3 + token->precision > 0 + token->precision +
-			ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
-	ret += putfloat(1, &mantissa, 0, 0);
+/*	ret = check_prefix(token, 3 + token->precision > 0 + token->precision +
+			ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);*/
+	ret = putfloat(1, &mantissa, 0, 0);
 	if (token->precision)
 		ret += (int)write(1, ".", 1);
 	ret += putfloat(token->precision, &mantissa, 1, 0);
@@ -77,17 +81,18 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
+	ret = 0;
 	if (exponent >= 0)
 	{
-		ret = check_prefix(token, exponent + 1 + token->precision > 0 +
-				token->precision, &mantissa);
+	//	ret = check_prefix(token, exponent + 1 + token->precision > 0 +
+	//			token->precision, &mantissa);
 		ret += putfloat(exponent + 1, &mantissa, 0, 0);
 		ret += (int)write(1, ".", token->precision > 0);
 	}
 	else
 	{
-		ret = check_prefix(token, 1 + token->precision > 0 + token->precision,
-				&mantissa);
+	//	ret = check_prefix(token, 1 + token->precision > 0 + token->precision,
+	//			&mantissa);
 		ret += (int)write(1, "0", 1);
 		exponent = (ssize_t)ft_ssabs(exponent);
 		if (token->precision > 0)
@@ -101,12 +106,13 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	}
 	return (ret + putfloat(token->precision, &mantissa, 1, 0));
 }
-
+/*
 static int	trim_z(long double num, int precision)
 {
+	void(num)
 	return (precision);
 }
-
+*/
 /* gG: If precision is zero, it is treated as 1.
  *     Precision determines how many significant digits are printed.
  *     Use eE if exponent is less than -4 or greater or equal to precision.
@@ -124,14 +130,16 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 		token->precision--;
 	if (exponent < -4 || exponent >= token->precision)
 	{
-		token->precision = trim_z(mantissa, token->precision);
+//		token->precision = trim_z(mantissa, token->precision);
 		return (conv_science_notation(mantissa, exponent, token));
 	}
+	/*
 	if (exponent >= 0)
-		token->precision = trim_z(mantissa * bad_powf(10.0, exponent),
+		token->precision = trim_z(mantissa * bad_powf(10.0, (ssize_t)exponent),
 				token->precision);
 	else
-		token->precision = trim_z(mantissa * bad_powf(0.1, exponent),
+		token->precision = trim_z(mantissa * bad_powf(0.1, (ssize_t)exponent),
 				token->precision);
+				*/
 	return (conv_decimal_notation(mantissa, exponent, token));
 }

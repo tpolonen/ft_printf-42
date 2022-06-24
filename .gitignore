@@ -7,6 +7,10 @@
 *.out
 24-bit*
 
+# Bear specific
+.cache/
+compile_commands.json
+
 # Prerequisites
 *.d
 
