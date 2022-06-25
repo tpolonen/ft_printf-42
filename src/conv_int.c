@@ -6,11 +6,16 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/23 20:13:05 by teppo            ###   ########.fr       */
+/*   Updated: 2022/06/25 03:17:21 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+/* These typecasts are needed to replicate the authentic behaviour of
+ * over/underflowing integer conversions. If you send INTMAX to signed char
+ * conversion, you want output to be value between -128 - 127 and so on.
+ */
 
 static ssize_t	signed_typecast(t_token *token, va_list args)
 {
@@ -59,6 +64,15 @@ static int	get_prefix_len(int negative, t_token *token)
 	return (0);
 }
 
+/* In this context prefix means everything that comes before the actual number:
+ * padding with whitespace or zeroes and optional plus/minus/empty space for
+ * sign.
+ *
+ * Order of operation matters: If we pad width with zeroes, we print signs
+ * first and zeroes after them - [+0009] for example.
+ * When we pad with whitespace, order is reversed - [   +9] for example.
+ */
+
 static int	check_prefix(t_token *token, int len, int negative)
 {
 	int	ret;
@@ -78,7 +92,8 @@ static int	check_prefix(t_token *token, int len, int negative)
 		pre_printed = 1;
 	}
 	if ((token->precision + pre_len) < token->width)
-		ret += ft_putset(token->width - token->precision - pre_len, token->pchar);
+		ret += ft_putset(token->width - token->precision - pre_len,
+				token->pchar);
 	if (pre_len > 0 && pre_printed == 0)
 		ret += print_prefix(negative, token);
 	return (ret);

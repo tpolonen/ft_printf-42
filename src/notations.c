@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/24 17:58:56 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/06/25 03:17:21 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,6 @@ static int	check_prefix(t_token *token, int len, long double *mantissa)
 	int	prefix_len = 0;
 	int	prefix_printed = 0;
 
-	(void)prefix_len;
-	(void)prefix_printed;
-	(void)token;
-	(void)len;
 	*mantissa = ft_fabsl(*mantissa);
 	return (0);
 }
@@ -98,7 +94,7 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 		ret += (int)write(1, "0", 1);
 		exponent = (ssize_t)ft_ssabs(exponent);
 		if (token->precision > 0)
-		{
+		
 			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
 				return (ret + ft_putset(token->precision, '0'));
@@ -136,17 +132,34 @@ static int	trim_z(long double num, int precision)
  *     Otherwise use fF.
  *     Trailing zeroes are removed from the fractional part of the result;
  *     a decimal point appears only if it is followed by at least one digit.
+ *
+ *     ...look, honestly this conversion has been reverse engineered by
+ *     pure brute force and endless frustration. It produces similar results
+ *     to actual printf-conversion, probably by pure coincidence.
+ *     I would heartily recommend looking elsewhere if you want to
+ *     replicate this conversion in your own version of printf.
  */
 
 int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 		t_token *token)
 {
-if (token->precision == 0)
+	int	scilen;
+	int declen;
+
+	if (token->precision == 0)
 		token->precision = 1;
+	token->precision--;
 	token->precision = trim_z(mantissa, token->precision);
-	if (exponent != 0)
-		token->precision--;
-	if (exponent < 4 || exponent >= token->precision)
+	scilen = 3 + (token->precision > 0) + token->precision +
+			ft_max(2, (int)ft_ssizelen(exponent, 10));
+	if (exponent > 0)
+		declen = exponent + 1 + (token->precision > 0) +
+				token->precision;
+	else
+		declen = 1 + (token->precision > 0) + token->precision;
+	if (scilen < declen)
 		return (conv_science_notation(mantissa, exponent, token));
+	if (exponent < 0)
+		token->precision++;
 	return (conv_decimal_notation(mantissa, exponent, token));
 }
