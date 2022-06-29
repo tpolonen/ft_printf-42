@@ -58,16 +58,16 @@ int main(void) {
 	int pf =    printf("what's e? [%e]*\n", 0.000012984719824);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	fp = ft_printf("what's e? [%e]!\n", 0.000012984799824);
-	pf =    printf("what's e? [%e]*\n", 0.000012984799824);
+	fp = ft_printf("what's e? [%20e]!\n", 0.000012984799824);
+	pf =    printf("what's e? [%20e]*\n", 0.000012984799824);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	fp = ft_printf("what's f? [%f]!\n", 34298.4584534);
-	pf =    printf("what's f? [%f]*\n", 34298.4584534);
+	fp = ft_printf("what's f? [%20f]!\n", 34298.4584534);
+	pf =    printf("what's f? [%20f]*\n", 34298.4584534);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	fp = ft_printf("what's g? [%g]!\n", 1.1283198);
-	pf =    printf("what's g? [%g]*\n", 1.1283198);
+	fp = ft_printf("what's g? [%20g]!\n", 1.1283198);
+	pf =    printf("what's g? [%20g]*\n", 1.1283198);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
 	fp = ft_printf("what's g? [%g]!\n", 1128319.328);
@@ -106,8 +106,8 @@ int main(void) {
 	pf =    printf("what's e? [%e]*\n", -34298.4584534);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
-	fp = ft_printf("what's .8f? [%.8f]!\n", -0.0011283198);
-	pf =    printf("what's .8f? [%.8f]*\n", -0.0011283198);
+	fp = ft_printf("what's .8f? [%10.8f]!\n", -0.0011283198);
+	pf =    printf("what's .8f? [%10.8f]*\n", -0.0011283198);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
 	fp = ft_printf("what's f? [%f]!\n", -1128319.328);

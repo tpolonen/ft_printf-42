@@ -30,11 +30,29 @@
 
 static int	check_prefix(t_token *token, int len, long double *mantissa)
 {
-	int	prefix_len = 0;
-	int	prefix_printed = 0;
+	int	ret;
+	int	prefix_len;
+	int	prefix_printed;
+	int	negative;
 
+	ret = 0;
+	negative = *mantissa < 0.0 || 42.0 / *mantissa == -1.0/0.0;
+	prefix_len = 0;
+	prefix_printed = 0;
+	if (token->precision & F_PADDED_POS || token->precision & F_PRINT_PLUS ||
+			negative)
+		prefix_len = 1;
+	if (token->pchar == '0')
+	{
+		ret += print_prefix(negative, token);
+		prefix_printed = 1;
+	}
+	if (len + prefix_len < token->width)
+		ret += ft_putset(token->width - len - prefix_len, token->pchar);
+	if (prefix_len > 0 && prefix_printed == 0)
+		ret += print_prefix(negative, token);
 	*mantissa = ft_fabsl(*mantissa);
-	return (0);
+	return (ret);
 }
 
 /* eE: Print the most significant number.
@@ -48,9 +66,9 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
-	ret = check_prefix(token, 3 + token->precision > 0 + token->precision +
-			ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
-	ret = putfloat(1, &mantissa, 0, 0);
+	ret = check_prefix(token, 3 + (token->precision > 0 || ) + token->precision +
+			(exponent > 0) * ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
+	ret += putfloat(1, &mantissa, 0, 0);
 	if (token->precision)
 		ret += (int)write(1, ".", 1);
 	ret += putfloat(token->precision, &mantissa, 1, 0);
@@ -82,19 +100,19 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	ret = 0;
 	if (exponent >= 0)
 	{
-		ret = check_prefix(token, exponent + 1 + token->precision > 0 +
-				token->precision, &mantissa);
+		ret = check_prefix(token, (int) exponent + 1 + (token->precision > 0 || 
+					token->specs & F_ALT_FORM) + token->precision, &mantissa);
 		ret += putfloat(exponent + 1, &mantissa, 0, 0);
-		ret += (int)write(1, ".", token->precision > 0);
+		ret += (int)write(1, ".", (token->precision > 0 || token->specs & F_ALT_FORM));
 	}
 	else
 	{
-		ret = check_prefix(token, 1 + token->precision > 0 + token->precision,
-				&mantissa);
+		ret = check_prefix(token, 1 + (token->precision > 0 ||
+					token->specs & F_ALT_FORM) + token->precision, &mantissa);
 		ret += (int)write(1, "0", 1);
 		exponent = (ssize_t)ft_ssabs(exponent);
 		if (token->precision > 0)
-		
+		{	
 			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
 				return (ret + ft_putset(token->precision, '0'));
@@ -153,7 +171,7 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 	scilen = 3 + (token->precision > 0) + token->precision +
 			ft_max(2, (int)ft_ssizelen(exponent, 10));
 	if (exponent > 0)
-		declen = exponent + 1 + (token->precision > 0) +
+		declen = (int)exponent + 1 + (token->precision > 0) +
 				token->precision;
 	else
 		declen = 1 + (token->precision > 0) + token->precision;

@@ -32,9 +32,9 @@ static ssize_t	normalize_double(long double num, long double *mantissa)
 	*mantissa = num;
 	if (num == 0.0)
 		return (0);
-	if (num < 1.0)
+	if (ft_fabsl(num) < 1.0)
 	{
-		while (*mantissa < 1.0)
+		while (ft_fabsl(*mantissa) < 1.0)
 		{
 			*mantissa *= 10.0;
 			exponent--;
@@ -110,9 +110,7 @@ int	conv_float(t_token *token, va_list args)
 		return (ret);
 	if (token->precision < 0)
 		token->precision = 6;
-	exponent = normalize_double(ft_fabsl(num), &mantissa);
-	if (num < 0.0)
-		mantissa *= -1.0;
+	exponent = normalize_double(num, &mantissa);
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, token);
 	else if (token->specs & DEC_DOUBLE)
