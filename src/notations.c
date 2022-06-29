@@ -66,10 +66,10 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
-	ret = check_prefix(token, 3 + (token->precision > 0 || ) + token->precision +
+	ret = check_prefix(token, 3 + (token->precision > 0 || token->specs & F_ALT_FORM) + token->precision +
 			(exponent > 0) * ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
 	ret += putfloat(1, &mantissa, 0, 0);
-	if (token->precision)
+	if (token->precision || token->specs & F_ALT_FORM)
 		ret += (int)write(1, ".", 1);
 	ret += putfloat(token->precision, &mantissa, 1, 0);
 	if (exponent == 0)
@@ -111,7 +111,7 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 					token->specs & F_ALT_FORM) + token->precision, &mantissa);
 		ret += (int)write(1, "0", 1);
 		exponent = (ssize_t)ft_ssabs(exponent);
-		if (token->precision > 0)
+		if (token->precision > 0 || token->specs & F_ALT_FORM)
 		{	
 			ret += (int)write(1, ".", 1);
 			if (token->precision < exponent)
