@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/23 13:50:42 by tpolonen          #+#    #+#              #
-#    Updated: 2022/06/29 21:58:03 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/07/01 22:01:08 by teppo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ OBJ  		:= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
 LIBFT		:= $(addprefix $(LFT_DIR), libft.a)
 LIBFT_OBJ 	:= $(wildcard $(LFT_DIR)obj/*.c)
 
-CC 		 := clang
+CC 		 := gcc
 CFLAGS 	 := -c -g -Wall -Wextra -Werror -Wconversion
 CPPFLAGS := -I$(LFTHEADER_DIR) -I$(HEADER_DIR)
 LDFLAGS  := -L$(LFT_DIR)
