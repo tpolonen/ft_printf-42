@@ -6,7 +6,7 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/02 17:51:00 by tpolonen          #+#    #+#              #
-#    Updated: 2022/07/02 20:33:23 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/07/02 23:06:24 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ SRC		+= $(addprefix $(SRC_DIR), $(_LFT))
 OBJ		:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
 CC			:= gcc
-CFLAGS		:= -c -Wall -Wextra -Werror
+CFLAGS		:= -c -g -Wall -Wextra -Werror
 CPPFLAGS	:= -I$(HEADER_DIR)
 ARFLAGS		:= rcs
 

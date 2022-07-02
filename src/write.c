@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/02 20:14:54 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 23:19:53 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@
  * ._.
  */
 
-int	print_prefix(int negative, t_token *token)
+int	print_prefix(int negative, int is_zero, t_token *token)
 {
 	if ((token->specs & F_ALT_FORM) && (token->specs & HEXAL))
 	{
+		if (is_zero)
+			return (0);
 		if (token->specs & (ALL_CAPS))
 			return ((int)write(1, "0X", 2));
 		return ((int)write(1, "0x", 2));

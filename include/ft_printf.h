@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 21:40:03 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 23:18:50 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int			conv_shortest_notation(long double mantissa, ssize_t exponent,
 		t_token *token);
 
 /* write.c */
-int			print_prefix(int negative, t_token *token);
+int			print_prefix(int negative, int is_zero, t_token *token);
 int			putstr(const char *str, int min_len, char fill_char);
 int			putfloat(ssize_t len, long double *mantissa, int round, int trim);
 

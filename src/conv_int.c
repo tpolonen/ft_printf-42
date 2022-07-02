@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 21:50:08 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 23:12:12 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,11 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(unsigned int)va_arg(args, int));
 }
 
-static int	get_prefix_len(int negative, t_token *token)
+static int	get_prefix_len(int negative, int is_zero, t_token *token)
 {
 	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
-		return (2);
+		if (!is_zero || token->specs & PTR)
+			return (2);
 	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
 		return (1);
 	return (0);
@@ -73,14 +74,14 @@ static int	get_prefix_len(int negative, t_token *token)
  * When we pad with whitespace, order is reversed - [   +9] for example.
  */
 
-static int	check_prefix(t_token *token, int len, int negative)
+static int	check_prefix(t_token *token, int len, int negative, int is_zero)
 {
 	int	ret;
 	int	pre_len;
 	int	pre_printed;
 
 	ret = 0;
-	pre_len = get_prefix_len(negative, token);
+	pre_len = get_prefix_len(negative, is_zero,	token);
 	pre_printed = 0;
 	if (len > token->precision)
 		token->precision = len;
@@ -108,6 +109,7 @@ int	conv_integer(t_token *token, va_list args)
 	size_t	len;
 
 	ssize = 0;
+	usize = 0;
 	base = 10;
 	if (token->specs & OCTAL)
 		base = 8;
@@ -123,7 +125,9 @@ int	conv_integer(t_token *token, va_list args)
 	if (token->specs & PTR && usize == 0)
 		return (putstr("(nil)", token->width, ' '));
 	len = ft_sizelen(usize, base);
-	ret = check_prefix(token, (int)len, ssize < 0);
+	ret = check_prefix(token, (int)len, ssize < 0, usize == 0);
+	if (token->precision == 0 && usize == 0)
+		return (ret);
 	ret += ft_putnum(usize, base, token->precision, token->specs & ALL_CAPS);
 	return (ret);
 }
