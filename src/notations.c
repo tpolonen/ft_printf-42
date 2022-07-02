@@ -6,11 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/25 03:17:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 20:14:34 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 /* We use these functions after we have normalized the number and got the
  * mantissa and exponent. This information can be used to produce any of

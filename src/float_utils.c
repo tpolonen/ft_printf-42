@@ -6,11 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/23 19:51:49 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/23 19:57:28 by teppo            ###   ########.fr       */
+/*   Updated: 2022/07/02 20:14:04 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 /* Actual powf is REAL complicated. It has specific edge cases that are
  * really counterintuitive and replicating it while staying within Norme

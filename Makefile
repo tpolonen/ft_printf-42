@@ -5,63 +5,70 @@
 #                                                     +:+ +:+         +:+      #
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/05/23 13:50:42 by tpolonen          #+#    #+#              #
-#    Updated: 2022/06/29 21:58:03 by tpolonen         ###   ########.fr        #
+#    Created: 2022/07/02 17:51:00 by tpolonen          #+#    #+#              #
+#    Updated: 2022/07/02 20:33:23 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-HEADER_DIR 		:= ./include/
-LFTHEADER_DIR	:= ../libft/include/
-LFT_DIR			:= ../libft/
-SRC_DIR 		:= ./src/
-OBJ_DIR 		:= ./obj/
+HEADER_DIR		:= ./include/
+SRC_DIR			:= ./src/
+OBJ_DIR			:= ./obj/
 
-_SRC := $(notdir $(wildcard $(SRC_DIR)*.c))
+_SRC	:= ft_printf.c
+_SRC	+= conv_float.c
+_SRC	+= conv_int.c
+_SRC	+= dispatch.c
+_SRC	+= float_utils.c
+_SRC	+= notations.c
+_SRC	+= write.c
 
-DEP := $(HEADER_DIR)ft_printf.h
-DEP += $(LFTHEADER_DIR)libft.h
+_LFT	:= ft_abs.c
+_LFT	+= ft_fabs.c
+_LFT	+= ft_intlen.c
+_LFT	+= ft_isdigit.c
+_LFT	+= ft_isspace.c
+_LFT	+= ft_max.c
+_LFT	+= ft_memset.c
+_LFT	+= ft_putchar.c
+_LFT	+= ft_putnum.c
+_LFT	+= ft_putset.c
+_LFT	+= ft_strlen.c
+_LFT	+= ft_strncmp.c
+_LFT	+= ft_strtol.c
 
-NAME := libftprintf.a
+SRC		:= $(addprefix $(SRC_DIR), $(_SRC))
+SRC		+= $(addprefix $(SRC_DIR), $(_LFT))
+OBJ		:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
-SRC  		:= $(addprefix $(SRC_DIR), $(_SRC))
-OBJ  		:= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC))
-LIBFT		:= $(addprefix $(LFT_DIR), libft.a)
-LIBFT_OBJ 	:= $(wildcard $(LFT_DIR)obj/*.c)
+CC			:= gcc
+CFLAGS		:= -c -Wall -Wextra -Werror
+CPPFLAGS	:= -I$(HEADER_DIR)
+ARFLAGS		:= rcs
 
-CC 		 := clang
-CFLAGS 	 := -c -g -Wall -Wextra -Werror -Wconversion
-CPPFLAGS := -I$(LFTHEADER_DIR) -I$(HEADER_DIR)
-LDFLAGS  := -L$(LFT_DIR)
-LDLIBS   := -lft
-ARFLAGS  := rcs
+NAME	:= libftprintf.a
 
 .PHONY: all clean fclean re
 
 all: $(NAME)
 
-$(LIBFT):
-	@make -C $(LFT_DIR) all
-
-$(NAME): $(LIBFT) $(OBJ_DIR) $(OBJ)
-	@echo "Compiled libftprintf objs"
-	@$(AR) $(ARFLAGS) $(@) $(OBJ) $(LIBFT_OBJ)
-	@echo "Compiled libftprintf.a"
-
-$(OBJ_DIR):
-	@mkdir -p $@
+$(NAME): $(OBJ_DIR) $(OBJ)
+	@echo "Compiled objs"
+	@$(AR) $(ARFLAGS) $@ $(OBJ)
+	@echo "Linked libftprintf.a"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	@$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@ 
+
+$(OBJ_DIR):
+	@/bin/mkdir -p $@
+	@echo "Made obj dir"
 
 clean:
-	@/bin/rm -rf $(OBJ_DIR)
-	@echo "Cleaned libftprintf objs"
-	@make -C $(LFT_DIR) clean
+	@if [ -d "$(OBJ_DIR)" ]; \
+		then /bin/rm -rf $(OBJ_DIR); echo "Removed objs"; fi
 
 fclean: clean
 	@/bin/rm -f $(NAME)
 	@echo "Removed libftprintf.a"
-	@make -C $(LFT_DIR) fclean
 
 re: fclean all
-

@@ -6,34 +6,32 @@
 #    By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/24 17:30:39 by tpolonen          #+#    #+#              #
-#    Updated: 2022/06/02 17:09:42 by tpolonen         ###   ########.fr        #
+#    Updated: 2022/07/02 20:45:26 by tpolonen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 HEADERDIR1	:= ../include/
 HEADERDIR2	:= ../../libft/include/
-LFTDIR		:= ../../libft/
 
 DEP := $(HEADERDIR1)ft_printf.h
 DEP += $(HEADERDIR2)libft.h
 
 SRC1 := $(wildcard ./*.c)
-SRC2 := $(wildcard ../src/*.c)
 BIN := $(basename $(SRC1))
 
 CC			:= gcc
 CFLAGS		:= -g
 CPPFLAGS	:= -I$(HEADERDIR1) -I$(HEADERDIR2)
-LDFLAGS		:= -L$(LFTDIR)
-LDLIBS		:= -lft
+LDFLAGS		:= -L../
+LDLIBS		:= -lftprintf
 
 all: $(BIN)
 
 lib:
-	make -C $(LFTDIR)
+	make -C ../
 
 %: %.c lib
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(SRC2) $< -o $@.out $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@.out $(LDFLAGS) $(LDLIBS)
 
 clean:
 	/bin/rm -rf *.out

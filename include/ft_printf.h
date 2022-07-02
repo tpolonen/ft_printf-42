@@ -6,20 +6,16 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/23 19:57:57 by teppo            ###   ########.fr       */
+/*   Updated: 2022/07/02 21:40:03 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
-# include <unistd.h>
-# include <stdlib.h>
 # include <stdarg.h>
 # include <stddef.h>
 # include <inttypes.h>
 # include "libft.h"
-
-# include <stdio.h>
 
 /* Here starts defining of bitmasks.
  * Each following decimal number is used as bitmask for interpreting the token.
@@ -64,6 +60,24 @@
 # define F_ALT_FORM			67108864
 # define F_PAD_WITH_ZEROES	33554432
 
+enum {
+	IS_NEGATIVE,
+	IS_ZERO,
+	IS_POSITIVE
+};
+
+/* Token is the struct that contains all the necessary information to turn
+ * a conversion specification and it's argument into an array of chars.
+ * - `specs` contains flags, length modifier, and conversion as bitfields.
+ * - `width` is the minimum amount of chars to be printed. By default
+ *   resulting string is adjusted to right, so extra padding is printed before
+ *   the actual result of the conversion. If width is negative, extra chars
+ *   are printed after the conversion.
+ * - `precision` is handled differently by each conversion, but generally
+ *   defines how many characters or digits are printed.
+ * - `pchar` is what we print to pad the conversion if needed.
+ */
+
 typedef struct s_token
 {
 	int		specs;
@@ -80,26 +94,21 @@ typedef struct s_conv
 	t_conv_function	*func;
 }	t_conv;
 
-/* ft_printf.c
- */
+/* ft_printf.c */
 int			ft_printf(const char *restrict format, ...);
 
-/* dispatch.c
- */
+/* dispatch.c */
 int			dispatch(t_token *token, va_list args);
 int			conv_char(t_token *token, va_list args);
 int			conv_string(t_token *token, va_list args);
 
-/* conv_int.c
- */
+/* conv_int.c */
 int			conv_integer(t_token *token, va_list args);
 
-/* conv_float.c
- */
+/* conv_float.c */
 int			conv_float(t_token *token, va_list args);
 
-/* notations.c
- */
+/* notations.c */
 int			conv_science_notation(long double mantissa, ssize_t exponent,
 		t_token *token);
 int			conv_decimal_notation(long double mantissa, ssize_t exponent,
@@ -107,14 +116,12 @@ int			conv_decimal_notation(long double mantissa, ssize_t exponent,
 int			conv_shortest_notation(long double mantissa, ssize_t exponent,
 		t_token *token);
 
-/* write.c
- */
+/* write.c */
 int			print_prefix(int negative, t_token *token);
 int			putstr(const char *str, int min_len, char fill_char);
 int			putfloat(ssize_t len, long double *mantissa, int round, int trim);
 
-/* float_utils.c
- */
+/* float_utils.c */
 long double	bad_powf(long double num, int exp);
 long double	round_ld(long double mantissa, ssize_t len, int round);
 #endif

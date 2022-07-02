@@ -6,11 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/23 20:21:26 by teppo            ###   ########.fr       */
+/*   Updated: 2022/07/02 21:48:36 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 static const t_conv	g_conv_table[] = {
 {INTEGER, &conv_integer},

@@ -6,11 +6,11 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/06/24 17:40:02 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 20:14:54 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 /* This is pretty kludgy attempt at saving lines from other num conversion
  * functions. Probably could be refactored in existing functions somehow.

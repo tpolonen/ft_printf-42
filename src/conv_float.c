@@ -6,11 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/23 19:23:02 by teppo            ###   ########.fr       */
+/*   Updated: 2022/07/02 20:01:27 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 /* So we want to convert float of arbitrary size and precision into array of
  * printable chars. Okay. Since we are using floating point numbers,

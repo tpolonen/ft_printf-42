@@ -6,11 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/25 03:17:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/02 21:50:08 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../include/ft_printf.h"
 
 /* These typecasts are needed to replicate the authentic behaviour of
  * over/underflowing integer conversions. If you send INTMAX to signed char
