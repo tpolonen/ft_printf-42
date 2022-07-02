@@ -36,11 +36,11 @@ static int	check_prefix(t_token *token, int len, long double *mantissa)
 	int	negative;
 
 	ret = 0;
-	negative = *mantissa < 0.0 || 42.0 / *mantissa == -1.0/0.0;
+	negative = (*mantissa < 0.0 || 42.0 / *mantissa == -1.0 / 0.0);
 	prefix_len = 0;
 	prefix_printed = 0;
-	if (token->precision & F_PADDED_POS || token->precision & F_PRINT_PLUS ||
-			negative)
+	if (token->precision & F_PADDED_POS || \
+			token->precision & F_PRINT_PLUS || negative)
 		prefix_len = 1;
 	if (token->pchar == '0')
 	{
@@ -66,8 +66,9 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
-	ret = check_prefix(token, 3 + (token->precision > 0 || token->specs & F_ALT_FORM) + token->precision +
-			(exponent > 0) * ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
+	ret = check_prefix(token, 3 + (token->precision > 0 || \
+				token->specs & F_ALT_FORM) + token->precision + (exponent > 0)
+			* ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
 	ret += putfloat(1, &mantissa, 0, 0);
 	if (token->precision || token->specs & F_ALT_FORM)
 		ret += (int)write(1, ".", 1);
@@ -100,24 +101,24 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	ret = 0;
 	if (exponent >= 0)
 	{
-		ret = check_prefix(token, (int) exponent + 1 + (token->precision > 0 || 
+		ret = check_prefix(token, (int)++exponent + (token->precision > 0 || \
 					token->specs & F_ALT_FORM) + token->precision, &mantissa);
 		ret += putfloat(exponent + 1, &mantissa, 0, 0);
-		ret += (int)write(1, ".", (token->precision > 0 || token->specs & F_ALT_FORM));
+		ret += (int)write(1, ".", (token->precision > 0 || \
+					token->specs & F_ALT_FORM));
 	}
 	else
 	{
-		ret = check_prefix(token, 1 + (token->precision > 0 ||
+		ret = check_prefix(token, 1 + (token->precision > 0 || \
 					token->specs & F_ALT_FORM) + token->precision, &mantissa);
 		ret += (int)write(1, "0", 1);
-		exponent = (ssize_t)ft_ssabs(exponent);
 		if (token->precision > 0 || token->specs & F_ALT_FORM)
 		{	
 			ret += (int)write(1, ".", 1);
-			if (token->precision < exponent)
+			if (token->precision < -exponent)
 				return (ret + ft_putset(token->precision, '0'));
-			ret += ft_putset(ft_abs((int)(exponent - 1)), '0');
-			token->precision -= (int)(exponent - 1);
+			ret += ft_putset(ft_abs((int)(exponent + 1)), '0');
+			token->precision -= ft_abs((int)(exponent + 1));
 		}
 	}
 	return (ret + putfloat(token->precision, &mantissa, 1, 0));

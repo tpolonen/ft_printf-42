@@ -30,11 +30,6 @@ long double	bad_powf(long double num, int exp)
 	return (out);
 }
 
-/* Rounding follows the bankers rule: round towards nearest, equals to even.
- * So we try to do the rounding every time it's requested and apply it only
- * if rounding would make the last digit even.
-*/
-
 long double	round_ld(long double mantissa, ssize_t len, int round)
 {
 	long double	rd;
@@ -46,5 +41,4 @@ long double	round_ld(long double mantissa, ssize_t len, int round)
 		mantissa += rd;
 	return (mantissa);
 }
-
 

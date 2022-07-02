@@ -25,8 +25,10 @@ static int	get_conversion(t_token *token, char **seek)
 			token->specs |= 1 << (16 - i);
 			if (token->specs & PTR)
 				token->specs |= F_ALT_FORM;
-			if (token->specs & INTEGER && \
-					(token->precision >= 0 || token->specs & F_RIGHT_PADDING))
+			if (token->specs & INTEGER)
+				if (token->specs & F_RIGHT_PADDING || token->width < 0)
+					token->pchar = ' ';
+			if ((token->specs & FLOAT) && (token->specs & F_RIGHT_PADDING))
 				token->pchar = ' ';
 			return (0);
 		}
