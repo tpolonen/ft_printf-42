@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 20:01:27 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/04 19:22:11 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static ssize_t	normalize_double(long double num, long double *mantissa)
 	}
 	else
 	{
-		while (*mantissa >= 10.0)
+		while (ft_fabsl(*mantissa) >= 10.0)
 		{
 			*mantissa /= 10.0;
 			exponent++;

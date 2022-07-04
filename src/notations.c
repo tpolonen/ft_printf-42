@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/02 20:14:34 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/04 19:26:16 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ static int	check_prefix(t_token *token, int len, long double *mantissa)
 		prefix_len = 1;
 	if (token->pchar == '0')
 	{
-		ret += print_prefix(negative, token);
+		ret += print_prefix(negative, *mantissa == 0.0L, token);
 		prefix_printed = 1;
 	}
 	if (len + prefix_len < token->width)
 		ret += ft_putset(token->width - len - prefix_len, token->pchar);
 	if (prefix_len > 0 && prefix_printed == 0)
-		ret += print_prefix(negative, token);
+		ret += print_prefix(negative, *mantissa == 0.0L, token);
 	*mantissa = ft_fabsl(*mantissa);
 	return (ret);
 }
@@ -67,7 +67,7 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 	int			ret;
 
 	ret = check_prefix(token, 3 + (token->precision > 0 || \
-				token->specs & F_ALT_FORM) + token->precision + (exponent > 0)
+				token->specs & F_ALT_FORM) + token->precision + (exponent != 0)
 			* ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
 	ret += putfloat(1, &mantissa, 0, 0);
 	if (token->precision || token->specs & F_ALT_FORM)
@@ -103,7 +103,7 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 	{
 		ret = check_prefix(token, (int)++exponent + (token->precision > 0 || \
 					token->specs & F_ALT_FORM) + token->precision, &mantissa);
-		ret += putfloat(exponent + 1, &mantissa, 0, 0);
+		ret += putfloat(exponent, &mantissa, 0, 0);
 		ret += (int)write(1, ".", (token->precision > 0 || \
 					token->specs & F_ALT_FORM));
 	}

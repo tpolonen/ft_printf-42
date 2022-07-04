@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 23:12:12 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/04 19:52:55 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,14 +89,14 @@ static int	check_prefix(t_token *token, int len, int negative, int is_zero)
 		token->precision = ft_max(token->precision, len + 1);
 	if ((token->precision + pre_len) > token->width || token->pchar == '0')
 	{
-		ret += print_prefix(negative, token);
+		ret += print_prefix(negative, is_zero, token);
 		pre_printed = 1;
 	}
 	if ((token->precision + pre_len) < token->width)
 		ret += ft_putset(token->width - token->precision - pre_len,
 				token->pchar);
 	if (pre_len > 0 && pre_printed == 0)
-		ret += print_prefix(negative, token);
+		ret += print_prefix(negative, is_zero, token);
 	return (ret);
 }
 
@@ -128,6 +128,6 @@ int	conv_integer(t_token *token, va_list args)
 	ret = check_prefix(token, (int)len, ssize < 0, usize == 0);
 	if (token->precision == 0 && usize == 0)
 		return (ret);
-	ret += ft_putnum(usize, base, token->precision, token->specs & ALL_CAPS);
-	return (ret);
+	return (ret + ft_putnum(usize, base, token->precision, \
+				token->specs & ALL_CAPS));
 }

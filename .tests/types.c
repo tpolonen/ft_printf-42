@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 12:27:25 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/06/23 18:10:29 by teppo            ###   ########.fr       */
+/*   Updated: 2022/07/04 19:13:05 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ int main(void) {
 
 	fp = ft_printf("what's f? [%20f]!\n", 34298.4584534);
 	pf =    printf("what's f? [%20f]*\n", 34298.4584534);
+	printf("fp[%d] pf[%d]\n\n", fp, pf);
+
+	fp = ft_printf("what's e? [%20e]!\n", 34298.4584534);
+	pf =    printf("what's e? [%20e]*\n", 34298.4584534);
 	printf("fp[%d] pf[%d]\n\n", fp, pf);
 
 	fp = ft_printf("what's g? [%20g]!\n", 1.1283198);

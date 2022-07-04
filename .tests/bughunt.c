@@ -25,9 +25,45 @@ void	test_numbers(void)
 	}
 }
 
+void	test_zero(void)
+{
+	ft_printf("@moulitest: %#.x %#.0x$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %.x %.0x$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %5.x %5.0x$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %.o %.0o$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %5.o %5.0o$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %#.o %#.0o$", 0, 0);
+	printf("\n");
+	ft_printf("%03.2d$", 0);
+	printf("\n");
+	ft_printf("%03.2d$", 1);
+	printf("\n");
+	ft_printf("@moulitest: %.d %.0d$", 0, 0);
+	printf("\n");
+	ft_printf("@moulitest: %5.d %5.0d$", 0, 0);
+	printf("\n");
+}
+
+void	bignum(void)
+{
+	ft_printf("% u", 4294967295);
+	printf("\n");
+	ft_printf("%+u", 4294967295);
+	printf("\n");
+}
+
 int main(void)
 {
-	printf("this apparently causes some issues\n");
-	test_numbers();
+	//printf("this apparently causes some issues\n");
+	//test_numbers();
+
+	printf("this REALLY causes some issues\n");
+	test_zero();
+	bignum();
 	return (0);
 }
