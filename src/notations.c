@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/04 19:26:16 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:01:46 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ int	conv_decimal_notation(long double mantissa, ssize_t exponent,
 {
 	int			ret;
 
-	ret = 0;
 	if (exponent >= 0)
 	{
 		ret = check_prefix(token, (int)++exponent + (token->precision > 0 || \
@@ -163,17 +162,17 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 		t_token *token)
 {
 	int	scilen;
-	int declen;
+	int	declen;
 
 	if (token->precision == 0)
 		token->precision = 1;
 	token->precision--;
 	token->precision = trim_z(mantissa, token->precision);
-	scilen = 3 + (token->precision > 0) + token->precision +
-			ft_max(2, (int)ft_ssizelen(exponent, 10));
+	scilen = 3 + (token->precision > 0) + token->precision + \
+		ft_max(2, (int)ft_ssizelen(exponent, 10));
 	if (exponent > 0)
-		declen = (int)exponent + 1 + (token->precision > 0) +
-				token->precision;
+		declen = (int)exponent + 1 + (token->precision > 0) + \
+			token->precision;
 	else
 		declen = 1 + (token->precision > 0) + token->precision;
 	if (scilen < declen)

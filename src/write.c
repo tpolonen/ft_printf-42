@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/02 23:19:53 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:21:59 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,10 @@
 
 int	print_prefix(int negative, int is_zero, t_token *token)
 {
-	if ((token->specs & F_ALT_FORM) && (token->specs & HEXAL))
+	if (((token->specs & F_ALT_FORM) && (token->specs & HEXAL)) || \
+			(token->specs & PTR))
 	{
-		if (is_zero)
+		if (is_zero && !(token->specs & PTR))
 			return (0);
 		if (token->specs & (ALL_CAPS))
 			return ((int)write(1, "0X", 2));
@@ -35,7 +36,6 @@ int	print_prefix(int negative, int is_zero, t_token *token)
 		return ((int)write(1, " ", 1));
 	return (0);
 }
-
 
 /* putstr prints the string representation of several conversions
  * that sometimes need to output string instead of what they usually do.

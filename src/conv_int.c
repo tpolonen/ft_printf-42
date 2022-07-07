@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/19 15:41:07 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/04 19:52:55 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:31:00 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,17 @@ static size_t	unsigned_typecast(t_token *token, va_list args)
 	return ((size_t)(unsigned int)va_arg(args, int));
 }
 
+/* We need to know the length of part that is printed before number before
+ * we write anything - if total length of the string we are going to print
+ * is less than requested width AND conversion is not left-adjusted, we
+ * need to print padding characters before we can write the actual
+ * result.
+ */
+
 static int	get_prefix_len(int negative, int is_zero, t_token *token)
 {
-	if ((token->specs & HEXAL) && (token->specs & F_ALT_FORM))
+	if (((token->specs & HEXAL) && (token->specs & F_ALT_FORM)) || \
+			(token->specs & PTR))
 		if (!is_zero || token->specs & PTR)
 			return (2);
 	if (negative || token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS)
@@ -81,7 +89,7 @@ static int	check_prefix(t_token *token, int len, int negative, int is_zero)
 	int	pre_printed;
 
 	ret = 0;
-	pre_len = get_prefix_len(negative, is_zero,	token);
+	pre_len = get_prefix_len(negative, is_zero, token);
 	pre_printed = 0;
 	if (len > token->precision)
 		token->precision = len;
@@ -105,11 +113,8 @@ int	conv_integer(t_token *token, va_list args)
 	ssize_t	ssize;
 	size_t	usize;
 	int		base;
-	int		ret;
-	size_t	len;
 
 	ssize = 0;
-	usize = 0;
 	base = 10;
 	if (token->specs & OCTAL)
 		base = 8;
@@ -122,12 +127,10 @@ int	conv_integer(t_token *token, va_list args)
 	}
 	else if (token->specs & UNSIGNED)
 		usize = unsigned_typecast(token, args);
-	if (token->specs & PTR && usize == 0)
-		return (putstr("(nil)", token->width, ' '));
-	len = ft_sizelen(usize, base);
-	ret = check_prefix(token, (int)len, ssize < 0, usize == 0);
 	if (token->precision == 0 && usize == 0)
-		return (ret);
-	return (ret + ft_putnum(usize, base, token->precision, \
-				token->specs & ALL_CAPS));
+		return (write(1, "0", ((token->specs & OCTAL) && \
+						(token->specs & F_ALT_FORM))));
+	return (check_prefix(token, (int)ft_sizelen(usize, base), ssize < 0, \
+				usize == 0) + ft_putnum(usize, base, token->precision,
+			token->specs & ALL_CAPS));
 }

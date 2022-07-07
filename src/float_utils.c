@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/23 19:51:49 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/02 20:14:04 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/07 19:58:41 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,3 @@ long double	round_ld(long double mantissa, ssize_t len, int round)
 		mantissa += rd;
 	return (mantissa);
 }
-

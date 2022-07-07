@@ -27,43 +27,54 @@ void	test_numbers(void)
 
 void	test_zero(void)
 {
-	ft_printf("@moulitest: %#.x %#.0x$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %.x %.0x$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %5.x %5.0x$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %.o %.0o$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %5.o %5.0o$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %#.o %#.0o$", 0, 0);
-	printf("\n");
-	ft_printf("%03.2d$", 0);
-	printf("\n");
-	ft_printf("%03.2d$", 1);
-	printf("\n");
-	ft_printf("@moulitest: %.d %.0d$", 0, 0);
-	printf("\n");
-	ft_printf("@moulitest: %5.d %5.0d$", 0, 0);
-	printf("\n");
+	ft_printf("@moulitest: %#.x %#.0x$!\n", 0, 0);
+   	   printf("@moulitest: %#.x %#.0x$*\n", 0, 0);
+	ft_printf("@moulitest: %.x %.0x$!\n", 0, 0);
+	   printf("@moulitest: %.x %.0x$*\n", 0, 0);
+	ft_printf("@moulitest: %5.x %5.0x$!\n", 0, 0);
+	   printf("@moulitest: %5.x %5.0x$*\n", 0, 0);
+	ft_printf("@moulitest: %.o %.0o$!\n", 0, 0);
+	   printf("@moulitest: %.o %.0o$*\n", 0, 0);
+	ft_printf("@moulitest: %5.o %5.0o$!\n", 0, 0);
+ 	   printf("@moulitest: %5.o %5.0o$*\n", 0, 0);
+	ft_printf("@moulitest: %#.o %#.0o$!\n", 0, 0);
+	   printf("@moulitest: %#.o %#.0o$*\n", 0, 0);
+	ft_printf("%03.2d$!\n", 0);
+	   printf("%03.2d$*\n", 0);
+	ft_printf("%03.2d$!\n", 1);
+	   printf("%03.2d$*\n", 1);
+	ft_printf("@moulitest: %.d %.0d$!\n", 0, 0);
+	   printf("@moulitest: %.d %.0d$*\n", 0, 0);
+	ft_printf("@moulitest: %5.d %5.0d$!\n", 0, 0);
+	   printf("@moulitest: %5.d %5.0d$*\n", 0, 0);
 }
 
 void	bignum(void)
 {
-	ft_printf("% u", 4294967295);
-	printf("\n");
-	ft_printf("%+u", 4294967295);
-	printf("\n");
+	ft_printf("% 20u$!\n", 4294967295);
+   	   printf("% 20u$*\n", 4294967295);
+	ft_printf("%+20u$!\n", 4294967295);
+	   printf("%+20u$*\n", 4294967295);
+}
+
+void	mouli1(void)
+{
+	ft_printf("%p!\n", 0);
+	   printf("%p*\n", 0);
+
+	ft_printf("["); 
+	ft_printf("%"); ft_printf("]!\n");
+	printf("["); printf("%"); printf("]*\n");
 }
 
 int main(void)
 {
 	//printf("this apparently causes some issues\n");
 	//test_numbers();
-
-	printf("this REALLY causes some issues\n");
-	test_zero();
-	bignum();
+	//printf("this REALLY causes some issues\n");
+	//test_zero();
+	
+//	bignum();
+	mouli1();
 	return (0);
 }

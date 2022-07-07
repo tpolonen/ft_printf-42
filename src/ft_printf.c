@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 20:02:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:28:33 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,17 @@ static int	get_conversion(t_token *token, char **seek)
 		if (**seek == conv[i])
 		{
 			token->specs |= 1 << (16 - i);
-			if (token->specs & PTR)
-				token->specs |= F_ALT_FORM;
 			if (token->specs & INTEGER)
-				if (token->specs & F_RIGHT_PADDING || token->width < 0)
+				if (token->specs & F_RIGHT_PADDING || token->width < 0 || \
+						token->precision != -1)
 					token->pchar = ' ';
 			if ((token->specs & FLOAT) && (token->specs & F_RIGHT_PADDING))
 				token->pchar = ' ';
-			return (0);
+			return (1);
 		}
 		i--;
 	}
-	return (1);
+	return (0);
 }
 
 static void	get_length(t_token *token, char **seek)
@@ -124,7 +123,7 @@ static int	get_token(t_token *token, char **start, va_list args)
 		(*start)++;
 	}
 	get_length(token, start);
-	if (get_conversion(token, start))
+	if (!get_conversion(token, start))
 		return (1);
 	if (token->specs & F_RIGHT_PADDING)
 		token->width = -(ft_abs(token->width));
@@ -164,10 +163,10 @@ int	ft_printf(const char *restrict format, ...)
 		if (*format == '\0')
 			break ;
 		if (get_token(&token, (char **) &format, args) == 0)
+		{
 			ret += dispatch(&token, args);
-		else
-			ret += (int)write(1, format, 1);
-		format++;
+			format++;
+		}
 	}
 	va_end(args);
 	return (ret);
