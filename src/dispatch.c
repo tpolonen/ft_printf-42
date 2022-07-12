@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/07 04:41:23 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/07 19:44:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/12 20:17:20 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	conv_char(t_token *token, va_list args)
 	else
 		c = '%';
 	if (token->width > 1 && !(token->specs & F_RIGHT_PADDING))
-		ret += ft_putset(token->width - 1, ' ');
+		ret += ft_putset(token->width - 1, token->pchar);
 	return ((int)(ret + write(1, &c, 1)));
 }
 
@@ -43,12 +43,12 @@ int	conv_string(t_token *token, va_list args)
 	ret = 0;
 	str = va_arg(args, char *);
 	if (str == NULL)
-		return (putstr("(null)", token->width, ' '));
+		str = "(null)";
 	len = (int)ft_strlen(str);
 	if (token->precision >= 0 && token->precision < len)
 		len = token->precision;
 	if (len < token->width && !(token->specs & F_RIGHT_PADDING))
-		ret += ft_putset(token->width - len, ' ');
+		ret += ft_putset(token->width - len, token->pchar);
 	return (ret + (int)write(1, str, (size_t)len));
 }
 

@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/07 20:01:46 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/12 20:38:23 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,12 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 	int			ret;
 
 	ret = check_prefix(token, 3 + (token->precision > 0 || \
-				token->specs & F_ALT_FORM) + token->precision + (exponent != 0)
-			* ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
+				token->specs & F_ALT_FORM) + token->precision + \
+			ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
 	ret += putfloat(1, &mantissa, 0, 0);
 	if (token->precision || token->specs & F_ALT_FORM)
 		ret += (int)write(1, ".", 1);
 	ret += putfloat(token->precision, &mantissa, 1, 0);
-	if (exponent == 0)
-		return (ret);
 	ret += (int)write(1, "e", 1);
 	if (exponent < 0)
 		ret += (int)write(1, "-", 1);

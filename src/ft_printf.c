@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/07 20:28:33 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/12 20:07:07 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	get_conversion(t_token *token, char **seek)
 			token->specs |= 1 << (16 - i);
 			if (token->specs & INTEGER)
 				if (token->specs & F_RIGHT_PADDING || token->width < 0 || \
-						token->precision != -1)
+						token->precision > -1)
 					token->pchar = ' ';
 			if ((token->specs & FLOAT) && (token->specs & F_RIGHT_PADDING))
 				token->pchar = ' ';
@@ -108,13 +108,13 @@ static int	get_token(t_token *token, char **start, va_list args)
 		return (-1);
 	*token = (t_token){0, 0, -1, ' '};
 	get_flag(token, start);
-	if (ft_isdigit(**start))
-		token->width = (int) ft_strtol(*start, start);
-	else if (**start == '*')
+	if (**start == '*')
 	{
 		token->width = (int) va_arg(args, int);
 		(*start)++;
 	}
+	if (ft_isdigit(**start))
+		token->width = (int) ft_strtol(*start, start);
 	if (**start == '.')
 		token->precision = (int) ft_strtol(++(*start), start);
 	if (**start == '*')

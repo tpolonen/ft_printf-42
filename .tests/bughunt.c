@@ -67,6 +67,44 @@ void	mouli1(void)
 	printf("["); printf("%"); printf("]*\n");
 }
 
+void	mouli2(void)
+{
+	ft_printf("%#o!\n", 0);
+	   printf("%#o*\n", 0);
+	ft_printf("%#.0x, %#.x!\n", 0, 0);
+	   printf("%#.0x, %#.x*\n", 0, 0);
+	ft_printf("%.0p, %.p!\n", 0, 0);
+	   printf("%.0p, %.p*\n", 0, 0);
+	ft_printf("%.p, %.0p!\n", 0, 0);
+	   printf("%.p, %.0p*\n", 0, 0);
+	ft_printf("{%*3d}!\n", 5, 0);
+	   printf("{%*3d}*\n", 5, 0);
+	ft_printf("{%.03s}!\n", 0);
+	   printf("{%.03s}*\n", 0);
+}
+
+void	mouli3(void)
+{
+	ft_printf("{%05.*d}!\n", -15, 42);
+	   printf("{%05.*d}*\n", -15, 42);
+}
+
+void	pft(void)
+{
+	ft_printf("{%010.03s}!\n", 0);
+	   printf("{%010.03s}*\n", 0);
+}
+
+void	caruy1(void)
+{
+	ft_printf("%g!\n", 9.9999997);
+	   printf("%g*\n", 9.9999997);
+	ft_printf("%g!\n", 9.999999);
+	   printf("%g*\n", 9.999999);
+	ft_printf("%g!\n", 9.9999999);
+	   printf("%g*\n", 9.9999999);
+}
+
 int main(void)
 {
 	//printf("this apparently causes some issues\n");
@@ -75,6 +113,10 @@ int main(void)
 	//test_zero();
 	
 //	bignum();
-	mouli1();
+//	mouli1();
+//	mouli2();
+//	mouli3();
+//	pft();
+	caruy1();
 	return (0);
 }
