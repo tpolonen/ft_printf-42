@@ -97,12 +97,37 @@ void	pft(void)
 
 void	caruy1(void)
 {
-	ft_printf("%g!\n", 9.9999997);
-	   printf("%g*\n", 9.9999997);
-	ft_printf("%g!\n", 9.999999);
-	   printf("%g*\n", 9.999999);
-	ft_printf("%g!\n", 9.9999999);
-	   printf("%g*\n", 9.9999999);
+	ft_printf("%f!\n", 9.9999997);
+	   printf("%f*\n", 9.9999997);
+	ft_printf("%f!\n", 9.999999);
+	   printf("%f*\n", 9.999999);
+	ft_printf("%f!\n", 9.9999999);
+	   printf("%f*\n", 9.9999999);
+	printf("\n");
+
+	ft_printf("%f!\n", 8.9999997);
+	   printf("%f*\n", 8.9999997);
+	ft_printf("%f!\n", 8.9999999);
+	   printf("%f*\n", 8.9999999);
+	printf("\n");
+
+	ft_printf("%.2f!\n", 8.9995);
+	   printf("%.2f*\n", 8.9995);
+	ft_printf("%.2f!\n", 8.997);
+	   printf("%.2f*\n", 8.997);
+	ft_printf("%.2f!\n", 8.999);
+	   printf("%.2f*\n", 8.999);
+	printf("\n");
+
+	ft_printf("%.2f!\n", 9.995);
+	   printf("%.2f*\n", 9.995);
+	ft_printf("%.2f!\n", 9.9995);
+	   printf("%.2f*\n", 9.9995);
+	ft_printf("%.2f!\n", 9.997);
+	   printf("%.2f*\n", 9.997);
+	ft_printf("%.2f!\n", 9.999);
+	   printf("%.2f*\n", 9.999);
+
 }
 
 int main(void)

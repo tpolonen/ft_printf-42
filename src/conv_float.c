@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/04 19:22:11 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/19 21:30:06 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,20 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 	return (*ret);
 }
 
+static long double	round_mantissa(long double mantissa, ssize_t exponent,
+		t_token *token)
+{
+	if (token->specs & SCI_DOUBLE)
+		return (round_ld(mantissa, token->precision + 1, 1));
+	if (token->specs & DEC_DOUBLE)
+	{
+		if (exponent >= 0)
+			return (round_ld(mantissa, exponent + 1 + token->precision, 1));
+		return (round_ld(mantissa, token->precision, 1));
+	}
+	return (mantissa);
+}
+
 /* 1. To start with, we convert all floats to long doubles so they can be
  *    handled with same functions.
  * 2. Check for exceptions - if any are found, print the relevant message
@@ -111,6 +125,8 @@ int	conv_float(t_token *token, va_list args)
 	if (token->precision < 0)
 		token->precision = 6;
 	exponent = normalize_double(num, &mantissa);
+	mantissa = round_mantissa(mantissa, exponent, token);
+	exponent += normalize_double(num, &mantissa);
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, token);
 	else if (token->specs & DEC_DOUBLE)
