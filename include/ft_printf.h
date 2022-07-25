@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/02 23:18:50 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/07/25 18:23:22 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,6 @@
 # define F_ALT_FORM			67108864
 # define F_PAD_WITH_ZEROES	33554432
 
-enum {
-	IS_NEGATIVE,
-	IS_ZERO,
-	IS_POSITIVE
-};
-
 /* Token is the struct that contains all the necessary information to turn
  * a conversion specification and it's argument into an array of chars.
  * - `specs` contains flags, length modifier, and conversion as bitfields.
@@ -110,11 +104,11 @@ int			conv_float(t_token *token, va_list args);
 
 /* notations.c */
 int			conv_science_notation(long double mantissa, ssize_t exponent,
-		t_token *token);
+				t_token *token);
 int			conv_decimal_notation(long double mantissa, ssize_t exponent,
-		t_token *token);
+				t_token *token);
 int			conv_shortest_notation(long double mantissa, ssize_t exponent,
-		t_token *token);
+				t_token *token);
 
 /* write.c */
 int			print_prefix(int negative, int is_zero, t_token *token);
