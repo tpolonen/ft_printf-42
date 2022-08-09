@@ -5,8 +5,20 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/09 18:39:10 by tpolonen          #+#    #+#             */
+/*   Updated: 2022/08/09 18:43:16 by tpolonen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:00 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/12 20:07:07 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/09 18:21:45 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +41,8 @@ static int	get_conversion(t_token *token, char **seek)
 					token->pchar = ' ';
 			if ((token->specs & FLOAT) && (token->specs & F_RIGHT_PADDING))
 				token->pchar = ' ';
+			if (token->specs & UNSIGNED)
+				token->specs &= ~(F_PADDED_POS | F_PRINT_PLUS);
 			return (1);
 		}
 		i--;
@@ -86,7 +100,7 @@ static void	get_flag(t_token *token, char **seek)
 }
 
 /*
- * This function converts the specifiers into usable form.
+ * This function converts the specifier into usable form.
  * The flags, length and conversion are recorded into bitflag,
  * optional width and precision are saved as integers.
  * Width is by default 0, precision is -1 since precision 0
@@ -100,6 +114,8 @@ static void	get_flag(t_token *token, char **seek)
  *   to negative.
  * - If conversion is a pointer, alternate form flag
  *   will be set.
+ * - If conversion is an unsigned number, space and plus
+ *   flags are turned off.
  */
 
 static int	get_token(t_token *token, char **start, va_list args)

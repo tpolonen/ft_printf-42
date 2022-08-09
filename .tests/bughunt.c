@@ -130,6 +130,44 @@ void	caruy1(void)
 
 }
 
+void usign(void)
+{
+	ft_printf("unsigned numbers and them flags:\n\n");
+
+	int fp = ft_printf("% u*\n", 42);
+	int pf =    printf("% u!\n", 42);
+	printf("fp=%d | pf=%d\n\n", fp, pf);
+
+	fp = ft_printf("%+u*\n", 42);
+	pf =    printf("%+u!\n", 42);
+	printf("fp=%d | pf=%d\n\n", fp, pf);
+}
+
+void intermission(void)
+{
+	int fp1 = ft_printf("btw what this returns ");
+	int fp2 = ft_printf("compared\nto this one?\n");
+	printf("1:%d, 2:%d\n\n", fp1, fp2);
+	int pf1 = printf("btw what this returns ");
+	int pf2 = printf("compared to\nthis one?\n");
+	printf("1:%d, 2:%d\n\n", pf1, pf2);
+}
+
+void mouli4(void)
+{
+	int fp = ft_printf("%.0p, %.p", 0, 0); ft_printf("\n");
+	int pf =    printf("%.0p, %.p", 0, 0); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+
+	fp = ft_printf("%.p, %.0p", 0, 0); ft_printf("\n");
+	pf =    printf("%.p, %.0p", 0, 0); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+
+	fp = ft_printf("{%f}{%lf}{%Lf}", 1.42, 1.42, 1.42l); ft_printf("\n");
+	pf =    printf("{%f}{%lf}{%Lf}", 1.42, 1.42, 1.42l); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+}
+
 int main(void)
 {
 	//printf("this apparently causes some issues\n");
@@ -142,6 +180,8 @@ int main(void)
 //	mouli2();
 //	mouli3();
 //	pft();
-	caruy1();
+//	caruy1();
+//	intermission();
+	mouli4();
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/25 18:23:22 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/09 18:28:37 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define FT_PRINTF_H
 # include <stdarg.h>
 # include <stddef.h>
-# include <inttypes.h>
 # include "libft.h"
 
 /* Here starts defining of bitmasks.
