@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/07/19 21:30:06 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/10 18:24:50 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	conv_float(t_token *token, va_list args)
 		token->precision = 6;
 	exponent = normalize_double(num, &mantissa);
 	mantissa = round_mantissa(mantissa, exponent, token);
-	exponent += normalize_double(num, &mantissa);
+	exponent += normalize_double(mantissa, &mantissa);
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, token);
 	else if (token->specs & DEC_DOUBLE)

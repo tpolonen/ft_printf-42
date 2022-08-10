@@ -162,9 +162,35 @@ void mouli4(void)
 	fp = ft_printf("%.p, %.0p", 0, 0); ft_printf("\n");
 	pf =    printf("%.p, %.0p", 0, 0); printf("\n");
 	printf("fp=%d, pf=%d\n\n", fp, pf);
-
+/*
 	fp = ft_printf("{%f}{%lf}{%Lf}", 1.42, 1.42, 1.42l); ft_printf("\n");
 	pf =    printf("{%f}{%lf}{%Lf}", 1.42, 1.42, 1.42l); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+	*/
+}
+
+void expaa(void)
+{
+	int fp = ft_printf("%f, %f, %f", 1.4242, 14.242, 142.42); ft_printf("\n");
+	int pf =    printf("%f, %f, %f", 1.4242, 14.242, 142.42); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+}
+
+void mouli5(void)
+{
+	int fp = ft_printf("{%f}{%lf}{%Lf}", -1.42, -1.42, -1.42l); ft_printf("\n");
+	int pf =	printf("{%f}{%lf}{%Lf}", -1.42, -1.42, -1.42l); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+
+	fp = ft_printf("{%f}{%lf}{%Lf}", -1.4242, -14.242, -142.42l); ft_printf("\n");
+	pf =	printf("{%f}{%lf}{%Lf}", -1.4242, -14.242, -142.42l); printf("\n");
+	printf("fp=%d, pf=%d\n\n", fp, pf);
+}
+
+void backslide(void)
+{
+	int fp = ft_printf("{%d}{%.d}{%.10d}", 42, 42, -42); ft_printf("\n");
+	int pf =	printf("{%d}{%.d}{%.10d}", 42, 42, -42); printf("\n");
 	printf("fp=%d, pf=%d\n\n", fp, pf);
 }
 
@@ -182,6 +208,9 @@ int main(void)
 //	pft();
 //	caruy1();
 //	intermission();
-	mouli4();
+//  mouli4();
+//	expaa();
+//	mouli5();
+	backslide();
 	return (0);
 }

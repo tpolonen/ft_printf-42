@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/08/09 18:28:37 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/10 19:06:30 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include <stdarg.h>
 # include <stddef.h>
 # include "libft.h"
+# include <stdio.h>
 
 /* Here starts defining of bitmasks.
  * Each following decimal number is used as bitmask for interpreting the token.

@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/22 22:54:51 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/02 20:08:32 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/10 19:11:00 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,37 +27,9 @@ int	ft_putnum(size_t num, int base, int min_len, int all_caps)
 	int			ret;
 
 	ret = 0;
-	len = (int)ft_sizelen(num, base);
-	if (len < min_len)
-		ret += ft_putset(min_len - len, '0');
-	i = len;
-	if (all_caps)
-		digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	else
-		digits = "0123456789abcdefghjiklmnopqrstuvwxyz";
-	while (i > 0)
-	{
-		buf[--i] = digits[num % (size_t)base];
-		num /= (size_t)base;
-	}
-	return (ret + (int)write(1, buf, (size_t)len));
-}
-
-/* Signed version of putnum for completeness's sake.
- */
-
-int	ft_putnums(ssize_t num, int base, int min_len, int all_caps)
-{
-	int			len;
-	char		*digits;
-	char		buf[30];
-	int			i;
-	int			ret;
-
-	ret = 0;
-	len = (int)ft_sizelen(num, base);
-	ret += write(1, "-", num < 0);
-	num = ft_ssabs(num);
+	len = 0;
+	if (min_len != 0 || num != 0)
+		len = (int)ft_sizelen(num, base);
 	if (len < min_len)
 		ret += ft_putset(min_len - len, '0');
 	i = len;
