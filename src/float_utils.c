@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/23 19:51:49 by teppo             #+#    #+#             */
-/*   Updated: 2022/08/17 19:25:47 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/24 20:41:21 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,15 @@ long double	round_ld(long double mantissa, ssize_t len, int round)
 	long double	sign;
 
 	sign = 1.0;
-	if (mantissa <= 0)
+	if (mantissa < 0)
 	{
 		mantissa = ft_fabsl(mantissa);
 		sign = -1.0;
 	}
 	if (len <= 0 || !round)
 		return (mantissa * sign);
-	rd = 5.0L * bad_powf(0.1, (int)len - 1);
-	mantissa += rd;
+	rd = 5.0L * bad_powf(0.1, (int)len);
+	if (!((int)((mantissa + rd) * bad_powf(10.0, (int)len)) % 2))
+		mantissa += rd;
 	return (mantissa * sign);
 }

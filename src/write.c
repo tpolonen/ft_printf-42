@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/19 20:52:33 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/24 19:48:43 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	print_prefix(int negative, int is_zero, t_token *token)
 	{
 		if (is_zero && !(token->specs & PTR))
 			return (0);
-		if (token->specs & (ALL_CAPS))
+		if (token->specs & ALL_CAPS)
 			return ((int)write(1, "0X", 2));
 		return ((int)write(1, "0x", 2));
 	}
@@ -82,7 +82,7 @@ int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
 	ret = 0;
 	ocount = 0;
 	round = 0;
-	*mantissa = round_ld(*mantissa, len, round);
+//	*mantissa = round_ld(*mantissa, len, round);
 	while (--len >= 0)
 	{
 		ipart = (int) *mantissa;

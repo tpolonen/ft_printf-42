@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/07/19 21:04:59 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/24 18:31:03 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static int	check_prefix(t_token *token, int len, long double *mantissa)
 	negative = (*mantissa < 0.0 || 42.0 / *mantissa == -1.0 / 0.0);
 	prefix_len = 0;
 	prefix_printed = 0;
-	if (token->precision & F_PADDED_POS || \
-			token->precision & F_PRINT_PLUS || negative)
+	if (token->specs & F_PADDED_POS || \
+			token->specs & F_PRINT_PLUS || negative)
 		prefix_len = 1;
 	if (token->pchar == '0')
 	{

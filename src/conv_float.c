@@ -6,11 +6,32 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/08/10 18:24:50 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/24 20:29:11 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
+
+static int	print_exceptions(const char *str, int *ret, t_token *token)
+{
+	char	buf[5];
+	int		i;
+
+	if (((token->specs & F_PADDED_POS) || (token->specs & F_PRINT_PLUS)) && \
+			str[0] != '-')
+	{
+		buf[0] = ' ';
+		if (token->specs & F_PRINT_PLUS)
+			buf[0] = '+';
+		i = -1;
+		while (++i < 4)
+			buf[i + 1] = str[i];
+		*ret = putstr(buf, token->width, ' ');
+	}
+	else
+		*ret = putstr(str, token->width, ' ');
+	return (*ret);
+}
 
 /* So we want to convert float of arbitrary size and precision into array of
  * printable chars. Okay. Since we are using floating point numbers,
@@ -68,7 +89,7 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 		if (num != num)
 			*ret = putstr("NAN", token->width, ' ');
 		else if (1.0 / 0.0 == num)
-			*ret = putstr("INF", token->width, ' ');
+			*ret = print_exceptions("INF", ret, token);
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-INF", token->width, ' ');
 	}
@@ -77,7 +98,7 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 		if (num != num)
 			*ret = putstr("nan", token->width, ' ');
 		else if (1.0 / 0.0 == num)
-			*ret = putstr("inf", token->width, ' ');
+			*ret = print_exceptions("inf", ret, token);
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-inf", token->width, ' ');
 	}
@@ -125,7 +146,8 @@ int	conv_float(t_token *token, va_list args)
 	if (token->precision < 0)
 		token->precision = 6;
 	exponent = normalize_double(num, &mantissa);
-	mantissa = round_mantissa(mantissa, exponent, token);
+	if (mantissa != 0.0)
+		mantissa = round_mantissa(mantissa, exponent, token);
 	exponent += normalize_double(mantissa, &mantissa);
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, token);
