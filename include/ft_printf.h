@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/08/10 19:06:30 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/31 18:45:43 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,4 +118,5 @@ int			putfloat(ssize_t len, long double *mantissa, int round, int trim);
 /* float_utils.c */
 long double	bad_powf(long double num, int exp);
 long double	round_ld(long double mantissa, ssize_t len, int round);
+long double roundld(long double value, int prec);
 #endif

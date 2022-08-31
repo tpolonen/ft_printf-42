@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/23 19:51:49 by teppo             #+#    #+#             */
-/*   Updated: 2022/08/24 20:41:21 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/31 21:03:29 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,33 @@ long double	bad_powf(long double num, int exp)
 	return (out);
 }
 
-long double	round_ld(long double mantissa, ssize_t len, int round)
+long double roundld(long double value, int prec)
 {
-	long double	rd;
-	long double	sign;
+	ssize_t			ipart;
+	ssize_t			frac;
+	long double		temp;
+	long double		diff;
 
-	sign = 1.0;
-	if (mantissa < 0)
+	ipart = (size_t)value;
+	temp = (value - (long double)ipart) * bad_powf(10, prec - 1);
+	frac = (unsigned long)temp;
+	diff = temp - (long double)frac;
+	if (diff >= 0.5)
 	{
-		mantissa = ft_fabsl(mantissa);
-		sign = -1.0;
+		frac++;
+		if (frac >= bad_powf(10.0, prec - 1))
+		{
+			frac = 0;
+			ipart++;
+		}
 	}
-	if (len <= 0 || !round)
-		return (mantissa * sign);
-	rd = 5.0L * bad_powf(0.1, (int)len);
-	if (!((int)((mantissa + rd) * bad_powf(10.0, (int)len)) % 2))
-		mantissa += rd;
-	return (mantissa * sign);
+	else if (!(diff < 0.5) && ((frac == 0) || (frac & 1)))
+		frac++;
+	if (prec == 0)
+	{
+		diff = value - (long double)ipart;
+		if ((!(diff < 0.5) || (diff > 0.5)) && (ipart & 1))
+			ipart++;
+	}
+	return ((long double)ipart + (long double)(frac / bad_powf(10, prec - 1)));
 }

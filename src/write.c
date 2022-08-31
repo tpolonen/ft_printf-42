@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/08/24 19:48:43 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/08/31 21:10:42 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
 	ret = 0;
 	ocount = 0;
 	round = 0;
-//	*mantissa = round_ld(*mantissa, len, round);
+	*mantissa = roundld(*mantissa, len);
 	while (--len >= 0)
 	{
 		ipart = (int) *mantissa;

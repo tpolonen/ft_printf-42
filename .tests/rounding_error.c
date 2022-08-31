@@ -2,17 +2,19 @@
 #include "ft_printf.h"
 #include <math.h>
 
-double raund(double rd, double e, int i)
-{
-	while (i-- > 0)
-		rd *= e;
-	return rd;
-}
-
 int main(void)
 {
-	printf("testing rounding with different funcs\n");
-	printf("rounding 5.0 with round(): e = 0.1, i = 3: %f\n", raund(5.0, 0.1, 3));
-	printf("multiplying 5.0 by ACTUAL pow(0.1, 3.0): %f\n", 5.0 * pow(0.1, 3.0));
+	printf("this is the number: 3.1415926500\n");
+	int fp = ft_printf("%f*\n", 3.1415926500);
+	int pf =    printf("%f!\n", 3.1415926500);
+	printf("fp*[%d] pf![%d]\n", fp, pf); 
+	fp = ft_printf("%.1f*\n", 3.1415926500);
+	pf =    printf("%.1f!\n", 3.1415926500);
+	printf("fp*[%d] pf![%d]\n", fp, pf); 
+
+	printf("this is the number: -958.125000\n");
+	fp = ft_printf("%f*\n", -958.125000);
+	pf =    printf("%f!\n", -958.125000);
+	printf("fp*[%d] pf![%d]\n", fp, pf); 
 	return 0;
 }
