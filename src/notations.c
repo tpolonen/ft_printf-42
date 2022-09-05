@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/08/24 18:31:03 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/05 19:45:20 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
  * with whitespace or 0 and the requested sign (minus, plus or empty space).
  */
 
-static int	check_prefix(t_token *token, int len, long double *mantissa)
+static int	check_prefix(t_token *token, int len, long double *num)
 {
 	int	ret;
 	int	prefix_len;
@@ -36,22 +36,21 @@ static int	check_prefix(t_token *token, int len, long double *mantissa)
 	int	negative;
 
 	ret = 0;
-	negative = (*mantissa < 0.0 || 42.0 / *mantissa == -1.0 / 0.0);
+	negative = *num < 0.0;
 	prefix_len = 0;
 	prefix_printed = 0;
-	if (token->specs & F_PADDED_POS || \
-			token->specs & F_PRINT_PLUS || negative)
+	if (token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS || negative)
 		prefix_len = 1;
 	if (token->pchar == '0')
 	{
-		ret += print_prefix(negative, *mantissa == 0.0L, token);
+		ret += print_prefix(negative, *num == 0.0L, token);
 		prefix_printed = 1;
 	}
 	if (len + prefix_len < token->width)
 		ret += ft_putset(token->width - len - prefix_len, token->pchar);
 	if (prefix_len > 0 && prefix_printed == 0)
-		ret += print_prefix(negative, *mantissa == 0.0L, token);
-	*mantissa = ft_fabsl(*mantissa);
+		ret += print_prefix(negative, *num == 0.0L, token);
+	*num = ft_fabsl(*num);
 	return (ret);
 }
 
@@ -69,10 +68,10 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 	ret = check_prefix(token, 3 + (token->precision > 0 || \
 				token->specs & F_ALT_FORM) + token->precision + (exponent != 0)
 			* ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
-	ret += putfloat(1, &mantissa, 0, 0);
+	ret += putfloat(1, &mantissa, 0);
 	if (token->precision || token->specs & F_ALT_FORM)
 		ret += (int)write(1, ".", 1);
-	ret += putfloat(token->precision, &mantissa, 1, 0);
+	ret += putfloat(token->precision, &mantissa, 1);
 	if (exponent == 0)
 		return (ret);
 	ret += (int)write(1, "e", 1);
@@ -83,44 +82,20 @@ int	conv_science_notation(long double mantissa, ssize_t exponent,
 	return (ret + ft_putnum(ft_ssabs(exponent), 10, 2, 0));
 }
 
-/* fF: Is exponent positive or negative?
- *     If positive: - Print normalized float digit by digit.
- *                  - Repeat until we hit the radix.
- *                  - If precision > 0:
- *                       Print radix and any remaining numbers up to precision.
- *     If negative: - Print 0 and radix.
- *                  - Print zeroes until exp. is zero or precision runs out.
- *                  - If any precision is left, fill with normalized float.
+/*  fF: The default case, hopefully most readable.
  */
 
-int	conv_decimal_notation(long double mantissa, ssize_t exponent,
-		t_token *token)
+int	conv_decimal_notation(long double num, t_token *token)
 {
 	int			ret;
+	ssize_t		exponent;
+	long double	mantissa;
 
-	if (exponent >= 0)
-	{
-		ret = check_prefix(token, (int)++exponent + (token->precision > 0 || \
-					token->specs & F_ALT_FORM) + token->precision, &mantissa);
-		ret += putfloat(exponent, &mantissa, 0, 0);
-		ret += (int)write(1, ".", (token->precision > 0 || \
-					token->specs & F_ALT_FORM));
-	}
-	else
-	{
-		ret = check_prefix(token, 1 + (token->precision > 0 || \
-					token->specs & F_ALT_FORM) + token->precision, &mantissa);
-		ret += (int)write(1, "0", 1);
-		if (token->precision > 0 || token->specs & F_ALT_FORM)
-		{	
-			ret += (int)write(1, ".", 1);
-			if (token->precision < -exponent)
-				return (ret + ft_putset(token->precision, '0'));
-			ret += ft_putset(ft_abs((int)(exponent + 1)), '0');
-			token->precision -= ft_abs((int)(exponent + 1));
-		}
-	}
-	return (ret + putfloat(token->precision, &mantissa, 1, 0));
+	exponent = normalize_double(num, &mantissa);
+	ret = check_prefix(token, (int)++exponent + (token->precision > 0 || 
+				token->specs & F_ALT_FORM) + token->precision, &num);
+	ret += putfl(num, token, 0);
+	return (ret);
 }
 
 static int	trim_z(long double num, int precision)

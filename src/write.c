@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/08/31 21:10:42 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/05 19:32:48 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	print_prefix(int negative, int is_zero, t_token *token)
 			(token->specs & PTR))
 	{
 		if (is_zero && !(token->specs & PTR))
-			return (0);
+;			return (0);
 		if (token->specs & ALL_CAPS)
 			return ((int)write(1, "0X", 2));
 		return ((int)write(1, "0x", 2));
@@ -39,7 +39,7 @@ int	print_prefix(int negative, int is_zero, t_token *token)
 
 /* putstr prints the string representation of several conversions
  * that sometimes need to output string instead of what they usually do.
- * If minimum length is more than strings length, chars are
+ * If minimum length is more than strings length, fill chars are
  * appended in front.
  */
 
@@ -73,7 +73,7 @@ int	putstr(const char *str, int min_len, char fill_char)
  * This form of the function handles only absolute values.
  */
 
-int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
+int	putfloat(ssize_t len, long double *mantissa, int trim)
 {
 	int	ipart;
 	int	ret;
@@ -81,8 +81,6 @@ int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
 
 	ret = 0;
 	ocount = 0;
-	round = 0;
-	*mantissa = roundld(*mantissa, len);
 	while (--len >= 0)
 	{
 		ipart = (int) *mantissa;
@@ -99,5 +97,27 @@ int	putfloat(ssize_t len, long double *mantissa, int round, int trim)
 		ocount = 0;
 		ret += ft_putchar('0' + (char)ipart);
 	}
-	return (ret + ft_putset(ocount, '0'));
+	ret += ft_putset(ocount, '0');
+	return (ret);
+}
+
+int putfl(long double num, t_token *token, int trim)
+{
+	int			ret;
+	ssize_t		exp;
+	long double	ipart;
+	long double	frac;
+
+	ipart = bad_floorfl(num);
+	frac = num - ipart;
+	ipart += bad_roundfl(&frac, token->precision);
+	ret = 0;
+	exp = normalize_double(ipart, &ipart);
+	if (exp >= 0)
+		ret += putfloat(exp + 1, &ipart, 0);
+	if ((token->precision > 0) || (token->specs & F_ALT_FORM))
+		ret += write(1, ".", 1);
+	frac *= 10.0;
+	ret += putfloat(token->precision, &frac, trim);
+	return (ret);
 }
