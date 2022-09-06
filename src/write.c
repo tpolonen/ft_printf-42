@@ -23,7 +23,7 @@ int	print_prefix(int negative, int is_zero, t_token *token)
 			(token->specs & PTR))
 	{
 		if (is_zero && !(token->specs & PTR))
-;			return (0);
+			return (0);
 		if (token->specs & ALL_CAPS)
 			return ((int)write(1, "0X", 2));
 		return ((int)write(1, "0x", 2));
@@ -60,7 +60,7 @@ int	putstr(const char *str, int min_len, char fill_char)
  * mantissa is adjusted while printing, so this function can be called
  * repeatedly for the same float.
  *
- * Every time the digit we would print is zero, we count it and continue 
+ * Every time the digit we would print is zero, we count it and continue
  * to the next iteration without printing anything.
  *
  * When we eventually hit a non-zero digit AND it's not the last digit
@@ -110,7 +110,7 @@ int putfl(long double num, t_token *token, int trim)
 
 	ipart = bad_floorfl(num);
 	frac = num - ipart;
-	ipart += bad_roundfl(&frac, token->precision);
+	ipart += bad_roundfl(&frac, (size_t)token->precision);
 	ret = 0;
 	exp = normalize_double(ipart, &ipart);
 	if (exp >= 0)

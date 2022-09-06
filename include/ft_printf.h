@@ -16,6 +16,7 @@
 # include <stddef.h>
 # include "libft.h"
 # include <stdio.h>
+# include <inttypes.h>
 
 /* Here starts defining of bitmasks.
  * Each following decimal number is used as bitmask for interpreting the token.
@@ -43,8 +44,8 @@
 # define FLOAT		16128
 # define LDOUBLE	131072
 # define SCI_DOUBLE 12288
-# define DEC_DOUBLE 3072 
-# define SHORTEST_F 768	
+# define DEC_DOUBLE 3072
+# define SHORTEST_F 768
 
 # define SIGNED		311296
 # define UNSIGNED	65724
@@ -103,9 +104,8 @@ int			conv_integer(t_token *token, va_list args);
 int			conv_float(t_token *token, va_list args);
 
 /* notations.c */
+int			conv_decimal_notation(long double num, t_token *token);
 int			conv_science_notation(long double mantissa, ssize_t exponent,
-				t_token *token);
-int			conv_decimal_notation(long double mantissa, ssize_t exponent,
 				t_token *token);
 int			conv_shortest_notation(long double mantissa, ssize_t exponent,
 				t_token *token);
@@ -114,6 +114,7 @@ int			conv_shortest_notation(long double mantissa, ssize_t exponent,
 int			print_prefix(int negative, int is_zero, t_token *token);
 int			putstr(const char *str, int min_len, char fill_char);
 int			putfloat(ssize_t len, long double *mantissa, int trim);
+int 		putfl(long double num, t_token *token, int trim);
 
 /* float_utils.c */
 ssize_t		normalize_double(long double num, long double *mantissa);

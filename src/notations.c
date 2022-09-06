@@ -36,7 +36,7 @@ static int	check_prefix(t_token *token, int len, long double *num)
 	int	negative;
 
 	ret = 0;
-	negative = *num < 0.0;
+	negative = ((*num < 0.0) || (42.0 / *num == 43.0 / -0.0));
 	prefix_len = 0;
 	prefix_printed = 0;
 	if (token->specs & F_PADDED_POS || token->specs & F_PRINT_PLUS || negative)
@@ -92,7 +92,7 @@ int	conv_decimal_notation(long double num, t_token *token)
 	long double	mantissa;
 
 	exponent = normalize_double(num, &mantissa);
-	ret = check_prefix(token, (int)++exponent + (token->precision > 0 || 
+	ret = check_prefix(token, (ft_max(1, (int)++exponent)) + (token->precision > 0 ||
 				token->specs & F_ALT_FORM) + token->precision, &num);
 	ret += putfl(num, token, 0);
 	return (ret);
@@ -154,5 +154,6 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 		return (conv_science_notation(mantissa, exponent, token));
 	if (exponent < 0)
 		token->precision++;
-	return (conv_decimal_notation(mantissa, exponent, token));
+	return (conv_decimal_notation(mantissa * bad_powfl(10.0, (int)exponent), \
+				token));
 }

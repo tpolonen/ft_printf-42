@@ -38,7 +38,7 @@ static int	print_exceptions(const char *str, int *ret, t_token *token)
  * 1. NaN == NaN is always false.
  * 2. Dividing by zero will always produce infinity:
  *    Sign depends on which number was divided.
- * 
+ *
  * There is probably a more elegant way to produce output with different
  * letter cases.
  */
@@ -97,7 +97,7 @@ int	conv_float(t_token *token, va_list args)
 	if (token->specs & SCI_DOUBLE)
 		ret += conv_science_notation(mantissa, exponent, token);
 	else if (token->specs & DEC_DOUBLE)
-		ret += conv_decimal_notation(mantissa, exponent, token);
+		ret += conv_decimal_notation(num, token);
 	else if (token->specs & SHORTEST_F)
 		ret += conv_shortest_notation(mantissa, exponent, token);
 	return (ret);
