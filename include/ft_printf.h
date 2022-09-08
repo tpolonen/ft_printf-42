@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/09/05 19:32:24 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:27:29 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,12 +96,6 @@ typedef struct s_doubletoint
 	int64_t low_bits;
 } 	t_doubletoint;
 
-union u_ldbits
-{
-	t_doubletoint bits;
-	long double ld;
-};
-
 /* ft_printf.c */
 int			ft_printf(const char *restrict format, ...);
 
@@ -133,5 +127,5 @@ int 		putfl(long double num, t_token *token, int trim);
 ssize_t		normalize_double(long double num, long double *mantissa);
 long double	bad_powfl(long double num, int exp);
 long double	bad_floorfl(long double num);
-long double	bad_roundfl(long double *frac, size_t precision);
+long double	bad_roundfl(long double *frac, size_t precision, int sign);
 #endif

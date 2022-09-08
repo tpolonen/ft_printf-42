@@ -98,8 +98,8 @@ int main(void)
 	fp = ft_printf("here's some doubles: %f %f %f %f\n", inf, ninf, zero, nzero);
 	printf("pf[%d] fp[%d]\n\n", pf, fp);
 
-	printf("is this negative zero? %d\n", 42.0 / nzero == ninf);
-	printf("is this negative zero? %d\n", 42.0 / zero == ninf);
-
+	pf =    printf("positive nan?: %f negative nan? %f\n", zero / zero, zero / nzero);
+	fp = ft_printf("positive nan?: %f negative nan? %f\n", zero / zero, zero / nzero);
+	printf("pf[%d] fp[%d]\n\n", pf, fp);
 	return 0;
 }

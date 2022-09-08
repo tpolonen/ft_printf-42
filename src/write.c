@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/09/05 19:32:48 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:28:17 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,10 @@ int putfl(long double num, t_token *token, int trim)
 	long double	frac;
 
 	ipart = bad_floorfl(num);
+	printf("ipart is %Lf\n", ipart);
 	frac = num - ipart;
-	ipart += bad_roundfl(&frac, (size_t)token->precision);
+	printf("frac is %Lf\n", frac);
+	ipart += bad_roundfl(&frac, (size_t)token->precision, num < 0.0);
 	ret = 0;
 	exp = normalize_double(ipart, &ipart);
 	if (exp >= 0)

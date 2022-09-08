@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/23 19:51:49 by teppo             #+#    #+#             */
-/*   Updated: 2022/09/05 19:31:43 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:29:26 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,23 +82,27 @@ long double	bad_floorfl(long double num)
 	return (num - temp);
 }
 
-long double	bad_roundfl(long double *frac, size_t precision)
+long double	bad_roundfl(long double *frac, size_t precision, int sign)
 {
 	long double	temp;
 	long double	diff;
+	long double	ret;
 
+	ret = 0.0;
 	temp = *frac * bad_powfl(10, precision - 1);
-	diff = bad_floorfl(temp) - temp;
+	printf("temp is %Lf\n", temp);
+	diff = temp - bad_floorfl(temp);
+	printf("diff is %Lf\n", diff);
 	if (precision == 0 && diff >= 0.5)
-		return (1.0);
-	if (diff >= 0.5)
+		ret = 1.0;
+	else if (diff >= 0.5)
 	{
 		*frac += (5.0 * bad_powfl(0.1, precision));
 		if (*frac >= 1.0)
 		{
 			*frac = 0.0;
-			return (1.0);
+			ret = 1.0;
 		}
 	}
-	return (0.0);
+	return (ret * (long double) sign);
 }

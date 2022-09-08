@@ -6,31 +6,11 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/09/05 16:13:41 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:18:44 by tpolonen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
-
-static int	print_nan(const char *str, int *ret, long double ld, t_token *token)
-{
-	char	buf[5];
-	int		i;
-	union u_ldbits bits;
-
-	bits.ld = ld;
-	if (bits.bits.high_bits < 0)
-	{
-		buf[0] = '-';
-		i = -1;
-		while (++i < 4)
-			buf[i + 1] = str[i];
-		*ret = putstr(buf, token->width, ' ');
-	}
-	else
-		*ret = putstr(str, token->width, ' ');
-	return (*ret);
-}
 
 static int	print_inf(const char *str, int *ret, t_token *token)
 {
@@ -67,7 +47,7 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 	if (token->specs & ALL_CAPS)
 	{
 		if (num != num)
-			*ret = print_nan("NAN", ret, num, token);
+			*ret = putstr("NAN", token->width, ' ');
 		else if (1.0 / 0.0 == num)
 			*ret = print_inf("INF", ret, token);
 		else if (-1.0 / 0.0 == num)
@@ -76,7 +56,7 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 	else
 	{
 		if (num != num)
-			*ret = print_nan("nan", ret, num, token);
+			*ret = putstr("nan", token->width, ' ');
 		else if (1.0 / 0.0 == num)
 			*ret = print_inf("inf", ret, token);
 		else if (-1.0 / 0.0 == num)
