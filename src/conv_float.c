@@ -12,13 +12,32 @@
 
 #include "../include/ft_printf.h"
 
-static int	print_exceptions(const char *str, int *ret, t_token *token)
+static int	print_nan(const char *str, int *ret, long double ld, t_token *token)
+{
+	char	buf[5];
+	int		i;
+	union u_ldbits bits;
+
+	bits.ld = ld;
+	if (bits.bits.high_bits < 0)
+	{
+		buf[0] = '-';
+		i = -1;
+		while (++i < 4)
+			buf[i + 1] = str[i];
+		*ret = putstr(buf, token->width, ' ');
+	}
+	else
+		*ret = putstr(str, token->width, ' ');
+	return (*ret);
+}
+
+static int	print_inf(const char *str, int *ret, t_token *token)
 {
 	char	buf[5];
 	int		i;
 
-	if (((token->specs & F_PADDED_POS) || (token->specs & F_PRINT_PLUS)) && \
-			str[0] != '-')
+	if ((token->specs & F_PADDED_POS) || (token->specs & F_PRINT_PLUS))
 	{
 		buf[0] = ' ';
 		if (token->specs & F_PRINT_PLUS)
@@ -32,7 +51,6 @@ static int	print_exceptions(const char *str, int *ret, t_token *token)
 		*ret = putstr(str, token->width, ' ');
 	return (*ret);
 }
-
 
 /* Basic principles for checking float exceptions are:
  * 1. NaN == NaN is always false.
@@ -49,18 +67,18 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 	if (token->specs & ALL_CAPS)
 	{
 		if (num != num)
-			*ret = putstr("NAN", token->width, ' ');
+			*ret = print_nan("NAN", ret, num, token);
 		else if (1.0 / 0.0 == num)
-			*ret = print_exceptions("INF", ret, token);
+			*ret = print_inf("INF", ret, token);
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-INF", token->width, ' ');
 	}
 	else
 	{
 		if (num != num)
-			*ret = putstr("nan", token->width, ' ');
+			*ret = print_nan("nan", ret, num, token);
 		else if (1.0 / 0.0 == num)
-			*ret = print_exceptions("inf", ret, token);
+			*ret = print_inf("inf", ret, token);
 		else if (-1.0 / 0.0 == num)
 			*ret = putstr("-inf", token->width, ' ');
 	}

@@ -15,6 +15,7 @@
 # include <stdarg.h>
 # include <stddef.h>
 # include "libft.h"
+#include <stdint.h>
 # include <stdio.h>
 # include <inttypes.h>
 
@@ -88,6 +89,18 @@ typedef struct s_conv
 	int				key;
 	t_conv_function	*func;
 }	t_conv;
+
+typedef struct s_doubletoint
+{
+	int64_t high_bits;
+	int64_t low_bits;
+} 	t_doubletoint;
+
+union u_ldbits
+{
+	t_doubletoint bits;
+	long double ld;
+};
 
 /* ft_printf.c */
 int			ft_printf(const char *restrict format, ...);
