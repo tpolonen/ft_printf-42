@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 22:09:48 by teppo             #+#    #+#             */
-/*   Updated: 2022/09/05 19:45:20 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:36:22 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,18 +60,17 @@ static int	check_prefix(t_token *token, int len, long double *num)
  *     Fill with zeroes as usual if numbers run out before precision.
  */
 
-int	conv_science_notation(long double mantissa, ssize_t exponent,
-		t_token *token)
+int	conv_science_notation(long double num, t_token *token)
 {
 	int			ret;
+	ssize_t		exponent;
+	long double	mantissa;
 
+	exponent = normalize_double(num, &mantissa);
 	ret = check_prefix(token, 3 + (token->precision > 0 || \
 				token->specs & F_ALT_FORM) + token->precision + (exponent != 0)
 			* ft_max(2, (int)ft_ssizelen(exponent, 10)), &mantissa);
-	ret += putfloat(1, &mantissa, 0);
-	if (token->precision || token->specs & F_ALT_FORM)
-		ret += (int)write(1, ".", 1);
-	ret += putfloat(token->precision, &mantissa, 1);
+	ret += putfl(mantissa, token, 0);
 	if (exponent == 0)
 		return (ret);
 	ret += (int)write(1, "e", 1);
@@ -92,31 +91,11 @@ int	conv_decimal_notation(long double num, t_token *token)
 	long double	mantissa;
 
 	exponent = normalize_double(num, &mantissa);
-	ret = check_prefix(token, (ft_max(1, (int)++exponent)) + (token->precision > 0 ||
-				token->specs & F_ALT_FORM) + token->precision, &num);
+	ret = check_prefix(token, (ft_max(1, (int)++exponent)) + \
+			(token->precision > 0 || token->specs & F_ALT_FORM) \
+			+ token->precision, &num);
 	ret += putfl(num, token, 0);
 	return (ret);
-}
-
-static int	trim_z(long double num, int precision)
-{
-	int	ocount;
-	int	ipart;
-	int	i;
-
-	ocount = 0;
-	i = 0;
-	while (i < precision)
-	{
-		ipart = (int)num;
-		num = (num - (long double) ipart) * 10.0;
-		if (ipart == 0)
-			ocount++;
-		else
-			ocount = 0;
-		i++;
-	}
-	return (precision - ocount);
 }
 
 /* gG: If precision is zero, it is treated as 1.
@@ -133,16 +112,18 @@ static int	trim_z(long double num, int precision)
  *     replicate this conversion in your own version of printf.
  */
 
-int	conv_shortest_notation(long double mantissa, ssize_t exponent,
-		t_token *token)
+int	conv_shortest_notation(long double num, t_token *token)
 {
-	int	scilen;
-	int	declen;
+	int			scilen;
+	int			declen;
+	long double	mantissa;
+	ssize_t		exponent;
+	int			ret;
 
 	if (token->precision == 0)
 		token->precision = 1;
 	token->precision--;
-	token->precision = trim_z(mantissa, token->precision);
+	exponent = normalize_double(num, &mantissa);
 	scilen = 3 + (token->precision > 0) + token->precision + \
 		ft_max(2, (int)ft_ssizelen(exponent, 10));
 	if (exponent > 0)
@@ -151,9 +132,11 @@ int	conv_shortest_notation(long double mantissa, ssize_t exponent,
 	else
 		declen = 1 + (token->precision > 0) + token->precision;
 	if (scilen < declen)
-		return (conv_science_notation(mantissa, exponent, token));
+		return (conv_science_notation(num, token));
 	if (exponent < 0)
 		token->precision++;
-	return (conv_decimal_notation(mantissa * bad_powfl(10.0, (int)exponent), \
-				token));
+	ret = check_prefix(token, (ft_max(1, (int)++exponent)) + \
+			(token->precision > 0 || token->specs & F_ALT_FORM) \
+			+ token->precision, &num);
+	return (ret + putfl(num, token, 1));
 }

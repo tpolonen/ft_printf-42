@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/06 17:25:27 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/09/08 19:18:44 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:20:43 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ static int	check_exceptions(long double num, int *ret,	t_token *token)
 int	conv_float(t_token *token, va_list args)
 {
 	long double	num;
-	long double	mantissa;
-	ssize_t		exponent;
 	int			ret;
 
 	ret = 0;
@@ -91,12 +89,11 @@ int	conv_float(t_token *token, va_list args)
 		return (ret);
 	if (token->precision < 0)
 		token->precision = 6;
-	exponent = normalize_double(num, &mantissa);
 	if (token->specs & SCI_DOUBLE)
-		ret += conv_science_notation(mantissa, exponent, token);
+		ret += conv_science_notation(num, token);
 	else if (token->specs & DEC_DOUBLE)
 		ret += conv_decimal_notation(num, token);
 	else if (token->specs & SHORTEST_F)
-		ret += conv_shortest_notation(mantissa, exponent, token);
+		ret += conv_shortest_notation(num, token);
 	return (ret);
 }

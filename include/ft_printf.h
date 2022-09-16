@@ -6,7 +6,7 @@
 /*   By: tpolonen <tpolonen@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 11:04:57 by tpolonen          #+#    #+#             */
-/*   Updated: 2022/09/08 19:27:29 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:38:52 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <stdarg.h>
 # include <stddef.h>
 # include "libft.h"
-#include <stdint.h>
 # include <stdio.h>
 # include <inttypes.h>
 
@@ -90,12 +89,6 @@ typedef struct s_conv
 	t_conv_function	*func;
 }	t_conv;
 
-typedef struct s_doubletoint
-{
-	int64_t high_bits;
-	int64_t low_bits;
-} 	t_doubletoint;
-
 /* ft_printf.c */
 int			ft_printf(const char *restrict format, ...);
 
@@ -112,16 +105,14 @@ int			conv_float(t_token *token, va_list args);
 
 /* notations.c */
 int			conv_decimal_notation(long double num, t_token *token);
-int			conv_science_notation(long double mantissa, ssize_t exponent,
-				t_token *token);
-int			conv_shortest_notation(long double mantissa, ssize_t exponent,
-				t_token *token);
+int			conv_science_notation(long double num, t_token *token);
+int			conv_shortest_notation(long double num, t_token *token);
 
 /* write.c */
 int			print_prefix(int negative, int is_zero, t_token *token);
 int			putstr(const char *str, int min_len, char fill_char);
-int			putfloat(ssize_t len, long double *mantissa, int trim);
-int 		putfl(long double num, t_token *token, int trim);
+int			putfloat(ssize_t len, long double *mantissa, int trim, int round);
+int			putfl(long double num, t_token *token, int trim);
 
 /* float_utils.c */
 ssize_t		normalize_double(long double num, long double *mantissa);

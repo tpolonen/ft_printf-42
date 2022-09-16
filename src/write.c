@@ -6,7 +6,7 @@
 /*   By: teppo <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 09:18:12 by teppo             #+#    #+#             */
-/*   Updated: 2022/09/08 19:28:17 by tpolonen         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:37:26 by teppo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	putstr(const char *str, int min_len, char fill_char)
  * This form of the function handles only absolute values.
  */
 
-int	putfloat(ssize_t len, long double *mantissa, int trim)
+int	putfloat(ssize_t len, long double *mantissa, int trim, int round)
 {
 	int	ipart;
 	int	ret;
@@ -81,6 +81,7 @@ int	putfloat(ssize_t len, long double *mantissa, int trim)
 
 	ret = 0;
 	ocount = 0;
+	*mantissa += 0.5 * bad_powfl(0.1, len + 1) * round;
 	while (--len >= 0)
 	{
 		ipart = (int) *mantissa;
@@ -101,7 +102,7 @@ int	putfloat(ssize_t len, long double *mantissa, int trim)
 	return (ret);
 }
 
-int putfl(long double num, t_token *token, int trim)
+int	putfl(long double num, t_token *token, int trim)
 {
 	int			ret;
 	ssize_t		exp;
@@ -109,17 +110,15 @@ int putfl(long double num, t_token *token, int trim)
 	long double	frac;
 
 	ipart = bad_floorfl(num);
-	printf("ipart is %Lf\n", ipart);
 	frac = num - ipart;
-	printf("frac is %Lf\n", frac);
 	ipart += bad_roundfl(&frac, (size_t)token->precision, num < 0.0);
 	ret = 0;
 	exp = normalize_double(ipart, &ipart);
 	if (exp >= 0)
-		ret += putfloat(exp + 1, &ipart, 0);
+		ret += putfloat(exp + 1, &ipart, 0, 1);
 	if ((token->precision > 0) || (token->specs & F_ALT_FORM))
 		ret += write(1, ".", 1);
 	frac *= 10.0;
-	ret += putfloat(token->precision, &frac, trim);
+	ret += putfloat(token->precision, &frac, trim, 0);
 	return (ret);
 }
